@@ -30,13 +30,25 @@ public class ModItems {
     public static final Item SCIENCE_STORYBOOK = registerItem("science_storybook",
             new StoryBook(new Item.Settings().maxCount(1), "science"));
 
+    public static final Item SEASHELL_STORYBOOK = registerItem("seashell_storybook",
+            new StoryBook(new Item.Settings().maxCount(1), "seashell"));
+
+    public static final Item AURORA_STORYBOOK = registerItem("aurora_storybook",
+            new StoryBook(new Item.Settings().maxCount(1), "aurora"));
+
+    public static final Item HAIR_STORYBOOK = registerItem("hair_storybook",
+            new StoryBook(new Item.Settings().maxCount(1), "hair"));
+
 
     public static final List<Item> STORYBOOK_ITEMS = List.of(
             CINDERELLA_STORYBOOK,
             FAIRY_TALE_STORYBOOK,
             MYSTERY_STORYBOOK,
             HISTORY_STORYBOOK,
-            SCIENCE_STORYBOOK
+            SCIENCE_STORYBOOK,
+            SEASHELL_STORYBOOK,
+            AURORA_STORYBOOK,
+            HAIR_STORYBOOK
     );
 
     private static Item registerItem(String name, Item item) {

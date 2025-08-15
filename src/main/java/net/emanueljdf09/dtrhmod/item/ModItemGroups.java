@@ -23,6 +23,9 @@ public class ModItemGroups {
                         entries.add(ModItems.CINDERELLA_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.MYSTERY_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.SCIENCE_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.HAIR_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.AURORA_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.SEASHELL_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.HISTORY_STORYBOOK.getDefaultStack());
                     }).build());
 

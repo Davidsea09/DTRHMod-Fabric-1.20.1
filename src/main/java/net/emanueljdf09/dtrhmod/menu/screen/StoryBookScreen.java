@@ -1,78 +1,422 @@
 package net.emanueljdf09.dtrhmod.menu.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.google.common.collect.ImmutableList;
+
+import com.mojang.datafixers.util.Pair;
+import io.github.mortuusars.scholar.client.gui.screen.view.BookViewAccess;
+import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
+import net.minecraft.client.util.NarratorManager;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.WrittenBookItem;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.screen.ScreenTexts;
+import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.IntFunction;
+
 
 public class StoryBookScreen extends Screen {
 
-    private final String storyType;
-    private final List<Text> pages;
-    private int pageIndex = -1; // -1 = cover, pages start at 0
-
-    private static final int BG_WIDTH = 192;
-    private static final int BG_HEIGHT = 192;
-
-    public StoryBookScreen(String storyType, List<Text> pages) {
-        super(Text.literal("Story Book"));
-        this.storyType = storyType;
-        this.pages = pages;
-    }
-
-    @Override
-    public boolean shouldPause() {
-        return false;
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
-
-        int x = (this.width - BG_WIDTH) / 2;
-        int y = (this.height - BG_HEIGHT) / 2;
-
-        Identifier texture;
-        if (pageIndex == -1) {
-            texture = new Identifier("dtrhmod", "textures/gui/book_" + storyType + "_cover.png");
-        } else if (pageIndex >= pages.size()) {
-            texture = new Identifier("dtrhmod", "textures/gui/book_" + storyType + "_back.png");
-        } else {
-            texture = new Identifier("dtrhmod", "textures/gui/book_" + storyType + "_pages.png");
+    public static final StoryBookScreen.Contents EMPTY_PROVIDER = new StoryBookScreen.Contents() {
+        @Override
+        public int getPageCount() {
+            return 0;
         }
 
-        RenderSystem.setShaderTexture(0, texture);
-        context.drawTexture(texture, x, y, 0, 0, BG_WIDTH, BG_HEIGHT);
+        @Override
+        public StringVisitable getPageUnchecked(int index) {
+            return StringVisitable.EMPTY;
+        }
+    };
+    public static final Identifier BOOK_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/book_middle.png");
+    public static final int TEXT_LEFT_X = 22;
+    public static final int TEXT_RIGHT_X = 159;
+    public static final int TEXT_Y = 21;
+    public static final int TEXT_WIDTH = 114;
+    public static final int TEXT_HEIGHT = 128;
+    protected static final int WIDTH = 295;
+    protected static final int HEIGHT = 180;
+    private StoryBookScreen.Contents contents;
+    private Pair<List<OrderedText>, List<OrderedText>> cachedPage;
+    private int cachedSpread;
+    protected int leftPos;
+    protected int topPos;
+    private ButtonWidget nextPageButton;
+    private ButtonWidget previousPageButton;
+    protected int currentSpread;
+    private final boolean pageTurnSound;
 
-        // Render page text
-        if (pageIndex >= 0 && pageIndex < pages.size()) {
-            // Left page
-            String leftText = pages.get(pageIndex).getString();
-            context.drawText(this.textRenderer, leftText, x + 20, y + 20, 0x000000, false);
 
-            // Right page
-            if (pageIndex + 1 < pages.size()) {
-                String rightText = pages.get(pageIndex + 1).getString();
-                context.drawText(this.textRenderer, rightText, x + 110, y + 20, 0x000000, false);
+
+
+    private StoryBookScreen(StoryBookScreen.Contents contents, boolean playPageTurnSound) {
+        super(NarratorManager.EMPTY);
+        this.contents = contents;
+        this.cachedPage = Pair.of(Collections.emptyList(), Collections.emptyList());
+        this.pageTurnSound = playPageTurnSound;
+    }
+
+    public StoryBookScreen.Contents getBookAccess() {
+        return this.contents;
+    }
+
+    public void setPageProvider(StoryBookScreen.Contents pageProvider) {
+        this.contents = pageProvider;
+        this.currentSpread = MathHelper.clamp(this.currentSpread, 0, this.getSpreadCount());
+        this.updatePageButtons();
+        this.cachedSpread = -1;
+    }
+
+    public int getPagesCount() {
+        return this.getBookAccess().getPageCount();
+    }
+
+    public boolean setPage(int index) {
+        index = MathHelper.clamp(index, 0, this.getBookAccess().getPageCount() - 1);
+        int spreadIndex = (int)((float)index / 2.0F);
+        if (spreadIndex != this.currentSpread) {
+            this.currentSpread = spreadIndex;
+            this.updatePageButtons();
+            this.cachedSpread = -1;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected boolean jumpToPage(int page) {
+        return this.setPage(page);
+    }
+
+
+    @Override
+    protected void init() {
+        this.addPageButtons();
+    }
+
+    protected void addPageButtons() {
+        this.leftPos = (this.width - 295) / 2;
+        this.topPos = (this.height - 180) / 2;
+        createWidgets();
+    }
+
+    protected void createWidgets() {
+        this.createPrevPageButton();
+        this.createNextPageButton();
+    }
+
+
+    protected void createNextPageButton() {
+        this.nextPageButton = this.addDrawableChild(new TexturedButtonWidget(this.leftPos + 270, this.topPos + 156, 13, 15, 308, 0, 15, BOOK_TEXTURE, 512, 512, (button) -> this.goToNextPage()));
+        nextPageButton.setTooltip(Tooltip.of(Text.translatable("spectatorMenu.next_page")));
+        this.nextPageButton = this.addDrawableChild(nextPageButton);
+    }
+
+    protected void createPrevPageButton() {
+        this.previousPageButton = this.addDrawableChild(new TexturedButtonWidget(this.leftPos + 12, this.topPos + 156, 13, 15, 295, 0, 15, BOOK_TEXTURE, 512, 512, (button) -> this.goToPreviousPage()));
+        previousPageButton.setTooltip(Tooltip.of(Text.translatable("spectatorMenu.previous_page")));
+        this.previousPageButton = this.addDrawableChild(previousPageButton);
+    }
+
+
+    private int getPageCount() {
+        return 100;
+    }
+
+    public int getSpreadCount() {
+        return (int)Math.ceil((double)this.getPageCount() / (double)2.0F);
+    }
+
+    protected boolean goToPreviousPage() {
+        if (this.currentSpread > 0) {
+            this.currentSpread--;
+            this.playPageTurnSound(0.8F);
+            return true;
+        } else {
+            return false;
+        }
+
+        this.updatePageButtons();
+    }
+
+    protected boolean goToNextPage() {
+        if (this.currentSpread < this.getSpreadCount() - 1) {
+            this.currentSpread++;
+            this.playPageTurnSound(1.0F);
+            return true;
+        } else {
+            return false;
+        }
+
+        this.updatePageButtons();
+    }
+
+    private void updatePageButtons() {
+        this.nextPageButton.visible = this.currentSpread < this.getSpreadCount() - 1;
+        this.previousPageButton.visible = this.currentSpread > 0;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        } else {
+            switch (keyCode) {
+                case 266:
+                    this.previousPageButton.onPress();
+                    return true;
+                case 267:
+                    this.nextPageButton.onPress();
+                    return true;
+                default:
+                    return false;
             }
         }
-
-        super.render(context, mouseX, mouseY, delta);
     }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float partialTick) {
+       this.renderBackground(context);
+       this.renderBook(context, mouseX, mouseY, partialTick);
+       this.renderPageNumbers(context, mouseX, mouseY, partialTick, this.currentSpread);
+    }
+
+    public void renderBook(DrawContext context, int mouseX, int mouseY, float partialTick) {
+        context.drawTexture(BOOK_TEXTURE, this.leftPos, this.topPos, 295, 180, 0.0F, 0.0F, 295, 180, 512, 512);
+    }
+
+    public void renderPageNumbers(DrawContext context, int mouseX, int mouseY, float partialTick, int currentSpread) {
+        this.renderLeftPageNumber(context, mouseX, mouseY, partialTick, currentSpread);
+        this.renderRightPageNumber(context, mouseX, mouseY, partialTick, currentSpread);
+    }
+
+    protected void renderLeftPageNumber(DrawContext context, int mouseX, int mouseY, float partialTick, int currentSpread) {
+        String leftPageNumber = Integer.toString(currentSpread * 2 + 1);
+        context.drawText(this.textRenderer, leftPageNumber, this.leftPos + 69 + (8 - this.textRenderer.getWidth(leftPageNumber) / 2), this.topPos + 157, 0x000000, false);
+    }
+
+    protected void renderRightPageNumber(DrawContext context, int mouseX, int mouseY, float partialTick, int currentSpread) {
+        String rightPageNumber = Integer.toString(currentSpread * 2 + 2);
+        context.drawText(this.textRenderer, rightPageNumber, this.leftPos + 208 + (8 - this.textRenderer.getWidth(rightPageNumber) / 2), this.topPos + 157, 0x000000, false);
+    }
+
+    protected boolean isHovering(int x, int y, int width, int height, double mouseX, double mouseY) {
+        mouseX -= (double)this.leftPos;
+        mouseY -= (double)this.topPos;
+        return mouseX >= (double)(x - 1) && mouseX < (double)(x + width + 1) && mouseY >= (double)(y - 1) && mouseY < (double)(y + height + 1);
+    }
+
+    protected boolean isHoveringOverRightPageNumber(double mouseX, double mouseY) {
+        return this.isHovering(206, 157, 17, 7, mouseX, mouseY);
+    }
+
+    protected boolean isHoveringOverLeftPageNumber(double mouseX, double mouseY) {
+        return this.isHovering(66, 157, 17, 7, mouseX, mouseY);
+    }
+
+    protected boolean isLeftPage(int pageIndex) {
+        return pageIndex % 2 == 0;
+    }
+
+    protected boolean isRightPage(int pageIndex) {
+        return pageIndex % 2 == 1;
+    }
+
+
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
-            pageIndex += 2; // advance by spread
-            if (pageIndex > pages.size()) {
-                this.close();
+            Style style = this.getTextStyleAt(mouseX, mouseY);
+            if (style != null && this.handleTextClick(style)) {
+                return true;
             }
-            return true;
         }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
+
+    @Override
+    public boolean handleTextClick(Style style) {
+        ClickEvent clickEvent = style.getClickEvent();
+        if (clickEvent == null) {
+            return false;
+        } else if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
+            String string = clickEvent.getValue();
+
+            try {
+                int i = Integer.parseInt(string) - 1;
+                return this.jumpToPage(i);
+            } catch (Exception var5) {
+                return false;
+            }
+        } else {
+            boolean bl = super.handleTextClick(style);
+            if (bl && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
+                this.closeScreen();
+            }
+
+            return bl;
+        }
+    }
+
+    protected void closeScreen() {
+        this.client.setScreen(null);
+    }
+
+    @Nullable
+    public Style getTextStyleAt(double x, double y) {
+        if (this.cachedPage.isEmpty()) {
+            return null;
+        } else {
+            int i = MathHelper.floor(x - (this.width - 192) / 2 - 36.0);
+            int j = MathHelper.floor(y - 2.0 - 30.0);
+            if (i >= 0 && j >= 0) {
+                int k = Math.min(128 / 9, this.cachedPage.size());
+                if (i <= 114 && j < 9 * k + k) {
+                    int l = j / 9;
+                    if (l >= 0 && l < this.cachedPage.size()) {
+                        OrderedText orderedText = (OrderedText)this.cachedPage.get(l);
+                        return this.client.textRenderer.getTextHandler().getStyleAt(orderedText, i);
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+    }
+
+    static List<String> readPages(NbtCompound nbt) {
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        Objects.requireNonNull(builder);
+        Objects.requireNonNull(builder);
+        filterPages(nbt, builder::add);
+        return builder.build();
+    }
+
+    public static void filterPages(NbtCompound nbt, Consumer<String> pageConsumer) {
+        NbtList nbtList = nbt.getList("pages", 8).copy();
+        IntFunction<String> intFunction;
+        if (MinecraftClient.getInstance().shouldFilterText() && nbt.contains("filtered_pages", 10)) {
+            NbtCompound nbtCompound = nbt.getCompound("filtered_pages");
+            intFunction = page -> {
+                String string = String.valueOf(page);
+                return nbtCompound.contains(string) ? nbtCompound.getString(string) : nbtList.getString(page);
+            };
+        } else {
+            Objects.requireNonNull(nbtList);
+            Objects.requireNonNull(nbtList);
+            intFunction = nbtList::getString;
+        }
+
+        for (int i = 0; i < nbtList.size(); i++) {
+            pageConsumer.accept((String)intFunction.apply(i));
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public interface Contents {
+        int getPageCount();
+
+        StringVisitable getPageUnchecked(int index);
+
+        default StringVisitable getPage(int index) {
+            return index >= 0 && index < this.getPageCount() ? this.getPageUnchecked(index) : StringVisitable.EMPTY;
+        }
+
+        static StoryBookScreen.Contents create(ItemStack stack) {
+            if (stack.isOf(Items.WRITTEN_BOOK)) {
+                return new StoryBookScreen.WrittenBookContents(stack);
+            } else {
+                return (StoryBookScreen.Contents)(stack.isOf(Items.WRITABLE_BOOK) ? new StoryBookScreen.WritableBookContents(stack) : StoryBookScreen.EMPTY_PROVIDER);
+            }
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class WritableBookContents implements StoryBookScreen.Contents {
+        private final List<String> pages;
+
+        public WritableBookContents(ItemStack stack) {
+            this.pages = getPages(stack);
+        }
+
+        private static List<String> getPages(ItemStack stack) {
+            NbtCompound nbtCompound = stack.getNbt();
+            return (List<String>)(nbtCompound != null ? StoryBookScreen.readPages(nbtCompound) : ImmutableList.of());
+        }
+
+        @Override
+        public int getPageCount() {
+            return this.pages.size();
+        }
+
+        @Override
+        public StringVisitable getPageUnchecked(int index) {
+
+            return index >= this.pages.size() ? Text.empty() : StringVisitable.plain((String)this.pages.get(index));
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class WrittenBookContents implements StoryBookScreen.Contents {
+        private final List<String> pages;
+
+        public WrittenBookContents(ItemStack stack) {
+            this.pages = getPages(stack);
+        }
+
+        private static List<String> getPages(ItemStack stack) {
+            NbtCompound nbtCompound = stack.getNbt();
+            return (List<String>)(nbtCompound != null && WrittenBookItem.isValid(nbtCompound)
+                    ? StoryBookScreen.readPages(nbtCompound)
+                    : ImmutableList.of(Text.Serializer.toJson(Text.translatable("book.invalid.tag").formatted(Formatting.DARK_RED))));
+        }
+
+        @Override
+        public int getPageCount() {
+            return this.pages.size();
+        }
+
+        @Override
+        public @NotNull StringVisitable getPageUnchecked(int index) {
+            String string = (String)this.pages.get(index);
+
+            try {
+                StringVisitable stringVisitable = Text.Serializer.fromJson(string);
+                if (stringVisitable != null) {
+                    return stringVisitable;
+                }
+            } catch (Exception var4) {
+            }
+
+            return StringVisitable.plain(string);
+        }
+    }
+
+
 }
