@@ -1,6 +1,7 @@
 package net.emanueljdf09.dtrhmod.item.custom;
 
 
+import net.emanueljdf09.dtrhmod.menu.screen.BookCoverScreen;
 import net.emanueljdf09.dtrhmod.menu.screen.StoryBookScreen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -368,8 +369,7 @@ Together, they returned to the kingdom, their love stronger than ever.
 
         if (world.isClient) {
             net.minecraft.client.MinecraftClient.getInstance()
-                    .setScreen(new StoryBookScreen(
-                            new StoryBookScreen.WrittenBookContents(stack)
+                    .setScreen(new BookCoverScreen(stack
                     ));
         }
 
