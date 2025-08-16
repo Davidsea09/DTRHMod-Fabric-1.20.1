@@ -39,6 +39,14 @@ public class BookCoverScreen extends Screen {
                 coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/lrrh_cover.png");
             }  else if (bookStack.isOf(ModItems.SEASHELL_STORYBOOK)) {
                 coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/seashell_cover.png");
+            }   else if (bookStack.isOf(ModItems.SCIENCE_STORYBOOK)) {
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/jb_cover.png");
+            }  else if (bookStack.isOf(ModItems.HAIR_STORYBOOK)) {
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/hair_cover.png");
+            }  else if (bookStack.isOf(ModItems.HISTORY_STORYBOOK)) {
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/tlp_cover.png");
+            }  else if (bookStack.isOf(ModItems.MYSTERY_STORYBOOK)) {
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/sw_cover.png");
             } else {
                 coverTexture = COVER_TEXTURE; // fallback
             }
@@ -60,7 +68,7 @@ public class BookCoverScreen extends Screen {
         }
 
     protected void createOpenBookButton() {
-        this.openBookButton = this.addDrawableChild(new TexturedButtonWidget(this.leftPos + 22, this.topPos + 57, 107, 33, 149, 0, 37, coverTexture, 256, 256, (button) -> this.openBook()));
+        this.openBookButton = this.addDrawableChild(new TexturedButtonWidget(this.leftPos + 22, this.topPos + 67, 107, 33, 149, 0, 37, coverTexture, 256, 256, (button) -> this.openBook()));
         openBookButton.setTooltip(Tooltip.of(Text.translatable("cover.title.open")));
         this.openBookButton = this.addDrawableChild(openBookButton);
     }

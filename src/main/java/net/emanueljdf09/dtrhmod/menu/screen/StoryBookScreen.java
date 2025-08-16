@@ -89,7 +89,15 @@ public class StoryBookScreen extends Screen {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/lrrh_open.png");
         }  else if (stack.isOf(ModItems.SEASHELL_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/seashell_open.png");
-        }  else {
+        }   else if (stack.isOf(ModItems.SCIENCE_STORYBOOK)) {
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/jb_open.png");
+        }  else if (stack.isOf(ModItems.HAIR_STORYBOOK)) {
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/hair_open.png");
+        }  else if (stack.isOf(ModItems.HISTORY_STORYBOOK)) {
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/tlp_open.png");
+        }  else if (stack.isOf(ModItems.MYSTERY_STORYBOOK)) {
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/sw_open.png");
+        } else {
             bookTexture = BOOK_TEXTURE; // fallback
         }
     }
