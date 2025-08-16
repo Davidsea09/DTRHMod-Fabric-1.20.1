@@ -85,7 +85,11 @@ public class StoryBookScreen extends Screen {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/aurora_open.png");
         } else if (stack.isOf(ModItems.CINDERELLA_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/cinder_open.png");
-        } else {
+        }  else if (stack.isOf(ModItems.FAIRY_TALE_STORYBOOK)) {
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/lrrh_open.png");
+        }  else if (stack.isOf(ModItems.SEASHELL_STORYBOOK)) {
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/seashell_open.png");
+        }  else {
             bookTexture = BOOK_TEXTURE; // fallback
         }
     }
@@ -126,24 +130,23 @@ public class StoryBookScreen extends Screen {
     protected void createWidgets() {
         this.createPrevPageButton();
         this.createNextPageButton();
+        updatePageButtons();
     }
 
 
     protected void createNextPageButton() {
         this.nextPageButton = this.addDrawableChild(new TexturedButtonWidget(this.leftPos + 270, this.topPos + 156, 13, 15, 308, 0, 15, bookTexture, 512, 512, (button) -> this.goToNextPage()));
         nextPageButton.setTooltip(Tooltip.of(Text.translatable("spectatorMenu.next_page")));
-        this.nextPageButton = this.addDrawableChild(nextPageButton);
     }
 
     protected void createPrevPageButton() {
         this.previousPageButton = this.addDrawableChild(new TexturedButtonWidget(this.leftPos + 12, this.topPos + 156, 13, 15, 295, 0, 15, bookTexture, 512, 512, (button) -> this.goToPreviousPage()));
         previousPageButton.setTooltip(Tooltip.of(Text.translatable("spectatorMenu.previous_page")));
-        this.previousPageButton = this.addDrawableChild(previousPageButton);
     }
 
 
     private int getPageCount() {
-        return this.contents.getPageCount();
+        return this.contents.getPageCount() + 2;
     }
 
     public int getSpreadCount() {
@@ -154,6 +157,7 @@ public class StoryBookScreen extends Screen {
         if (this.currentSpread > 0) {
             this.currentSpread--;
             this.playPageTurnSound(0.8F);
+            this.updatePageButtons();
             return true;
         } else {
             return false;
@@ -164,6 +168,7 @@ public class StoryBookScreen extends Screen {
         if (this.currentSpread < this.getSpreadCount() - 1) {
             this.currentSpread++;
             this.playPageTurnSound(1.0F);
+            this.updatePageButtons();
             return true;
         } else {
             return false;
@@ -173,6 +178,12 @@ public class StoryBookScreen extends Screen {
     private void updatePageButtons() {
         this.nextPageButton.visible = this.currentSpread < this.getSpreadCount() - 1;
         this.previousPageButton.visible = this.currentSpread > 0;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        super.mouseReleased(mouseX, mouseY, button);
+        return true;
     }
 
     @Override
@@ -204,28 +215,44 @@ public class StoryBookScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float partialTick) {
         this.updatePageButtons();
-       this.renderBackground(context);
-       this.renderBook(context, mouseX, mouseY, partialTick);
-       this.renderPageNumbers(context, mouseX, mouseY, partialTick, this.currentSpread);
-       this.updateAndCacheContentsIfNeeded();
+        this.renderBackground(context);
+        this.renderBook(context, mouseX, mouseY, partialTick);
+        super.render(context, mouseX, mouseY, partialTick);
+        this.renderPageNumbers(context, mouseX, mouseY, partialTick, this.currentSpread);
+        this.updateAndCacheContentsIfNeeded();
         this.renderPageContents(context, this.cachedPage.getFirst(), this.leftPos + 22, this.topPos + 21);
         this.renderPageContents(context, this.cachedPage.getSecond(), this.leftPos + 159, this.topPos + 21);
+
+        this.renderLastPages(context);
 
         Style style = this.getClickedComponentStyleAt((double) mouseX, (double) mouseY);
        if (style != null) {
            context.drawHoverEvent(this.textRenderer, style, mouseX, mouseY);
         }
 
-       super.render(context, mouseX, mouseY, partialTick);
+
 
     }
 
     public void renderBook(DrawContext context, int mouseX, int mouseY, float partialTick) {
         context.drawTexture(bookTexture, this.leftPos, this.topPos, 295, 180, 0.0F, 0.0F, 295, 180, 512, 512);
+    }
+
+    public void renderLastPages(DrawContext context) {
+        if (this.currentSpread == this.getSpreadCount() - 1) {
+            int endX = this.leftPos + 180; int endY = this.topPos + 50;
+            context.drawTexture(bookTexture, endX, endY, 372, 57, 72, 60, 512, 512
+            );
+        }
+
+        if (this.currentSpread == this.getSpreadCount() - 1) {
+            int endX = this.leftPos + 42;
+            int endY = this.topPos + 50;
+            context.drawTexture(bookTexture, endX, endY, 372, 57, 72, 60, 512, 512);
+        }
     }
 
     public void renderPageNumbers(DrawContext context, int mouseX, int mouseY, float partialTick, int currentSpread) {
@@ -269,6 +296,7 @@ public class StoryBookScreen extends Screen {
             Objects.requireNonNull(this.textRenderer);
             guiGraphics.drawText(renderer, text, x, y + i * 9, 0x000000, false);
         }
+
     }
 
 
