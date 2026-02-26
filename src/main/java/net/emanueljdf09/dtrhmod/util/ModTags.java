@@ -4,12 +4,26 @@ import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.biome.Biome;
 
 public class ModTags {
+
+    public static class Biomes {
+
+        public static final TagKey<Biome> WONDERLAND_BIOMES = tag("wonderland_biomes");
+        public static final TagKey<Biome> IS_CHESSBOARD = tag("is_chessboard");
+        public static final TagKey<Biome> IS_EXTERIOR = tag("is_exterior");
+
+
+        private static TagKey<Biome> tag(String name) {
+            return TagKey.of(RegistryKeys.BIOME, new Identifier(DownTheRabbitHole.MOD_ID, name));
+        }
+    }
+
+
     public static class Blocks {
         public static final TagKey<Block> TH_LOGS = tag("th_logs");
         public static final TagKey<Block> WW_LOGS = tag("ww_logs");

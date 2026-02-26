@@ -11,7 +11,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.BookScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -19,12 +18,9 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -167,9 +163,8 @@ public class StoryBookScreen extends Screen {
             this.playPageTurnSound(0.8F);
             this.updatePageButtons();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     protected boolean goToNextPage() {
@@ -178,9 +173,8 @@ public class StoryBookScreen extends Screen {
             this.playPageTurnSound(1.0F);
             this.updatePageButtons();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private void updatePageButtons() {
@@ -236,7 +230,7 @@ public class StoryBookScreen extends Screen {
 
         this.renderLastPages(context);
 
-        Style style = this.getClickedComponentStyleAt((double) mouseX, (double) mouseY);
+        Style style = this.getClickedComponentStyleAt(mouseX, mouseY);
        if (style != null) {
            context.drawHoverEvent(this.textRenderer, style, mouseX, mouseY);
         }
@@ -322,6 +316,7 @@ public class StoryBookScreen extends Screen {
 
     @Override
     public boolean handleTextClick(Style style) {
+        assert style != null;
         ClickEvent clickEvent = style.getClickEvent();
         if (clickEvent == null) {
             return false;
@@ -345,6 +340,7 @@ public class StoryBookScreen extends Screen {
     }
 
     protected void closeScreen() {
+        assert this.client != null;
         this.client.setScreen(null);
     }
 
@@ -374,8 +370,8 @@ public class StoryBookScreen extends Screen {
 
             // Select cached lines for the page being hovered
             List<OrderedText> pageContents = isOverRightPage
-                    ? (List<OrderedText>) this.cachedPage.getSecond()
-                    : (List<OrderedText>) this.cachedPage.getFirst();
+                    ? this.cachedPage.getSecond()
+                    : this.cachedPage.getFirst();
 
             if (pageContents.isEmpty()) {
                 return null;
@@ -430,7 +426,7 @@ public class StoryBookScreen extends Screen {
         }
 
         for (int i = 0; i < nbtList.size(); i++) {
-            pageConsumer.accept((String)intFunction.apply(i));
+            pageConsumer.accept(intFunction.apply(i));
         }
     }
 
@@ -444,38 +440,6 @@ public class StoryBookScreen extends Screen {
             return index >= 0 && index < this.getPageCount() ? this.getPageUnchecked(index) : StringVisitable.EMPTY;
         }
 
-        static StoryBookScreen.Contents create(ItemStack stack) {
-            if (stack.isOf(Items.WRITTEN_BOOK)) {
-                return new StoryBookScreen.WrittenBookContents(stack);
-            } else {
-                return (StoryBookScreen.Contents)(stack.isOf(Items.WRITABLE_BOOK) ? new StoryBookScreen.WritableBookContents(stack) : StoryBookScreen.EMPTY_PROVIDER);
-            }
-        }
-    }
-
-    @Environment(EnvType.CLIENT)
-    public static class WritableBookContents implements StoryBookScreen.Contents {
-        private final List<String> pages;
-
-        public WritableBookContents(ItemStack stack) {
-            this.pages = getPages(stack);
-        }
-
-        private static List<String> getPages(ItemStack stack) {
-            NbtCompound nbtCompound = stack.getNbt();
-            return (List<String>)(nbtCompound != null ? StoryBookScreen.readPages(nbtCompound) : ImmutableList.of());
-        }
-
-        @Override
-        public int getPageCount() {
-            return this.pages.size();
-        }
-
-        @Override
-        public StringVisitable getPageUnchecked(int index) {
-
-            return index >= this.pages.size() ? Text.empty() : StringVisitable.plain((String)this.pages.get(index));
-        }
     }
 
     @Environment(EnvType.CLIENT)
@@ -488,9 +452,9 @@ public class StoryBookScreen extends Screen {
 
         private static List<String> getPages(ItemStack stack) {
             NbtCompound nbtCompound = stack.getNbt();
-            return (List<String>)(nbtCompound != null && WrittenBookItem.isValid(nbtCompound)
+            return WrittenBookItem.isValid(nbtCompound)
                     ? StoryBookScreen.readPages(nbtCompound)
-                    : ImmutableList.of(Text.Serializer.toJson(Text.translatable("book.invalid.tag").formatted(Formatting.DARK_RED))));
+                    : ImmutableList.of(Text.Serializer.toJson(Text.translatable("book.invalid.tag").formatted(Formatting.DARK_RED)));
         }
 
         @Override
@@ -500,7 +464,7 @@ public class StoryBookScreen extends Screen {
 
         @Override
         public @NotNull StringVisitable getPageUnchecked(int index) {
-            String string = (String)this.pages.get(index);
+            String string = this.pages.get(index);
 
             try {
                 StringVisitable stringVisitable = Text.Serializer.fromJson(string);

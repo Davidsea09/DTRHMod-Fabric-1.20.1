@@ -21,10 +21,20 @@
 		"client": [
 			"net.emanueljdf09.dtrhmod.DownTheRabbitHoleClient"
 		],
-
 		"fabric-datagen": [
 			"net.emanueljdf09.dtrhmod.DownTheRabbitHoleDataGenerator"
+		],
+		"cardinal-components-entity": [
+			"net.emanueljdf09.dtrhmod.util.ModComponents"
 		]
+
+	},
+	"custom": {
+		"cardinal-components": {
+			"entity": [
+				"dtrhmod:exterior_component"
+			]
+		}
 	},
 	"mixins": [
 		"dtrhmod.mixins.json"

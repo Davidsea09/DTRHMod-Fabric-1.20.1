@@ -15,6 +15,7 @@ import java.util.List;
 public class ModItems {
 
     public static final Item POCKETWATCH = registerItem("pocketwatch", new Item(new FabricItemSettings()));
+
     public static final Item CINDERELLA_STORYBOOK = registerItem("cinderella_storybook",
             new StoryBook(new Item.Settings().maxCount(1), "adventure"));
 

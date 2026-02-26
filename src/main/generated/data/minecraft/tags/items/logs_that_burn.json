@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:th_log",
+    "dtrhmod:stripped_th_log",
+    "dtrhmod:th_wood",
+    "dtrhmod:stripped_th_wood",
+    "dtrhmod:ww_log",
+    "dtrhmod:stripped_ww_log",
+    "dtrhmod:ww_wood",
+    "dtrhmod:stripped_ww_wood",
+    "dtrhmod:bb_log",
+    "dtrhmod:stripped_bb_log",
+    "dtrhmod:bb_wood",
+    "dtrhmod:stripped_bb_wood"
+  ]
+}

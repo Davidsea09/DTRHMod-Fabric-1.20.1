@@ -14,7 +14,6 @@ import net.minecraft.client.util.NarratorManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 
 @Environment(EnvType.CLIENT)
 public class BookCoverScreen extends Screen {

@@ -2,7 +2,6 @@ package net.emanueljdf09.dtrhmod.item.custom;
 
 
 import net.emanueljdf09.dtrhmod.menu.screen.BookCoverScreen;
-import net.emanueljdf09.dtrhmod.menu.screen.StoryBookScreen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -378,7 +377,7 @@ Together, they returned to the kingdom, their love stronger than ever.
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        if (stack.hasNbt() && stack.getNbt().contains("title") && stack.getNbt().contains("author")) {
+        if (stack.hasNbt() && Objects.requireNonNull(stack.getNbt()).contains("title") && stack.getNbt().contains("author")) {
             tooltip.add(Text.literal(stack.getNbt().getString("ogTitle")));
             tooltip.add(Text.literal("Author: " + stack.getNbt().getString("author")));
         } else {
@@ -391,6 +390,6 @@ Together, they returned to the kingdom, their love stronger than ever.
         return false;
     }
 
-    private record StoryData(String title, String ogTitle, String author, List<String> pages) {}
+    public record StoryData(String title, String ogTitle, String author, List<String> pages) {}
 
 }

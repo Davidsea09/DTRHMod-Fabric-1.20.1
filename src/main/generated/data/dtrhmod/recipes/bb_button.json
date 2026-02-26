@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "dtrhmod:bb_planks"
+    }
+  ],
+  "result": {
+    "item": "dtrhmod:bb_button"
+  }
+}
