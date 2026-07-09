@@ -1,0 +1,19 @@
+{
+  "structures": [
+    {
+      "structure": "dtrhmod:portal/overworld_mirror_room",
+      "weight": 1
+    },
+    {
+      "structure": "dtrhmod:portal/wonderland_mirror_room",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 32,
+    "separation": 8,
+    "salt": 47291047,
+    "spread_type": "linear"
+  }
+}

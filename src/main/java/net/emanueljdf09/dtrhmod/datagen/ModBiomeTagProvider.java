@@ -8,6 +8,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.world.biome.Biome;
 
@@ -32,5 +33,9 @@ public class ModBiomeTagProvider extends FabricTagProvider<Biome> {
 
         getOrCreateTagBuilder(ModTags.Biomes.IS_EXTERIOR)
                 .add(ModBiomes.THE_EXTERIOR);
+
+        getOrCreateTagBuilder(ModTags.Biomes.HAS_MIRROR)
+                .addOptionalTag(BiomeTags.IS_OVERWORLD)
+                .addTag(ModTags.Biomes.WONDERLAND_BIOMES);
     }
 }

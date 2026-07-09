@@ -1,13 +1,21 @@
 package net.emanueljdf09.dtrhmod;
 
+import net.emanueljdf09.dtrhmod.block.ModBlockEntities;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
+import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.item.ModItemGroups;
 import net.emanueljdf09.dtrhmod.item.ModItems;
+import net.emanueljdf09.dtrhmod.util.*;
+import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
 import net.emanueljdf09.dtrhmod.world.features.tree.deco.ModTreeDeco;
+import net.emanueljdf09.dtrhmod.world.structures.ModStructurePieces;
+import net.emanueljdf09.dtrhmod.world.structures.ModStructureProcessors;
+import net.emanueljdf09.dtrhmod.world.structures.ModStructures;
 import net.fabricmc.api.ModInitializer;
 
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,9 +30,6 @@ import static net.emanueljdf09.dtrhmod.world.dimension.ModDimensions.EXTERIOR_LE
 public class DownTheRabbitHole implements ModInitializer {
 	public static final String MOD_ID = "dtrhmod";
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 
@@ -33,7 +38,16 @@ public class DownTheRabbitHole implements ModInitializer {
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
 		ModBlocks.registerModBlock();
+		ModBlockEntities.registerBlockEnities();
+		ModEntities.registerModEntities();
+		ModEffects.registerModEffects();
+		ModEffects.registerBrewingRecipes();
 		ModTreeDeco.register();
+		ModStructureProcessors.register();
+		ModStructurePieces.register();
+		ModStructures.registerStructures();
+		WonderlandProgressionUtil.register();
+		ModCommands.register();
 
 		StrippableBlockRegistry.register(ModBlocks.TH_LOG, ModBlocks.STRIPPED_TH_LOG);
 		StrippableBlockRegistry.register(ModBlocks.TH_WOOD, ModBlocks.STRIPPED_TH_WOOD);
@@ -72,26 +86,36 @@ public class DownTheRabbitHole implements ModInitializer {
 
 		LOGGER.info("Follow the tunnel...");
 
+		ServerTickEvents.START_SERVER_TICK.register(TeleportUtil::tickMirrorTrances);
+
 		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof ServerPlayerEntity player) {
 				if (world.getRegistryKey().equals(EXTERIOR_LEVEL_KEY)) {
 
-					BlockPos spawnPos = new BlockPos(0, 64, 0);
+					BlockPos spawnPos = new BlockPos(0, 62, 0);
 
-					if (world.getBlockState(spawnPos).isAir()) {
-
-						world.getStructureTemplateManager().getTemplate(new Identifier(DownTheRabbitHole.MOD_ID, "exterior/intro_beta"))
+						world.getStructureTemplateManager().getTemplate(new Identifier(DownTheRabbitHole.MOD_ID, "exterior/exterior_room"))
 								.ifPresentOrElse(template -> {
-									StructurePlacementData data = new StructurePlacementData();
+									StructurePlacementData data = new StructurePlacementData()
+											.setIgnoreEntities(false)
+											.setUpdateNeighbors(true);
 									template.place(world, spawnPos, spawnPos, data, world.getRandom(), 3);
 
-									world.setSpawnPos(new BlockPos(10, 68, 5), 0.0f);
+									world.updateNeighbors(spawnPos, ModBlocks.EXTERIOR_DOOR);
 
-									System.out.println("[DTRH] Successfully placed intro_beta at 0, 64, 0");
+									world.setSpawnPos(new BlockPos(3, 70, 2), 0.0f);
+
+									System.out.println("[DTRH] Successfully placed exterior_room at 0, 62, 0");
 								}, () -> {
-									System.err.println("[DTRH] ERROR: Could not find NBT file at data/dtrhmod/structures/intro_beta.nbt");
+									System.err.println("[DTRH] ERROR: Could not find NBT file at data/dtrhmod/structures/exterior_room.nbt");
 								});
-					}
+
+						ProgressionComponent component = ModComponents.PROGRESSION_COMPONENT.get(player);
+
+							if (!component.hasDoneExterior()) {
+								ModPackets.sendOpenBookPacket(player, "wonderland_intro");
+							}
+
 				}
 			}
 		});

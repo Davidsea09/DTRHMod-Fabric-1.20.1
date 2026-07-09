@@ -20,14 +20,23 @@ public class WwTreeDecorator extends TreeDecorator {
     public void generate(Generator generator) {
         Random random = generator.getRandom();
 
+        // Loop through every single leaf block placed by the Acacia Foliage Placer
         for (BlockPos pos : generator.getLeavesPositions()) {
 
-            if (random.nextFloat() < 0.3f) {
+            // Only drop trails from the outer/lower leaves to keep it looking realistic (35% chance)
+            if (random.nextFloat() < 0.35f) {
+                BlockPos currentPos = pos.down();
 
-                BlockPos below = pos.down();
+                // Determine a random length for this willow strand (e.g., 2 to 4 blocks long)
+                int strandLength = random.nextBetween(2, 4);
 
-                if (generator.isAir(below)) {
-                    generator.replace(below, ModBlocks.WW_HANGING_LEAVES.getDefaultState());
+                for (int i = 0; i < strandLength; i++) {
+                    if (generator.isAir(currentPos)) {
+                        generator.replace(currentPos, ModBlocks.WW_HANGING_LEAVES.getDefaultState());
+                        currentPos = currentPos.down(); // Move down to continue the chain
+                    } else {
+                        break; // Stop drawing this strand if we hit a solid block or another leaf
+                    }
                 }
             }
         }

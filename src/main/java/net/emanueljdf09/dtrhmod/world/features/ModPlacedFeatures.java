@@ -31,6 +31,7 @@ public class ModPlacedFeatures {
     public static final RegistryKey<PlacedFeature> TH_TREE_PLACED = registerKey("th_tree_placed");
     public static final RegistryKey<PlacedFeature> BB_TREE_PLACED = registerKey("bb_tree_placed");
     public static final RegistryKey<PlacedFeature> WW_TREE_PLACED = registerKey("ww_tree_placed");
+    public static final RegistryKey<PlacedFeature> TULGEY_TREE_PLACED = registerKey("tulgey_tree_placed");
 
     public static void bootstrap(Registerable<PlacedFeature> context) {
         var configuredFeatureRegistryEntryLookup = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
@@ -44,13 +45,20 @@ public class ModPlacedFeatures {
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
                         ModBlocks.TH_SAPLING));
 
-        register(context, WW_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.WW_TREE),
-                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
-                        ModBlocks.WW_SAPLING));
-
         register(context, BB_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BB_TREE),
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
                         ModBlocks.BB_SAPLING));
+
+        register(context, TULGEY_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.TULGEY_TREE_SELECTOR),
+                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
+                        PlacedFeatures.createCountExtraModifier(10, 0.1f, 3),
+                        ModBlocks.TH_SAPLING));
+
+        register(context, WW_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.WW_TREE),
+                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
+                        PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
+                        ModBlocks.WW_SAPLING));
+
     }
 
     public static RegistryKey<PlacedFeature> registerKey(String name) {

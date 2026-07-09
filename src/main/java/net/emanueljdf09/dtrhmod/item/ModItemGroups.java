@@ -2,9 +2,13 @@ package net.emanueljdf09.dtrhmod.item;
 
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
+import net.emanueljdf09.dtrhmod.util.ModEffects;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
+import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
@@ -18,14 +22,21 @@ public class ModItemGroups {
                     .icon(() -> new ItemStack(ModItems.POCKETWATCH)).entries((displayContext, entries) -> {
 
                         entries.add(ModItems.POCKETWATCH);
-                        entries.add(ModItems.FAIRY_TALE_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.EXTERIOR_KEY);
+
+                        entries.add(ModItems.DRINK_ME);
+                        entries.add(ModItems.EAT_ME);
+                        entries.add(ModItems.WHITE_RABBIT_SPAWN_EGG);
+                        entries.add(ModItems.WEEPING_PLAYERS_SPAWN_EGG);
+
+                        entries.add(ModItems.RED_RIDING_HOOD_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.CINDERELLA_STORYBOOK.getDefaultStack());
-                        entries.add(ModItems.MYSTERY_STORYBOOK.getDefaultStack());
-                        entries.add(ModItems.SCIENCE_STORYBOOK.getDefaultStack());
-                        entries.add(ModItems.HAIR_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.SNOW_WHITE_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.JACK_AND_THE_BEANSTALK_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.RAPUNZEL_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.AURORA_STORYBOOK.getDefaultStack());
-                        entries.add(ModItems.SEASHELL_STORYBOOK.getDefaultStack());
-                        entries.add(ModItems.HISTORY_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.THE_LITTLE_MERMAID_STORYBOOK.getDefaultStack());
+                        entries.add(ModItems.THREE_LITTLE_PIGS_STORYBOOK.getDefaultStack());
 
 
 
@@ -86,6 +97,10 @@ public class ModItemGroups {
                         entries.add(ModBlocks.WONDER_DIRT.asItem());
                         entries.add(ModBlocks.WONDER_GRASS.asItem());
                         entries.add(ModBlocks.RABBIT_HOLE.asItem());
+                        entries.add(ModItems.EXTERIOR_CHEST_ITEM);
+                        entries.add(ModBlocks.EXTERIOR_DOOR.asItem());
+                        entries.add(ModBlocks.EXTERIOR_PORTAL.asItem());
+                        entries.add(ModBlocks.MIRROR_BLOCK.asItem());
 
                     }).build());
 

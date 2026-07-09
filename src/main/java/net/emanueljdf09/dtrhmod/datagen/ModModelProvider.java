@@ -6,9 +6,9 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
+import net.minecraft.data.client.ModelIds;
 import net.minecraft.data.client.Models;
 import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
 
 public class ModModelProvider extends FabricModelProvider {
     public ModModelProvider(FabricDataOutput output) {
@@ -21,6 +21,8 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerFlowerbed(ModBlocks.LAWN_DAISY_PATCH);
 
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.RABBIT_HOLE);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_PORTAL);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_DOOR);
 
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.WONDER_DIRT);
 
@@ -84,6 +86,10 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerDoor(ModBlocks.BB_DOOR);
         blockStateModelGenerator.registerTrapdoor(ModBlocks.BB_TRAPDOOR);
 
+        blockStateModelGenerator.registerParentedItemModel(ModItems.WHITE_RABBIT_SPAWN_EGG, ModelIds.getMinecraftNamespacedItem("template_spawn_egg"));
+         blockStateModelGenerator.registerParentedItemModel(ModItems.WEEPING_PLAYERS_SPAWN_EGG, ModelIds.getMinecraftNamespacedItem("template_spawn_egg"));
+
+
 
 
 
@@ -99,7 +105,9 @@ public class ModModelProvider extends FabricModelProvider {
         }
 
         itemModelGenerator.register(ModItems.POCKETWATCH, Models.GENERATED);
-
+        itemModelGenerator.register(ModItems.DRINK_ME, Models.GENERATED);
+        itemModelGenerator.register(ModItems.EAT_ME, Models.GENERATED);
+        itemModelGenerator.register(ModItems.EXTERIOR_KEY, Models.GENERATED);
     }
 
 

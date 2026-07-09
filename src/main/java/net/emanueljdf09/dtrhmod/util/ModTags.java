@@ -16,6 +16,7 @@ public class ModTags {
         public static final TagKey<Biome> WONDERLAND_BIOMES = tag("wonderland_biomes");
         public static final TagKey<Biome> IS_CHESSBOARD = tag("is_chessboard");
         public static final TagKey<Biome> IS_EXTERIOR = tag("is_exterior");
+        public static final TagKey<Biome> HAS_MIRROR = tag("has_structure/mirror_room");
 
 
         private static TagKey<Biome> tag(String name) {

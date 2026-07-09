@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.item.ModItems;
+import net.emanueljdf09.dtrhmod.util.ModUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -81,21 +83,68 @@ public class StoryBookScreen extends Screen {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/aurora_open.png");
         } else if (stack.isOf(ModItems.CINDERELLA_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/cinder_open.png");
-        }  else if (stack.isOf(ModItems.FAIRY_TALE_STORYBOOK)) {
+        }  else if (stack.isOf(ModItems.RED_RIDING_HOOD_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/lrrh_open.png");
-        }  else if (stack.isOf(ModItems.SEASHELL_STORYBOOK)) {
+        }  else if (stack.isOf(ModItems.THE_LITTLE_MERMAID_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/seashell_open.png");
-        }   else if (stack.isOf(ModItems.SCIENCE_STORYBOOK)) {
+        }   else if (stack.isOf(ModItems.JACK_AND_THE_BEANSTALK_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/jb_open.png");
-        }  else if (stack.isOf(ModItems.HAIR_STORYBOOK)) {
+        }  else if (stack.isOf(ModItems.RAPUNZEL_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/hair_open.png");
-        }  else if (stack.isOf(ModItems.HISTORY_STORYBOOK)) {
+        }  else if (stack.isOf(ModItems.THREE_LITTLE_PIGS_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/tlp_open.png");
-        }  else if (stack.isOf(ModItems.MYSTERY_STORYBOOK)) {
+        }  else if (stack.isOf(ModItems.SNOW_WHITE_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/sw_open.png");
         } else {
             bookTexture = BOOK_TEXTURE; // fallback
         }
+    }
+
+    // --- ADD THIS SECONDARY CONSTRUCTOR FOR PACKET CODES ---
+    public StoryBookScreen(String triggerKey) {
+        super(NarratorManager.EMPTY);
+        this.cachedPage = Pair.of(Collections.emptyList(), Collections.emptyList());
+        this.cachedSpread = -1;
+
+        if ("wonderland_intro".equals(triggerKey)) {
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/enter_wonder_open.png");
+
+
+            this.contents = createTranslatableContents(
+                    "storybook.wonderland.intro.text"
+            );
+        } else {
+            bookTexture = BOOK_TEXTURE;
+            this.contents = EMPTY_PROVIDER;
+        }
+    }
+
+    private static StoryBookScreen.Contents createTranslatableContents(String textKey) {
+        net.minecraft.util.Language language = net.minecraft.util.Language.getInstance();
+
+        String rawText = language.get(textKey);
+
+        List<String> rawPages = ModUtils.splitIntoPages(rawText);
+        List<StringVisitable> formattedPages = new ArrayList<>();
+
+        boolean isFirstPage = true;
+        for (String pageText : rawPages) {
+            formattedPages.add(Text.Serializer.fromLenientJson(pageText) != null
+                ? Text.Serializer.fromLenientJson(pageText)
+                : Text.literal(pageText));
+            }
+
+        return new StoryBookScreen.Contents() {
+            @Override
+            public int getPageCount() {
+                return formattedPages.size();
+            }
+
+            @Override
+            public StringVisitable getPageUnchecked(int index) {
+                return formattedPages.get(index);
+            }
+        };
     }
 
     public StoryBookScreen.Contents getBookAccess() {
@@ -150,11 +199,24 @@ public class StoryBookScreen extends Screen {
 
 
     private int getPageCount() {
-        return this.contents.getPageCount() + 2;
+        return this.contents.getPageCount();
     }
-
     public int getSpreadCount() {
-        return (int)Math.ceil((double)this.getPageCount() / (double)2.0F);
+        int totalTextPages = this.getPageCount();
+        if (totalTextPages <= 0) return 1;
+
+        int finalPageIdx = totalTextPages - 1;
+        int finalTextSpread = finalPageIdx / 2;
+        boolean endedOnLeftPage = (finalPageIdx % 2 == 0);
+
+        // If the text ends on a Right page, we need +1 extra spread index to turn the page
+        // and look at the final graphic on the left side of the next empty page layer!
+        if (!endedOnLeftPage) {
+            return finalTextSpread + 2;
+        }
+
+        // Otherwise, everything fits on the current spread safely
+        return finalTextSpread + 1;
     }
 
     protected boolean goToPreviousPage() {
@@ -244,16 +306,34 @@ public class StoryBookScreen extends Screen {
     }
 
     public void renderLastPages(DrawContext context) {
-        if (this.currentSpread == this.getSpreadCount() - 1) {
-            int endX = this.leftPos + 180; int endY = this.topPos + 50;
-            context.drawTexture(bookTexture, endX, endY, 372, 57, 72, 60, 512, 512
-            );
-        }
+        int totalTextPages = this.getPageCount();
+        if (totalTextPages <= 0) return;
 
-        if (this.currentSpread == this.getSpreadCount() - 1) {
-            int endX = this.leftPos + 42;
-            int endY = this.topPos + 50;
-            context.drawTexture(bookTexture, endX, endY, 372, 57, 72, 60, 512, 512);
+        // Calculate the exact 0-indexed page number where the text finishes
+        int finalPageIdx = totalTextPages - 1;
+
+        // Find which spread index contains that final piece of text
+        int finalTextSpread = finalPageIdx / 2;
+
+        // Determine whether the text ended on the Left side (even index) or Right side (odd index)
+        boolean endedOnLeftPage = (finalPageIdx % 2 == 0);
+
+        if (endedOnLeftPage) {
+            // --- CASE A: Text stops on the Left page ---
+            // The right page is empty! Draw the final graphic on the RIGHT side of this same spread.
+            if (this.currentSpread == finalTextSpread) {
+                int endX = this.leftPos + 180;
+                int endY = this.topPos + 50;
+                context.drawTexture(bookTexture, endX, endY, 372, 57, 72, 60, 512, 512);
+            }
+        } else {
+            // --- CASE B: Text stops on the Right page ---
+            // The book is full on this spread! Draw the final graphic on the LEFT side of the NEXT spread.
+            if (this.currentSpread == finalTextSpread + 1) {
+                int endX = this.leftPos + 42;
+                int endY = this.topPos + 50;
+                context.drawTexture(bookTexture, endX, endY, 372, 57, 72, 60, 512, 512);
+            }
         }
     }
 

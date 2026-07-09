@@ -1,35 +1,66 @@
 package net.emanueljdf09.dtrhmod.util;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
+import dev.onyxstudios.cca.api.v3.block.BlockComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.block.BlockComponentInitializer;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
+import dev.onyxstudios.cca.api.v3.world.WorldComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.world.WorldComponentInitializer;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
-import net.emanueljdf09.dtrhmod.util.components.ExteriorComponent;
-import net.emanueljdf09.dtrhmod.util.components.ExteriorComponentImpl;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.emanueljdf09.dtrhmod.block.entity.MirrorBlockEntity;
+import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
+import net.emanueljdf09.dtrhmod.util.components.ProgressionComponentImpl;
+import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorComponent;
+import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorComponentImpl;
+import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorGossipComponent;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.biome.Biome;
 
-public class ModComponents implements EntityComponentInitializer {
+public class ModComponents implements EntityComponentInitializer, WorldComponentInitializer, BlockComponentInitializer {
 
-    public static final ComponentKey<ExteriorComponent> EXTERIOR_COMPONENT =
+
+    public static final ComponentKey<ProgressionComponent> PROGRESSION_COMPONENT =
             ComponentRegistry.getOrCreate(
-                    new Identifier(DownTheRabbitHole.MOD_ID, "exterior_component"),
-                    ExteriorComponent.class
+                    new Identifier(DownTheRabbitHole.MOD_ID, "progression_component"),
+                    ProgressionComponent.class
             );
+
+    public static final ComponentKey<MirrorComponent> MIRROR_COMPONENT =
+                ComponentRegistry.getOrCreate(
+                        new Identifier(DownTheRabbitHole.MOD_ID, "mirror_component"),
+                        MirrorComponent.class
+                );
+
+    public static final ComponentKey<MirrorGossipComponent> MIRROR_GOSSIP =
+            ComponentRegistry.getOrCreate(
+                    new Identifier(DownTheRabbitHole.MOD_ID, "mirror_gossip"),
+                    MirrorGossipComponent.class
+            );
+
 
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
 
         registry.registerForPlayers(
-                EXTERIOR_COMPONENT,
-                ExteriorComponentImpl::new,
+                PROGRESSION_COMPONENT,
+                ProgressionComponentImpl::new,
                 RespawnCopyStrategy.ALWAYS_COPY
         );
+
+    }
+
+
+    @Override
+    public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry) {
+        registry.register(MIRROR_COMPONENT, world -> new MirrorComponentImpl());
+    }
+
+    @Override
+    public void registerBlockComponentFactories(BlockComponentFactoryRegistry registry) {
+        registry.registerFor(MirrorBlockEntity.class, MIRROR_GOSSIP, entity -> new MirrorGossipComponent());
+
     }
 }

@@ -1,0 +1,7 @@
+{
+  "type": "dtrhmod:mirror_room",
+  "biomes": "dtrhmod:tulgey_forest",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_thin"
+}

@@ -66,6 +66,9 @@ dependencies {
 	modImplementation "dev.emi:trinkets:${trinkets_version}"
 	modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
 	modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
+	modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-block:5.2.2"
+	modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-world:5.2.2"
+	modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-level:5.2.2"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

@@ -24,9 +24,7 @@
     [],
     [
       "minecraft:patch_grass_forest",
-      "dtrhmod:th_tree_placed",
-      "dtrhmod:ww_tree_placed",
-      "dtrhmod:bb_tree_placed"
+      "dtrhmod:ww_tree_placed"
     ]
   ],
   "has_precipitation": true,

@@ -76,7 +76,7 @@ public class ModBiomes {
                         context.getRegistryLookup(RegistryKeys.CONFIGURED_CARVER));
 
         WonderBiomeFeatures.addDefaultDisks(biomeBuilder);
-        WonderBiomeFeatures.addTulgeyWoodsVegetation(biomeBuilder);
+        WonderBiomeFeatures.addValeOfTearsVegetation(biomeBuilder);
 
         return new Biome.Builder()
                 .precipitation(true)

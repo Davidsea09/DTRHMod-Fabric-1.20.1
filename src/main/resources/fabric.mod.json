@@ -26,18 +26,24 @@
 		],
 		"cardinal-components-entity": [
 			"net.emanueljdf09.dtrhmod.util.ModComponents"
+		],
+		"cardinal-components-world": [
+			"net.emanueljdf09.dtrhmod.util.ModComponents"
+		],
+		"cardinal-components-block": [
+			"net.emanueljdf09.dtrhmod.util.ModComponents"
 		]
-
 	},
 	"custom": {
-		"cardinal-components": {
-			"entity": [
-				"dtrhmod:exterior_component"
-			]
-		}
+		"cardinal-components": [
+				"dtrhmod:progression_component",
+				"dtrhmod:mirror_component",
+				"dtrhmod:mirror_gossip"
+
+		]
 	},
 	"mixins": [
-		"dtrhmod.mixins.json"
+      "dtrhmod.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.17.2",

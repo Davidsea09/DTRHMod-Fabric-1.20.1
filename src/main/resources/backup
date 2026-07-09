@@ -1,0 +1,65 @@
+ public static void handleMirrorTeleport(ServerPlayerEntity player, BlockPos clickedPos, ServerWorld sourceWorld) {
+        RegistryKey<World> currentDimKey = sourceWorld.getRegistryKey();
+
+        ServerWorld overworld = player.getServer().getWorld(World.OVERWORLD);
+        ServerWorld wonderland = player.getServer().getWorld(ModDimensions.WONDERLAND_LEVEL_KEY);
+        if (overworld == null || wonderland == null) return;
+
+        MirrorComponent overworldNetwork = ModComponents.MIRROR_COMPONENT.get(overworld);
+        MirrorComponent wonderlandNetwork = ModComponents.MIRROR_COMPONENT.get(wonderland);
+
+        MirrorComponent currentNetwork = (currentDimKey == World.OVERWORLD) ? overworldNetwork : wonderlandNetwork;
+        Optional<BlockPos> destinationOpt = currentNetwork.getDestination(clickedPos);
+
+        RegistryKey<World> targetDim = (currentDimKey == World.OVERWORLD) ? ModDimensions.WONDERLAND_LEVEL_KEY : World.OVERWORLD;
+        ServerWorld targetWorld = (currentDimKey == World.OVERWORLD) ? wonderland : overworld;
+
+        BlockPos targetPos;
+
+        // 1. PATH A: Already Linked
+        if (destinationOpt.isPresent()) {
+            targetPos = destinationOpt.get();
+        }
+        // 2. PATH B: Coordinate Search Scan
+        else {
+            BlockPos existingMirrorPos = findNearbyUnlinkedMirror(targetWorld, clickedPos, 16);
+            if (existingMirrorPos != null) {
+                targetPos = existingMirrorPos;
+
+                // Link them across both networks symmetrically
+                overworldNetwork.linkMirrors((currentDimKey == World.OVERWORLD) ? clickedPos : targetPos, (currentDimKey == World.OVERWORLD) ? targetPos : clickedPos);
+                wonderlandNetwork.linkMirrors((currentDimKey == World.OVERWORLD) ? targetPos : clickedPos, (currentDimKey == World.OVERWORLD) ? clickedPos : targetPos);
+
+                // --- CRITICAL FIX: TELEPORT AND RETURN IMMEDIATELY ---
+                // This prevents ANY subsequent blockstate modification routines from running!
+                teleportPlayerToMirrorFront(player, targetWorld, targetPos);
+                return;
+            }
+            // 3. PATH C: Fallback Generation
+            else {
+                int spawnY = targetWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, clickedPos).getY();
+                targetPos = new BlockPos(clickedPos.getX(), spawnY, clickedPos.getZ());
+                BlockPos exitMirrorUpper = targetPos.up();
+
+                BlockState sourceState = sourceWorld.getBlockState(clickedPos);
+                Direction mirrorFacing = Direction.NORTH;
+                if (sourceState.isOf(ModBlocks.MIRROR_BLOCK)) {
+                    mirrorFacing = sourceState.get(MirrorBlock.FACING);
+                }
+
+                BlockState lowerState = ModBlocks.MIRROR_BLOCK.getDefaultState()
+                        .with(MirrorBlock.HALF, DoubleBlockHalf.LOWER)
+                        .with(MirrorBlock.TYPE, MirrorType.wonderland)
+                        .with(MirrorBlock.FACING, mirrorFacing);
+
+                targetWorld.setBlockState(targetPos, lowerState, 2);
+                targetWorld.setBlockState(exitMirrorUpper, lowerState.with(MirrorBlock.HALF, DoubleBlockHalf.UPPER), 2);
+
+                overworldNetwork.linkMirrors((currentDimKey == World.OVERWORLD) ? clickedPos : targetPos, (currentDimKey == World.OVERWORLD) ? targetPos : clickedPos);
+                wonderlandNetwork.linkMirrors((currentDimKey == World.OVERWORLD) ? targetPos : clickedPos, (currentDimKey == World.OVERWORLD) ? clickedPos : targetPos);
+            }
+        }
+
+        // --- FALLBACK GENERATION TELEPORT ONLY ---
+        teleportPlayerToMirrorFront(player, targetWorld, targetPos);
+    }

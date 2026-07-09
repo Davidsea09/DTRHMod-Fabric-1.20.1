@@ -1,10 +1,9 @@
 package net.emanueljdf09.dtrhmod.block;
 
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
-import net.emanueljdf09.dtrhmod.block.custom.RabbitHoleBlock;
-import net.emanueljdf09.dtrhmod.block.custom.WHangingLeavesBodyBlock;
-import net.emanueljdf09.dtrhmod.block.custom.WHangingLeavesHeadBlock;
-import net.emanueljdf09.dtrhmod.block.custom.WonderGrassBlock;
+import net.emanueljdf09.dtrhmod.block.custom.*;
+import net.emanueljdf09.dtrhmod.block.custom.mirror.MirrorBlock;
+import net.emanueljdf09.dtrhmod.item.block.ExteriorChestItem;
 import net.emanueljdf09.dtrhmod.world.features.tree.BbSaplingGenerator;
 import net.emanueljdf09.dtrhmod.world.features.tree.ThSaplingGenerator;
 import net.emanueljdf09.dtrhmod.world.features.tree.WwSaplingGenerator;
@@ -27,8 +26,22 @@ public class ModBlocks {
     public static final Block RABBIT_HOLE = registerBlockWithItem("rabbit_hole",
             new RabbitHoleBlock(FabricBlockSettings.copyOf(Blocks.MOSS_BLOCK).noCollision()));
 
-    public static final Block CHESS_GRASS = registerBlockWithItem("chess_grass",
-            new WonderGrassBlock(FabricBlockSettings.copyOf(Blocks.GRASS_BLOCK)));
+    public static final Block EXTERIOR_PORTAL = registerBlockWithItem("exterior_portal",
+            new ExteriorPortal(FabricBlockSettings.copyOf(Blocks.MOSS_BLOCK).noCollision()));
+
+    public static final Block EXTERIOR_CHEST = registerBlock("exterior_chest",
+            new ExteriorChest(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+
+    public static final Block EXTERIOR_DOOR = registerBlockWithItem("exterior_door",
+            new ExteriorDoor(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+
+    public static final Block TEAPOT_BLOCK = registerBlockWithItem("teapot_block",
+            new TeapotBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+
+    public static final Block MIRROR_BLOCK = registerBlockWithItem("mirror_block",
+            new MirrorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)
+                    .suffocates((state, world, pos) -> false)
+                    .blockVision((state, world, pos) -> false)));
 
     public static final Block WONDER_GRASS = registerBlockWithItem("wonder_grass",
             new WonderGrassBlock(FabricBlockSettings.copyOf(Blocks.GRASS_BLOCK)));

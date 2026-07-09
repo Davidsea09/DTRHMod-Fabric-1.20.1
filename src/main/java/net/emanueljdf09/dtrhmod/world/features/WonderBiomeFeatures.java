@@ -16,9 +16,13 @@ public class WonderBiomeFeatures {
 
     public static void addTulgeyWoodsVegetation(GenerationSettings.LookupBackedBuilder builder) {
         DefaultBiomeFeatures.addForestGrass(builder);
-        builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, ModPlacedFeatures.TH_TREE_PLACED);
+        builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, ModPlacedFeatures.TULGEY_TREE_PLACED);
+
+    }
+
+    public static void addValeOfTearsVegetation(GenerationSettings.LookupBackedBuilder builder) {
+        DefaultBiomeFeatures.addForestGrass(builder);
         builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, ModPlacedFeatures.WW_TREE_PLACED);
-        builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, ModPlacedFeatures.BB_TREE_PLACED);
 
     }
 
