@@ -20,6 +20,10 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
 
+        getOrCreateTagBuilder(BlockTags.MUSHROOM_GROW_BLOCK)
+                .add(ModBlocks.WONDER_DIRT)
+                        .add(ModBlocks.WONDER_GRASS);
+
         getOrCreateTagBuilder(BlockTags.LOGS_THAT_BURN)
                 .add(ModBlocks.TH_LOG)
                 .add(ModBlocks.STRIPPED_TH_LOG)

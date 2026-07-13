@@ -23,6 +23,15 @@ public class ModItemGroups {
 
                         entries.add(ModItems.POCKETWATCH);
                         entries.add(ModItems.EXTERIOR_KEY);
+                        entries.add(ModItems.EMPTY_CUP);
+                        entries.add(ModItems.FILLED_TEA_CUP);
+                        entries.add(ModBlocks.TEAPOT_BLOCK.asItem());
+                        entries.add(ModBlocks.BLUE_MUSHROOM.asItem());
+                        entries.add(ModBlocks.BLUE_MUSHROOM_BLOCK.asItem());
+                        entries.add(ModBlocks.YELLOW_MUSHROOM_BLOCK.asItem());
+                        entries.add(ModBlocks.YELLOW_MUSHROOM.asItem());
+                        entries.add(ModBlocks.MAGENTA_MUSHROOM_BLOCK.asItem());
+                        entries.add(ModBlocks.MAGENTA_MUSHROOM.asItem());
 
                         entries.add(ModItems.DRINK_ME);
                         entries.add(ModItems.EAT_ME);

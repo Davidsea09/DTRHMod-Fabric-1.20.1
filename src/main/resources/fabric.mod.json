@@ -5,7 +5,7 @@
 	"name": "Down The Rabbit Hole",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"EmanuelJDF09"
+		"Emanueljdf09"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -32,13 +32,15 @@
 		],
 		"cardinal-components-block": [
 			"net.emanueljdf09.dtrhmod.util.ModComponents"
+		],
+		"jei_mod_plugin": [
+			"net.emanueljdf09.dtrhmod.compat.jei.DownTheRabbitHoleJEIClientPlugin"
 		]
 	},
 	"custom": {
 		"cardinal-components": [
 				"dtrhmod:progression_component",
-				"dtrhmod:mirror_component",
-				"dtrhmod:mirror_gossip"
+				"dtrhmod:mirror_component"
 
 		]
 	},

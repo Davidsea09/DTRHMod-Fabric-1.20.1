@@ -20,6 +20,13 @@ public class ModModelProvider extends FabricModelProvider {
 
         blockStateModelGenerator.registerFlowerbed(ModBlocks.LAWN_DAISY_PATCH);
 
+        blockStateModelGenerator.registerMushroomBlock(ModBlocks.BLUE_MUSHROOM_BLOCK);
+        blockStateModelGenerator.registerTintableCross(ModBlocks.BLUE_MUSHROOM, BlockStateModelGenerator.TintType.NOT_TINTED);
+        blockStateModelGenerator.registerMushroomBlock(ModBlocks.YELLOW_MUSHROOM_BLOCK);
+        blockStateModelGenerator.registerTintableCross(ModBlocks.YELLOW_MUSHROOM, BlockStateModelGenerator.TintType.NOT_TINTED);
+        blockStateModelGenerator.registerMushroomBlock(ModBlocks.MAGENTA_MUSHROOM_BLOCK);
+        blockStateModelGenerator.registerTintableCross(ModBlocks.MAGENTA_MUSHROOM, BlockStateModelGenerator.TintType.NOT_TINTED);
+
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.RABBIT_HOLE);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_PORTAL);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_DOOR);
@@ -87,8 +94,7 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerTrapdoor(ModBlocks.BB_TRAPDOOR);
 
         blockStateModelGenerator.registerParentedItemModel(ModItems.WHITE_RABBIT_SPAWN_EGG, ModelIds.getMinecraftNamespacedItem("template_spawn_egg"));
-         blockStateModelGenerator.registerParentedItemModel(ModItems.WEEPING_PLAYERS_SPAWN_EGG, ModelIds.getMinecraftNamespacedItem("template_spawn_egg"));
-
+        blockStateModelGenerator.registerParentedItemModel(ModItems.WEEPING_PLAYERS_SPAWN_EGG, ModelIds.getMinecraftNamespacedItem("template_spawn_egg"));
 
 
 
@@ -105,6 +111,7 @@ public class ModModelProvider extends FabricModelProvider {
         }
 
         itemModelGenerator.register(ModItems.POCKETWATCH, Models.GENERATED);
+        itemModelGenerator.register(ModItems.EMPTY_CUP, Models.GENERATED);
         itemModelGenerator.register(ModItems.DRINK_ME, Models.GENERATED);
         itemModelGenerator.register(ModItems.EAT_ME, Models.GENERATED);
         itemModelGenerator.register(ModItems.EXTERIOR_KEY, Models.GENERATED);

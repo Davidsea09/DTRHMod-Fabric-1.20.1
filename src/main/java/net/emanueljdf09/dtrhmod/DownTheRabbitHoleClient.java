@@ -8,7 +8,11 @@ import net.emanueljdf09.dtrhmod.block.models.renderers.MirrorBlockEntityRenderer
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.entity.client.renderers.WeepingPlayerRenderer;
 import net.emanueljdf09.dtrhmod.entity.client.renderers.WhiteRabbitRenderer;
+import net.emanueljdf09.dtrhmod.item.ModItems;
+import net.emanueljdf09.dtrhmod.item.custom.DynamicTeaCupItem;
+import net.emanueljdf09.dtrhmod.menu.ModScreenHandlers;
 import net.emanueljdf09.dtrhmod.menu.screen.BookCoverScreen;
+import net.emanueljdf09.dtrhmod.menu.screen.TeapotScreen;
 import net.emanueljdf09.dtrhmod.util.ModPackets;
 import net.emanueljdf09.dtrhmod.util.ModTags;
 import net.fabricmc.api.ClientModInitializer;
@@ -21,7 +25,11 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.color.world.GrassColors;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 
@@ -35,6 +43,36 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
 
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getColor(0.5, 1.0), ModBlocks.WONDER_GRASS);
+
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
+            if (tintIndex == 1) {
+                int baseColor = net.minecraft.potion.PotionUtil.getColor(DynamicTeaCupItem.getEffectsFromStack(stack));
+
+                NbtCompound nbt = stack.getNbt();
+                if (nbt != null && nbt.contains("FluidUsed")) {
+                    String fluidId = nbt.getString("FluidUsed");
+
+                    int r = (baseColor >> 16) & 0xFF;
+                    int g = (baseColor >> 8) & 0xFF;
+                    int b = baseColor & 0xFF;
+
+                    if (fluidId.contains("lava_bucket")) {
+                        r = (int) (r * 0.6 + 0xFF * 0.4);
+                        g = (int) (g * 0.6 + 0x45 * 0.4);
+                        b = (int) (b * 0.6 + 0x00 * 0.4);
+                        return (r << 16) | (g << 8) | b;
+                    }
+                    else if (fluidId.contains("milk_bucket")) {
+                        r = (int) (r * 0.5 + 255 * 0.5);
+                        g = (int) (g * 0.5 + 255 * 0.5);
+                        b = (int) (b * 0.5 + 255 * 0.5);
+                        return (r << 16) | (g << 8) | b;
+                    }
+                }
+                return baseColor;
+            }
+            return -1;
+        }, ModItems.FILLED_TEA_CUP);
 
         ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> {
 
@@ -97,6 +135,10 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TH_SAPLING, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WW_SAPLING, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BB_SAPLING, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.YELLOW_MUSHROOM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BLUE_MUSHROOM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGENTA_MUSHROOM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TEAPOT_BLOCK, RenderLayer.getCutout());
 
         BlockEntityRendererRegistry.register(ModBlockEntities.MIRROR_BLOCK_ENTITY, MirrorBlockEntityRenderer::new);
 
@@ -105,19 +147,18 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
 
         EntityRendererRegistry.register(ModEntities.WHITE_RABBIT, WhiteRabbitRenderer::new);
         EntityRendererRegistry.register(ModEntities.WEEPING_PLAYER, WeepingPlayerRenderer::new);
+
+        HandledScreens.register(ModScreenHandlers.TEAPOT_SCREEN_HANDLER, TeapotScreen::new);
     }
 
     public static void registerClientNetworkPackets() {
-        // Register a receiver bound to our unique packet ID channel
         ClientPlayNetworking.registerGlobalReceiver(ModPackets.OPEN_BOOK_PACKET_ID, (client, handler, buf, responseSender) -> {
 
-            // 1. Read the exact same data out in the EXACT same order it was written server-side
             String triggerKey = buf.readString();
 
-            // 2. Switch from the network thread to the main game engine thread safely
-            client.execute(() -> {
-                // 3. Force-open your highly customizable book screen using your new string constructor!
-                MinecraftClient.getInstance().setScreen(new BookCoverScreen(triggerKey));
+           client.execute(() -> {
+
+               MinecraftClient.getInstance().setScreen(new BookCoverScreen(triggerKey));
             });
         });
     }

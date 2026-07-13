@@ -1,7 +1,9 @@
 package net.emanueljdf09.dtrhmod.datagen;
 
+import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.item.ModItems;
+import net.emanueljdf09.dtrhmod.recipe.TeapotRecipeJsonBuilder;
 import net.emanueljdf09.dtrhmod.util.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -26,6 +28,31 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
     @Override
     public void generate(Consumer<RecipeJsonProvider> consumer) {
+
+        TeapotRecipeJsonBuilder.create(ModItems.FILLED_TEA_CUP)
+                .addIngredient(Items.SPRUCE_LEAVES)
+                .fluid(Items.WATER_BUCKET)
+                .cupCount(1)
+                .addEffect(new Identifier("minecraft", "speed"), 200, 0)
+                .criterion(hasItem(Items.SPRUCE_LEAVES), conditionsFromItem(Items.SPRUCE_LEAVES))
+                .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "spruce_tea"));
+
+        TeapotRecipeJsonBuilder.create(ModItems.FILLED_TEA_CUP)
+                .addIngredient(Items.ACACIA_LEAVES)
+                .fluid(Items.WATER_BUCKET)
+                .cupCount(1)
+                .addEffect(new Identifier("minecraft", "strength"), 200, 0)
+                .criterion(hasItem(Items.ACACIA_LEAVES), conditionsFromItem(Items.ACACIA_LEAVES))
+                .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "acacia_tea"));
+
+        TeapotRecipeJsonBuilder.create(ModItems.FILLED_TEA_CUP)
+                .addIngredient(Items.RED_MUSHROOM)
+                .fluid(Items.WATER_BUCKET)
+                .cupCount(1)
+                .addEffect(new Identifier("minecraft", "night_vision"), 200, 0)
+                .criterion(hasItem(Items.RED_MUSHROOM), conditionsFromItem(Items.RED_MUSHROOM))
+                .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "mushroom_tea"));
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, ModItems.POCKETWATCH, 1)
                 .pattern("NNN")
                 .pattern("N N")

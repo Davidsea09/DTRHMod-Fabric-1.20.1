@@ -5,6 +5,8 @@ import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.item.ModItemGroups;
 import net.emanueljdf09.dtrhmod.item.ModItems;
+import net.emanueljdf09.dtrhmod.menu.ModScreenHandlers;
+import net.emanueljdf09.dtrhmod.recipe.ModRecipes;
 import net.emanueljdf09.dtrhmod.util.*;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
 import net.emanueljdf09.dtrhmod.world.features.tree.deco.ModTreeDeco;
@@ -48,6 +50,8 @@ public class DownTheRabbitHole implements ModInitializer {
 		ModStructures.registerStructures();
 		WonderlandProgressionUtil.register();
 		ModCommands.register();
+		ModScreenHandlers.registerScreenHandlers();
+		ModRecipes.registerRecipes();
 
 		StrippableBlockRegistry.register(ModBlocks.TH_LOG, ModBlocks.STRIPPED_TH_LOG);
 		StrippableBlockRegistry.register(ModBlocks.TH_WOOD, ModBlocks.STRIPPED_TH_WOOD);

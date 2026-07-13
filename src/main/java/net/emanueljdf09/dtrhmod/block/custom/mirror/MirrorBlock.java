@@ -66,6 +66,13 @@ public class MirrorBlock extends BlockWithEntity {
     }
 
     @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            super.onStateReplaced(state, world, pos, newState, moved);
+        }
+    }
+
+    @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         world.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), Block.NOTIFY_ALL);
     }
@@ -113,7 +120,6 @@ public class MirrorBlock extends BlockWithEntity {
         BlockPos lowerPos = (state.get(HALF) == DoubleBlockHalf.LOWER) ? pos : pos.down();
         BlockState lowerState = world.getBlockState(lowerPos);
 
-        // Safety check: ensure we are actually working with our mirror block state
         if (!lowerState.isOf(this)) return ActionResult.PASS;
         MirrorType currentType = lowerState.get(TYPE);
 
@@ -127,21 +133,9 @@ public class MirrorBlock extends BlockWithEntity {
                     return ActionResult.SUCCESS;
                 }
 
-                if (stack.isOf(Items.GOLD_INGOT)) {
-                    if (!world.isClient) {
-                        mirrorEntity.activateMagicMirror(world, lowerState, lowerPos);
-                    }
-                    return ActionResult.SUCCESS;
-                }
-                return ActionResult.PASS;
+               return ActionResult.PASS;
             }
 
-            if (currentType == MirrorType.magic_mirror) {
-                if (!world.isClient) {
-                    mirrorEntity.handleMagicMirrorInteraction(player, hand, lowerPos);
-                }
-                return ActionResult.SUCCESS;
-            }
 
             if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
 
@@ -184,10 +178,8 @@ public class MirrorBlock extends BlockWithEntity {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        // We only want the gossip scanner running on the server side (performance friendly!)
         if (world.isClient) return null;
 
-        // This registers our static tick method to run every single game frame
         return checkType(type, net.emanueljdf09.dtrhmod.block.ModBlockEntities.MIRROR_BLOCK_ENTITY, MirrorBlockEntity::tick);
     }
 

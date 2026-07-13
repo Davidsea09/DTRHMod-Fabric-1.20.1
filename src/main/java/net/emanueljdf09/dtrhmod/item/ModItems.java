@@ -4,6 +4,7 @@ import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.item.block.ExteriorChestItem;
+import net.emanueljdf09.dtrhmod.item.custom.DynamicTeaCupItem;
 import net.emanueljdf09.dtrhmod.item.custom.StoryBook;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.BlockItem;
@@ -52,6 +53,11 @@ public class ModItems {
             new Item(new Item.Settings().food(ModFoodComponent.DRINK_ME)));
     public static final Item EAT_ME = registerItem("eat_me",
             new Item(new Item.Settings().food(ModFoodComponent.EAT_ME)));
+
+    public static final Item EMPTY_CUP = registerItem("empty_cup",
+            new Item(new Item.Settings()));
+    public static final Item FILLED_TEA_CUP = registerItem("filled_tea_cup",
+            new DynamicTeaCupItem(new FabricItemSettings().maxCount(16)));
 
     public static final Item WHITE_RABBIT_SPAWN_EGG = registerItem("white_rabbit_spawn_egg",
             new SpawnEggItem(ModEntities.WHITE_RABBIT, 0x057E36, 0x100000,

@@ -1,11 +1,17 @@
 package net.emanueljdf09.dtrhmod.menu.handler;
 
 import net.emanueljdf09.dtrhmod.block.entity.TeapotBlockEntity;
+import net.emanueljdf09.dtrhmod.item.ModItems;
+import net.emanueljdf09.dtrhmod.menu.ModScreenHandlers;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -16,46 +22,53 @@ public class TeapotScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
     private final TeapotBlockEntity teapotBlockEntity;
 
-    public TeapotScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(7), new ArrayPropertyDelegate(2));
+    public TeapotScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
+        this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
+                new ArrayPropertyDelegate(2));
     }
 
-    public TeapotScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
-        super(null, syncId); // Replace null with your ScreenHandlerType registry reference later
-        checkSize(inventory, 7);
-        this.inventory = inventory;
-        this.propertyDelegate = propertyDelegate;
-
+    public TeapotScreenHandler(int syncId, PlayerInventory playerInventory,
+                               BlockEntity blockEntity, PropertyDelegate propertyDelegate) {
+        super(ModScreenHandlers.TEAPOT_SCREEN_HANDLER, syncId);
+        checkSize(((Inventory) blockEntity), 6);
+        this.inventory = ((Inventory) blockEntity);
         inventory.onOpen(playerInventory.player);
-        this.addProperties(propertyDelegate);
+        this.propertyDelegate = propertyDelegate;
+        this.teapotBlockEntity = ((TeapotBlockEntity) blockEntity);
 
-        // --- 1. Top Three Ingredient Slots ---
-        // Estimated X coordinates: 26, 44, 62. Y coordinate: 17
-        for (int i = 0; i < 3; ++i) {
-            this.addSlot(new Slot(inventory, i, 26 + (i * 18), 17));
-        }
+        this.addSlot(new Slot(inventory, 0, 27, 34));
+        this.addSlot(new Slot(inventory, 1, 45, 34));
+        this.addSlot(new Slot(inventory, 2, 63, 34));
 
-        // --- 2. Bottom Three Specialty Slots (Cup, Base, Pouch) ---
-        // Estimated X coordinates: 20, 44, 68. Y coordinate: 53
-        this.addSlot(new Slot(inventory, 3, 20, 53)); // Cup slot
-        this.addSlot(new Slot(inventory, 4, 44, 53)); // Middle base slot
-        this.addSlot(new Slot(inventory, 5, 68, 53)); // Pouch slot
-
-        // --- 3. Output Slot ---
-        // Estimated X/Y coordinates based on arrow placement
-        this.addSlot(new Slot(inventory, 6, 124, 35));
-
-        // --- 4. Player Inventory Squares (3x9 Grid) ---
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+        this.addSlot(new Slot(inventory, 3, 27, 12) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return stack.isOf(net.minecraft.item.Items.WATER_BUCKET)
+                        || stack.isOf(net.minecraft.item.Items.LAVA_BUCKET)
+                        || stack.isOf(net.minecraft.item.Items.MILK_BUCKET);
             }
-        }
+        });
 
-        // --- 5. Player Hotbar (1x9 Grid) ---
-        for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
-        }
+        this.addSlot(new Slot(inventory, 4, 63, 56) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return stack.isOf(ModItems.EMPTY_CUP);
+            }
+        });
+
+        this.addSlot(new Slot(inventory, 5, 130, 35) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        });
+
+
+        addPlayerInventory(playerInventory);
+        addPlayerHotbar(playerInventory);
+
+        addProperties(propertyDelegate);
+
     }
 
     public boolean isCrafting() {
@@ -70,13 +83,70 @@ public class TeapotScreenHandler extends ScreenHandler {
 
     @Override
     public ItemStack quickMove(PlayerEntity player, int slotIndex) {
-        // Handle shift-clicking items here safely
-        return ItemStack.EMPTY;
+        ItemStack newStack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(slotIndex);
+
+        if (slot != null && slot.hasStack()) {
+            ItemStack originalStack = slot.getStack();
+            newStack = originalStack.copy();
+
+            if (slotIndex < 6) {
+                if (!this.insertItem(originalStack, 6, this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else {
+
+                if (originalStack.isOf(Items.WATER_BUCKET)) {
+                    if (!this.insertItem(originalStack, 3, 4, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (originalStack.isOf(Items.LAVA_BUCKET)) {
+                    if (!this.insertItem(originalStack, 3, 4, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (originalStack.isOf(Items.MILK_BUCKET)) {
+                    if (!this.insertItem(originalStack, 3, 4, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (originalStack.isOf(ModItems.EMPTY_CUP)) {
+                    if (!this.insertItem(originalStack, 4, 5, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else {
+                    if (!this.insertItem(originalStack, 0, 3, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            }
+
+            if (originalStack.isEmpty()) {
+                slot.setStack(ItemStack.EMPTY);
+            } else {
+                slot.markDirty();
+            }
+        }
+
+        return newStack;
     }
 
     @Override
     public boolean canUse(PlayerEntity player) {
         return this.inventory.canPlayerUse(player);
     }
+
+    private void addPlayerInventory(PlayerInventory playerInventory) {
+        for (int i = 0; i < 3; ++i) {
+            for (int l = 0; l < 9; ++l) {
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+            }
+        }
+    }
+
+    private void addPlayerHotbar(PlayerInventory playerInventory) {
+        for (int i = 0; i < 9; ++i) {
+            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+        }
+    }
+
 }
 

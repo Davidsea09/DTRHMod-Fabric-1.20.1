@@ -4,6 +4,7 @@ import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.custom.*;
 import net.emanueljdf09.dtrhmod.block.custom.mirror.MirrorBlock;
 import net.emanueljdf09.dtrhmod.item.block.ExteriorChestItem;
+import net.emanueljdf09.dtrhmod.world.features.ModConfiguredFeatures;
 import net.emanueljdf09.dtrhmod.world.features.tree.BbSaplingGenerator;
 import net.emanueljdf09.dtrhmod.world.features.tree.ThSaplingGenerator;
 import net.emanueljdf09.dtrhmod.world.features.tree.WwSaplingGenerator;
@@ -22,6 +23,25 @@ public class ModBlocks {
 
     public static final Block LAWN_DAISY_PATCH = registerBlockWithItem("lawn_daisy_patch",
             new FlowerbedBlock(FabricBlockSettings.create().mapColor(MapColor.OFF_WHITE).noCollision().sounds(BlockSoundGroup.PINK_PETALS).pistonBehavior(PistonBehavior.DESTROY)));
+
+    public static final Block BLUE_MUSHROOM_BLOCK = registerBlockWithItem("blue_mushroom_block",
+            new MushroomBlock(FabricBlockSettings.create().mapColor(MapColor.BLUE)));
+    public static final Block BLUE_MUSHROOM = registerBlockWithItem("blue_mushroom",
+            new MushroomPlantBlock(FabricBlockSettings.create().mapColor(MapColor.BLUE).noCollision().ticksRandomly().breakInstantly(),
+                    ModConfiguredFeatures.BIG_BLUE_MUSHROOM));
+
+    public static final Block YELLOW_MUSHROOM_BLOCK = registerBlockWithItem("yellow_mushroom_block",
+            new MushroomBlock(FabricBlockSettings.create().mapColor(MapColor.YELLOW)));
+    public static final Block YELLOW_MUSHROOM = registerBlockWithItem("yellow_mushroom",
+            new MushroomPlantBlock(FabricBlockSettings.create().mapColor(MapColor.YELLOW).noCollision().ticksRandomly().breakInstantly(),
+                    ModConfiguredFeatures.BIG_YELLOW_MUSHROOM));
+
+    public static final Block MAGENTA_MUSHROOM_BLOCK = registerBlockWithItem("magenta_mushroom_block",
+            new MushroomBlock(FabricBlockSettings.create().mapColor(MapColor.MAGENTA)));
+    public static final Block MAGENTA_MUSHROOM = registerBlockWithItem("magenta_mushroom",
+            new MushroomPlantBlock(FabricBlockSettings.create().mapColor(MapColor.MAGENTA).noCollision().ticksRandomly().breakInstantly(),
+                    ModConfiguredFeatures.BIG_MAGENTA_MUSHROOM));
+
 
     public static final Block RABBIT_HOLE = registerBlockWithItem("rabbit_hole",
             new RabbitHoleBlock(FabricBlockSettings.copyOf(Blocks.MOSS_BLOCK).noCollision()));

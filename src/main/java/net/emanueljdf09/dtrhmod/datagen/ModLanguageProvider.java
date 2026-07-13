@@ -306,9 +306,13 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         builder.add("exterior.player.faileddoor", "I'm locked, did you grab the key?");
         builder.add("exterior.player.opendoor", "Now we're talking");
 
+        builder.add("container.dtrhmod.teapot", "Teapot");
+
         builder.add(ModBlocks.RABBIT_HOLE, "Rabbit Hole");
         builder.add(ModBlocks.EXTERIOR_PORTAL, "Exterior Gateway");
         builder.add(ModBlocks.MIRROR_BLOCK, "Mirror");
+        builder.add(ModBlocks.TEAPOT_BLOCK, "Teapot");
+        builder.add(ModItems.EMPTY_CUP, "Empty Cup");
 
 
         builder.add(ModEntities.WHITE_RABBIT, "White Rabbit");

@@ -6,8 +6,6 @@
     "facing=north,half=upper,type=wonderland": { "model": "dtrhmod:block/mirror_top" },
     "facing=north,half=lower,type=structure": { "model": "dtrhmod:block/mirror_bottom" },
     "facing=north,half=upper,type=structure": { "model": "dtrhmod:block/mirror_top" },
-    "facing=north,half=lower,type=magic_mirror": { "model": "dtrhmod:block/mirror_bottom" },
-    "facing=north,half=upper,type=magic_mirror": { "model": "dtrhmod:block/mirror_top" },
 
     "facing=south,half=lower,type=normal": { "model": "dtrhmod:block/mirror_bottom", "y": 180 },
     "facing=south,half=upper,type=normal": { "model": "dtrhmod:block/mirror_top", "y": 180 },
@@ -15,8 +13,6 @@
     "facing=south,half=upper,type=wonderland": { "model": "dtrhmod:block/mirror_top", "y": 180 },
     "facing=south,half=lower,type=structure": { "model": "dtrhmod:block/mirror_bottom", "y": 180 },
     "facing=south,half=upper,type=structure": { "model": "dtrhmod:block/mirror_top", "y": 180 },
-    "facing=south,half=lower,type=magic_mirror": { "model": "dtrhmod:block/mirror_bottom", "y": 180 },
-    "facing=south,half=upper,type=magic_mirror": { "model": "dtrhmod:block/mirror_top", "y": 180 },
 
     "facing=east,half=lower,type=normal": { "model": "dtrhmod:block/mirror_bottom", "y": 90 },
     "facing=east,half=upper,type=normal": { "model": "dtrhmod:block/mirror_top", "y": 90 },
@@ -24,8 +20,6 @@
     "facing=east,half=upper,type=wonderland": { "model": "dtrhmod:block/mirror_top", "y": 90 },
    "facing=east,half=lower,type=structure": { "model": "dtrhmod:block/mirror_bottom", "y": 90 },
     "facing=east,half=upper,type=structure": { "model": "dtrhmod:block/mirror_top", "y": 90 },
-   "facing=east,half=lower,type=magic_mirror": { "model": "dtrhmod:block/mirror_bottom", "y": 90 },
-    "facing=east,half=upper,type=magic_mirror": { "model": "dtrhmod:block/mirror_top", "y": 90 },
 
     "facing=west,half=lower,type=normal": { "model": "dtrhmod:block/mirror_bottom", "y": 270 },
     "facing=west,half=upper,type=normal": { "model": "dtrhmod:block/mirror_top", "y": 270 },
@@ -33,8 +27,6 @@
     "facing=west,half=upper,type=wonderland": { "model": "dtrhmod:block/mirror_top", "y": 270 },
     "facing=west,half=lower,type=structure": { "model": "dtrhmod:block/mirror_bottom", "y": 270 },
     "facing=west,half=upper,type=structure": { "model": "dtrhmod:block/mirror_top", "y": 270 },
-    "facing=west,half=lower,type=magic_mirror": { "model": "dtrhmod:block/mirror_bottom", "y": 270 },
-    "facing=west,half=upper,type=magic_mirror": { "model": "dtrhmod:block/mirror_top", "y": 270 }
 
   }
 }

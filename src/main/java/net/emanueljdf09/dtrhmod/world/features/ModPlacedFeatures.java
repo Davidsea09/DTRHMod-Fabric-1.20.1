@@ -33,6 +33,10 @@ public class ModPlacedFeatures {
     public static final RegistryKey<PlacedFeature> WW_TREE_PLACED = registerKey("ww_tree_placed");
     public static final RegistryKey<PlacedFeature> TULGEY_TREE_PLACED = registerKey("tulgey_tree_placed");
 
+    public static final RegistryKey<PlacedFeature> BIG_BLUE_MUSHROOM_PLACED = registerKey("big_blue_mushroom_placed");
+    public static final RegistryKey<PlacedFeature> BIG_YELLOW_MUSHROOM_PLACED = registerKey("big_yellow_mushroom_placed");
+    public static final RegistryKey<PlacedFeature> BIG_MAGENTA_MUSHROOM_PLACED = registerKey("big_magenta_mushroom_placed");
+
     public static void bootstrap(Registerable<PlacedFeature> context) {
         var configuredFeatureRegistryEntryLookup = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
 
@@ -58,6 +62,22 @@ public class ModPlacedFeatures {
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
                         PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
                         ModBlocks.WW_SAPLING));
+
+        register(context, BIG_BLUE_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_BLUE_MUSHROOM),
+                RarityFilterPlacementModifier.of(1),
+                SquarePlacementModifier.of(),
+                PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP,
+                BiomePlacementModifier.of());
+        register(context, BIG_YELLOW_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_YELLOW_MUSHROOM),
+                RarityFilterPlacementModifier.of(2),
+                SquarePlacementModifier.of(),
+                PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP,
+                BiomePlacementModifier.of());
+        register(context, BIG_MAGENTA_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_MAGENTA_MUSHROOM),
+                RarityFilterPlacementModifier.of(1),
+                SquarePlacementModifier.of(),
+                PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP,
+                BiomePlacementModifier.of());
 
     }
 

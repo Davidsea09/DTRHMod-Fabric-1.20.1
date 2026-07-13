@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"facing=north": { "model": "dtrhmod:block/teapot_block" },
+		"facing=east":  { "model": "dtrhmod:block/teapot_block", "y": 90 },
+		"facing=south": { "model": "dtrhmod:block/teapot_block", "y": 180 },
+		"facing=west":  { "model": "dtrhmod:block/teapot_block", "y": 270 }
+	}
+}

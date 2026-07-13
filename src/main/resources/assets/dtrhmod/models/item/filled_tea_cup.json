@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dtrhmod:item/empty_cup",
+    "layer1": "dtrhmod:item/empty_cup_overlay"
+  }
+}

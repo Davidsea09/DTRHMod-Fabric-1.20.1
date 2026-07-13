@@ -15,7 +15,6 @@ import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponentImpl;
 import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorComponent;
 import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorComponentImpl;
-import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorGossipComponent;
 import net.minecraft.util.Identifier;
 
 public class ModComponents implements EntityComponentInitializer, WorldComponentInitializer, BlockComponentInitializer {
@@ -32,12 +31,6 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                         new Identifier(DownTheRabbitHole.MOD_ID, "mirror_component"),
                         MirrorComponent.class
                 );
-
-    public static final ComponentKey<MirrorGossipComponent> MIRROR_GOSSIP =
-            ComponentRegistry.getOrCreate(
-                    new Identifier(DownTheRabbitHole.MOD_ID, "mirror_gossip"),
-                    MirrorGossipComponent.class
-            );
 
 
 
@@ -60,7 +53,5 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
 
     @Override
     public void registerBlockComponentFactories(BlockComponentFactoryRegistry registry) {
-        registry.registerFor(MirrorBlockEntity.class, MIRROR_GOSSIP, entity -> new MirrorGossipComponent());
-
     }
 }

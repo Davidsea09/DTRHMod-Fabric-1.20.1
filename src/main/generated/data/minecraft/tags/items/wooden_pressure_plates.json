@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "dtrhmod:th_pressure_plate",
-    "dtrhmod:ww_pressure_plate",
-    "dtrhmod:bb_pressure_plate"
-  ]
-}
