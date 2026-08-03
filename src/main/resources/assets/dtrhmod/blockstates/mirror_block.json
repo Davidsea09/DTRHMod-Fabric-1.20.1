@@ -26,7 +26,7 @@
     "facing=west,half=lower,type=wonderland": { "model": "dtrhmod:block/mirror_bottom", "y": 270 },
     "facing=west,half=upper,type=wonderland": { "model": "dtrhmod:block/mirror_top", "y": 270 },
     "facing=west,half=lower,type=structure": { "model": "dtrhmod:block/mirror_bottom", "y": 270 },
-    "facing=west,half=upper,type=structure": { "model": "dtrhmod:block/mirror_top", "y": 270 },
+    "facing=west,half=upper,type=structure": { "model": "dtrhmod:block/mirror_top", "y": 270 }
 
   }
 }

@@ -5,6 +5,7 @@ import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.item.block.ExteriorChestItem;
 import net.emanueljdf09.dtrhmod.item.custom.DynamicTeaCupItem;
+import net.emanueljdf09.dtrhmod.item.custom.OnceUponATimeBookItem;
 import net.emanueljdf09.dtrhmod.item.custom.StoryBook;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.BlockItem;
@@ -48,6 +49,9 @@ public class ModItems {
 
     public static final Item RAPUNZEL_STORYBOOK = registerItem("rapunzel_storybook",
             new StoryBook(new Item.Settings().maxCount(1), "rapunzel"));
+
+    public static final Item ONCE_UPON_A_TIME_BOOK = registerItem("once_upon_a_time_book",
+            new OnceUponATimeBookItem(new Item.Settings().maxCount(1)));
 
     public static final Item DRINK_ME = registerItem("drink_me",
             new Item(new Item.Settings().food(ModFoodComponent.DRINK_ME)));

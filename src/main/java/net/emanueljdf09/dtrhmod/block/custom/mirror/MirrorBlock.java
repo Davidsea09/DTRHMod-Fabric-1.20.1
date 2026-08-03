@@ -175,13 +175,6 @@ public class MirrorBlock extends BlockWithEntity {
         return BlockRenderType.MODEL;
     }
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        if (world.isClient) return null;
-
-        return checkType(type, net.emanueljdf09.dtrhmod.block.ModBlockEntities.MIRROR_BLOCK_ENTITY, MirrorBlockEntity::tick);
-    }
 
     private static final VoxelShape UPPER_NORTH = makeShapeNorthUp();
     private static final VoxelShape UPPER_SOUTH = makeShapeSouthUp();

@@ -38,6 +38,7 @@ public class ModItemGroups {
                         entries.add(ModItems.WHITE_RABBIT_SPAWN_EGG);
                         entries.add(ModItems.WEEPING_PLAYERS_SPAWN_EGG);
 
+                        entries.add(ModItems.ONCE_UPON_A_TIME_BOOK.getDefaultStack());
                         entries.add(ModItems.RED_RIDING_HOOD_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.CINDERELLA_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.SNOW_WHITE_STORYBOOK.getDefaultStack());

@@ -61,7 +61,7 @@ public class StoryBookScreen extends Screen {
     public static final int TEXT_HEIGHT = 128;
     protected static final int WIDTH = 295;
     protected static final int HEIGHT = 180;
-    private StoryBookScreen.Contents contents;
+    public StoryBookScreen.Contents contents;
     private Pair<List<OrderedText>, List<OrderedText>> cachedPage;
     private int cachedSpread;
     protected int leftPos;
@@ -100,7 +100,6 @@ public class StoryBookScreen extends Screen {
         }
     }
 
-    // --- ADD THIS SECONDARY CONSTRUCTOR FOR PACKET CODES ---
     public StoryBookScreen(String triggerKey) {
         super(NarratorManager.EMPTY);
         this.cachedPage = Pair.of(Collections.emptyList(), Collections.emptyList());
@@ -119,7 +118,7 @@ public class StoryBookScreen extends Screen {
         }
     }
 
-    private static StoryBookScreen.Contents createTranslatableContents(String textKey) {
+    protected static StoryBookScreen.Contents createTranslatableContents(String textKey) {
         net.minecraft.util.Language language = net.minecraft.util.Language.getInstance();
 
         String rawText = language.get(textKey);
@@ -309,26 +308,19 @@ public class StoryBookScreen extends Screen {
         int totalTextPages = this.getPageCount();
         if (totalTextPages <= 0) return;
 
-        // Calculate the exact 0-indexed page number where the text finishes
         int finalPageIdx = totalTextPages - 1;
 
-        // Find which spread index contains that final piece of text
         int finalTextSpread = finalPageIdx / 2;
 
-        // Determine whether the text ended on the Left side (even index) or Right side (odd index)
         boolean endedOnLeftPage = (finalPageIdx % 2 == 0);
 
         if (endedOnLeftPage) {
-            // --- CASE A: Text stops on the Left page ---
-            // The right page is empty! Draw the final graphic on the RIGHT side of this same spread.
             if (this.currentSpread == finalTextSpread) {
                 int endX = this.leftPos + 180;
                 int endY = this.topPos + 50;
                 context.drawTexture(bookTexture, endX, endY, 372, 57, 72, 60, 512, 512);
             }
         } else {
-            // --- CASE B: Text stops on the Right page ---
-            // The book is full on this spread! Draw the final graphic on the LEFT side of the NEXT spread.
             if (this.currentSpread == finalTextSpread + 1) {
                 int endX = this.leftPos + 42;
                 int endY = this.topPos + 50;
@@ -433,12 +425,10 @@ public class StoryBookScreen extends Screen {
 
     @Nullable
     public Style getClickedComponentStyleAt(double mouseX, double mouseY) {
-        // Check if mouse is inside the vertical bounds of the page area
         if (!(mouseY < (double) (this.topPos + 21)) && !(mouseY >= (double) (this.topPos + 21 + 128))) {
             boolean isOverRightPage;
 
-            // Check if mouse is over right page
-            if (mouseX >= (double) (this.leftPos + 159) && mouseX < (double) (this.leftPos + 159 + 114)) {
+           if (mouseX >= (double) (this.leftPos + 159) && mouseX < (double) (this.leftPos + 159 + 114)) {
                 isOverRightPage = true;
             } else {
                 // Check if mouse is over left page
@@ -448,7 +438,6 @@ public class StoryBookScreen extends Screen {
                 isOverRightPage = false;
             }
 
-            // Select cached lines for the page being hovered
             List<OrderedText> pageContents = isOverRightPage
                     ? this.cachedPage.getSecond()
                     : this.cachedPage.getFirst();
