@@ -46,8 +46,6 @@ public class BookCoverScreen extends Screen {
                 coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/tlp_cover.png");
             }  else if (bookStack.isOf(ModItems.SNOW_WHITE_STORYBOOK)) {
                 coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/sw_cover.png");
-            } else if (bookStack.isOf(ModItems.ONCE_UPON_A_TIME_BOOK)) {
-                    coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/once_upon_a_time_cover.png");
             } else {
                 coverTexture = COVER_TEXTURE;
             }
@@ -89,9 +87,7 @@ public class BookCoverScreen extends Screen {
     }
 
     protected void openBook() {
-        if (this.bookStack.isOf(ModItems.ONCE_UPON_A_TIME_BOOK)) {
-            MinecraftClient.getInstance().setScreen(new MasterStoryBookScreen(this.bookStack));
-        } else if (this.triggerKey != null) {
+        if (this.triggerKey != null) {
             MinecraftClient.getInstance().setScreen(new StoryBookScreen(this.triggerKey));
         } else {
             MinecraftClient.getInstance()

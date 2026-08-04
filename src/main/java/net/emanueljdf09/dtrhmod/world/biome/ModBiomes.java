@@ -22,6 +22,9 @@ public class ModBiomes {
     public static final RegistryKey<Biome> THE_EXTERIOR =
             register("the_exterior");
 
+    public static final RegistryKey<Biome> ENCHANTED_FOREST =
+            register("enchanted_forest");
+
     public static final RegistryKey<Biome> LAND_OF_FLOWERS =
             register("land_of_flowers");
 
@@ -36,6 +39,7 @@ public class ModBiomes {
     public static void bootstrap(Registerable<Biome> context) {
         context.register(TULGEY_FOREST, tulgeyForest(context));
         context.register(THE_EXTERIOR, theExterior(context));
+        context.register(ENCHANTED_FOREST, enchantedForest(context));
         context.register(TEAR_LAKE_VALLEY, tearLakeValley(context));
         context.register(CHESSBOARD_FIELDS, chessBoardFields(context));
     }
@@ -119,6 +123,29 @@ public class ModBiomes {
     }
 
     public  static Biome theExterior(Registerable<Biome> context) {
+        SpawnSettings.Builder spawnBuilder = new SpawnSettings.Builder();
+
+        GenerationSettings.LookupBackedBuilder biomeBuilder =
+                new GenerationSettings.LookupBackedBuilder(context.getRegistryLookup(RegistryKeys.PLACED_FEATURE),
+                        context.getRegistryLookup(RegistryKeys.CONFIGURED_CARVER));
+
+        return new Biome.Builder()
+                .precipitation(false)
+                .temperature(0.5f)
+                .downfall(0.5f)
+                .effects(new BiomeEffects.Builder()
+                        .waterColor(4159318)
+                        .waterFogColor(329011)
+                        .fogColor(12632256)
+                        .skyColor(7907303)
+                        .grassColor(7907303)
+                        .build())
+                .spawnSettings(spawnBuilder.build())
+                .generationSettings(biomeBuilder.build())
+                .build();
+    }
+
+    public  static Biome enchantedForest(Registerable<Biome> context) {
         SpawnSettings.Builder spawnBuilder = new SpawnSettings.Builder();
 
         GenerationSettings.LookupBackedBuilder biomeBuilder =

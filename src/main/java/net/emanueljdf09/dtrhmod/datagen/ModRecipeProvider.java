@@ -3,6 +3,7 @@ package net.emanueljdf09.dtrhmod.datagen;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.item.ModItems;
+import net.emanueljdf09.dtrhmod.recipe.HatRitualRecipeJsonBuilder;
 import net.emanueljdf09.dtrhmod.recipe.TeapotRecipeJsonBuilder;
 import net.emanueljdf09.dtrhmod.util.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -52,6 +53,19 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .addEffect(new Identifier("minecraft", "night_vision"), 200, 0)
                 .criterion(hasItem(Items.RED_MUSHROOM), conditionsFromItem(Items.RED_MUSHROOM))
                 .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "mushroom_tea"));
+
+        HatRitualRecipeJsonBuilder.create(new Identifier(DownTheRabbitHole.MOD_ID, "storybook"), true)
+                .structureId(new Identifier(DownTheRabbitHole.MOD_ID, "portal/mirror_room_complete")) // 🌟 Set structure ID
+                .addIngredient(ModItems.SNOW_WHITE_STORYBOOK)
+                .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "snow_white_hat_ritual"));
+
+        HatRitualRecipeJsonBuilder.create(new Identifier(DownTheRabbitHole.MOD_ID, "wonderland"), false)
+                .addIngredient(ModItems.POCKETWATCH)
+                .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "wonderland_hat_ritual"));
+
+        HatRitualRecipeJsonBuilder.create(new Identifier(DownTheRabbitHole.MOD_ID, "overworld"), false)
+                .addIngredient(Items.DIAMOND)
+                .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "overworld_hat_ritual"));
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, ModItems.POCKETWATCH, 1)
                 .pattern("NNN")

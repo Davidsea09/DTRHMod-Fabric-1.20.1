@@ -9,6 +9,7 @@ import net.emanueljdf09.dtrhmod.menu.ModScreenHandlers;
 import net.emanueljdf09.dtrhmod.recipe.ModRecipes;
 import net.emanueljdf09.dtrhmod.util.*;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
+import net.emanueljdf09.dtrhmod.world.dimension.ModDimensions;
 import net.emanueljdf09.dtrhmod.world.features.tree.deco.ModTreeDeco;
 import net.emanueljdf09.dtrhmod.world.structures.ModStructurePieces;
 import net.emanueljdf09.dtrhmod.world.structures.ModStructureProcessors;
@@ -26,6 +27,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 import static net.emanueljdf09.dtrhmod.world.dimension.ModDimensions.EXTERIOR_LEVEL_KEY;
 
@@ -91,6 +94,15 @@ public class DownTheRabbitHole implements ModInitializer {
 		LOGGER.info("Follow the tunnel...");
 
 		ServerTickEvents.START_SERVER_TICK.register(TeleportUtil::tickMirrorTrances);
+
+		ServerTickEvents.END_WORLD_TICK.register(world -> {
+			if (world.getRegistryKey().equals(ModDimensions.STORYBOOK_LEVEL_KEY)) {
+				// 🌟 Use new ArrayList<>() to avoid ConcurrentModificationException during teleportation!
+				for (ServerPlayerEntity player : new ArrayList<>(world.getPlayers())) {
+					TeleportUtil.checkAndHandleVoidReturn(player);
+				}
+			}
+		});
 
 		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof ServerPlayerEntity player) {

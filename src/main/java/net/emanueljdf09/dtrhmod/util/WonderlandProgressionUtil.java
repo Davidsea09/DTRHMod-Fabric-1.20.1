@@ -29,7 +29,7 @@ public class WonderlandProgressionUtil {
     public static void register() {
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                if (player.getWorld().getRegistryKey() == net.emanueljdf09.dtrhmod.world.dimension.ModDimensions.WONDERLAND_LEVEL_KEY) {
+                if (player.getWorld().getRegistryKey() == ModDimensions.WONDERLAND_LEVEL_KEY) {
                     evaluateBiomeProgression(player);
                 } else {
                     // Clean up cache if they leave the dimension
@@ -102,8 +102,6 @@ public class WonderlandProgressionUtil {
             // Player is inside a locked zone! Teleport them back to safety instantly
             handleSolidWallCollision(player, warningMessage);
         } else {
-            // Player is in a legal zone. Save this exact position as their safe house location!
-            // We store their full position vector (X, Y, Z) so we know exactly where they stood.
             LAST_SAFE_POSITIONS.put(player.getUuid(), player.getPos());
         }
     }
@@ -112,26 +110,18 @@ public class WonderlandProgressionUtil {
         ServerWorld world = player.getServerWorld();
         UUID uuid = player.getUuid();
 
-        // 1. Fetch their last known safe location
         Vec3d safePos = LAST_SAFE_POSITIONS.get(uuid);
 
         if (safePos != null) {
-            // Kill all ongoing momentum so they don't stutter-glitch forward
             player.setVelocity(0, 0, 0);
 
-            // Absolute position reset back to the border's edge (keeping their pitch/yaw camera looking direction)
-            player.teleport(world, safePos.x, safePos.y, safePos.z, player.getYaw(), player.getPitch());
+           player.teleport(world, safePos.x, safePos.y, safePos.z, player.getYaw(), player.getPitch());
         }
 
-        // 2. OMINOUS VISUAL SHIFT
-        // Apply an intense Darkness effect. The ambient flag hides the HUD potion icon,
-        // making it look like the environment itself is dimming out.
-        player.addStatusEffect(new StatusEffectInstance(
+       player.addStatusEffect(new StatusEffectInstance(
                 StatusEffects.DARKNESS, 40, 0, true, false, false
         ));
 
-        // 3. SPARK WALL PARTICLES
-        // Spawn standard white spell dust and barrier particles right where they tried to step
         double px = player.getX();
         double py = player.getEyeY();
         double pz = player.getZ();

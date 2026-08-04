@@ -1,0 +1,14 @@
+{
+  "type": "dtrhmod:storybook_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "layers": [
+        { "block": "minecraft:air", "height": 61 },
+        { "block": "minecraft:barrier", "height": 3 }
+
+      ],
+      "biome": "dtrhmod:enchanted_forest"
+    }
+  }
+}

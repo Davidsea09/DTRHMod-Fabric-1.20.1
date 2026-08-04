@@ -30,6 +30,13 @@ public class ModDimensions {
     public static final RegistryKey<DimensionType> EXTERIOR_DIM_TYPE = RegistryKey.of(RegistryKeys.DIMENSION_TYPE,
             new Identifier(DownTheRabbitHole.MOD_ID, "exterior_type"));
 
+    public static final RegistryKey<DimensionOptions> STORYBOOK_KEY = RegistryKey.of(RegistryKeys.DIMENSION,
+            new Identifier(DownTheRabbitHole.MOD_ID, "storybook"));
+    public static final RegistryKey<World> STORYBOOK_LEVEL_KEY = RegistryKey.of(RegistryKeys.WORLD,
+            new Identifier(DownTheRabbitHole.MOD_ID, "storybook"));
+    public static final RegistryKey<DimensionType> STORYBOOK_DIM_TYPE = RegistryKey.of(RegistryKeys.DIMENSION_TYPE,
+            new Identifier(DownTheRabbitHole.MOD_ID, "storybook_type"));
+
     public static void bootstrapType(Registerable<DimensionType> context) {
         context.register(WONDERLAND_DIM_TYPE, new DimensionType(
                 OptionalLong.of(12900), // fixedTime
@@ -62,6 +69,23 @@ public class ModDimensions {
                 256, //logicalHeight
                 BlockTags.INFINIBURN_OVERWORLD, //infiniburn
                 DimensionTypes.THE_END_ID, //effectsLocation
+                0.3f, //ambientlight              piglinsafe   Raids
+                new DimensionType.MonsterSettings(true, false, UniformIntProvider.create(0, 0), 0)));
+
+        context.register(STORYBOOK_DIM_TYPE, new DimensionType(
+                OptionalLong.of(6000),
+                true,
+                false, //hasCeiling
+                false, //ultraWarm
+                false, //natural
+                1.0, //coordinateScale
+                false, //bedWorks
+                false, //respawnAnchorWorks
+                0, //minY
+                256, //MaxHeight
+                256, //logicalHeight
+                BlockTags.INFINIBURN_OVERWORLD, //infiniburn
+                DimensionTypes.OVERWORLD_ID, //effectsLocation
                 0.3f, //ambientlight              piglinsafe   Raids
                 new DimensionType.MonsterSettings(true, false, UniformIntProvider.create(0, 0), 0)));
     }

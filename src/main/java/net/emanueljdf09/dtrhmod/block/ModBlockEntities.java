@@ -36,6 +36,13 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(TeapotBlockEntity::new,
                             ModBlocks.TEAPOT_BLOCK).build());
 
+    public static final BlockEntityType<MadHatterHatBlockEntity> MAD_HATTER_HAT =
+            Registry.register(
+                    Registries.BLOCK_ENTITY_TYPE,
+                    new Identifier(DownTheRabbitHole.MOD_ID, "mad_hatter_hat_be"),
+                    FabricBlockEntityTypeBuilder.create(MadHatterHatBlockEntity::new, ModBlocks.MAD_HATTER_HAT).build()
+            );
+
 
 
     public static void registerBlockEnities() {

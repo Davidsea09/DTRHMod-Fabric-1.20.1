@@ -4,6 +4,7 @@ import net.emanueljdf09.dtrhmod.block.ModBlockEntities;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.block.models.renderers.ExteriorChestRenderer;
 import net.emanueljdf09.dtrhmod.block.models.renderers.ExteriorDoorRenderer;
+import net.emanueljdf09.dtrhmod.block.models.renderers.MadHatterHatBlockEntityRenderer;
 import net.emanueljdf09.dtrhmod.block.models.renderers.MirrorBlockEntityRenderer;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.entity.client.renderers.WeepingPlayerRenderer;
@@ -144,6 +145,8 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
 
         BlockEntityRendererRegistry.register(ModBlockEntities.EXTERIOR_DOOR_ENTITY, ExteriorDoorRenderer::new);
         BlockEntityRendererRegistry.register(ModBlockEntities.EXTERIOR_CHEST_ENTITY, ExteriorChestRenderer::new);
+
+        //BlockEntityRendererRegistry.register(ModBlockEntities.MAD_HATTER_HAT, MadHatterHatBlockEntityRenderer::new);
 
         EntityRendererRegistry.register(ModEntities.WHITE_RABBIT, WhiteRabbitRenderer::new);
         EntityRendererRegistry.register(ModEntities.WEEPING_PLAYER, WeepingPlayerRenderer::new);

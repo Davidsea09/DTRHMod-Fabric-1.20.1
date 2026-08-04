@@ -208,13 +208,10 @@ public class StoryBookScreen extends Screen {
         int finalTextSpread = finalPageIdx / 2;
         boolean endedOnLeftPage = (finalPageIdx % 2 == 0);
 
-        // If the text ends on a Right page, we need +1 extra spread index to turn the page
-        // and look at the final graphic on the left side of the next empty page layer!
-        if (!endedOnLeftPage) {
+         if (!endedOnLeftPage) {
             return finalTextSpread + 2;
         }
 
-        // Otherwise, everything fits on the current spread safely
         return finalTextSpread + 1;
     }
 

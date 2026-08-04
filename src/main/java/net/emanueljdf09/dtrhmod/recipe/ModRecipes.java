@@ -14,5 +14,13 @@ public class ModRecipes {
         Registry.register(Registries.RECIPE_TYPE,
                 new Identifier(DownTheRabbitHole.MOD_ID, "teapot"),
                 TeapotRecipe.Type.INSTANCE);
+
+        Registry.register(Registries.RECIPE_SERIALIZER,
+                new Identifier(DownTheRabbitHole.MOD_ID, "hat_ritual"),
+                HatRitualRecipe.Serializer.INSTANCE);
+
+        Registry.register(Registries.RECIPE_TYPE,
+                new Identifier(DownTheRabbitHole.MOD_ID, "hat_ritual"),
+                HatRitualRecipe.Type.INSTANCE);
     }
 }

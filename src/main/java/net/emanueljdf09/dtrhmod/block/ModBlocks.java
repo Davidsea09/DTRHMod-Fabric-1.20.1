@@ -42,6 +42,9 @@ public class ModBlocks {
             new MushroomPlantBlock(FabricBlockSettings.create().mapColor(MapColor.MAGENTA).noCollision().ticksRandomly().breakInstantly(),
                     ModConfiguredFeatures.BIG_MAGENTA_MUSHROOM));
 
+    public static final Block MAD_HATTER_HAT = registerBlockWithItem("mad_hatter_hat",
+            new MadHatterHatBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque().noCollision()));
+
 
     public static final Block RABBIT_HOLE = registerBlockWithItem("rabbit_hole",
             new RabbitHoleBlock(FabricBlockSettings.copyOf(Blocks.MOSS_BLOCK).noCollision()));

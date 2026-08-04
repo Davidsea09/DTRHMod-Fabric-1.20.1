@@ -30,6 +30,7 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.RABBIT_HOLE);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_PORTAL);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_DOOR);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.MAD_HATTER_HAT);
 
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.WONDER_DIRT);
 

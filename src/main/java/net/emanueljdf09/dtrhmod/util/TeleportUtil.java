@@ -15,12 +15,14 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
@@ -28,12 +30,26 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
 
 public class TeleportUtil {
 
     private static final Map<UUID, MirrorTranceData> ACTIVE_TRANCES = new HashMap<>();
+
+    private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
+    private static final long COOLDOWN_MS = 5000; // 2.5 seconds cooldown
+
+    public static boolean hasTeleportCooldown(ServerPlayerEntity player) {
+        long currentTime = System.currentTimeMillis();
+        long lastTeleport = TELEPORT_COOLDOWNS.getOrDefault(player.getUuid(), 0L);
+        return (currentTime - lastTeleport) < COOLDOWN_MS;
+    }
+
+    public static void updateTeleportCooldown(ServerPlayerEntity player) {
+        TELEPORT_COOLDOWNS.put(player.getUuid(), System.currentTimeMillis());
+    }
 
     public static class MirrorTranceData {
         public final BlockPos mirrorPos;
@@ -62,6 +78,109 @@ public class TeleportUtil {
         if (world == null) return;
 
         player.teleport(world, x, y, z, player.getYaw(), player.getPitch());
+    }
+
+    public static void teleportToPlayerInstance(
+            ServerPlayerEntity player,
+            UUID ownerUuid,
+            RegistryKey<World> targetDimKey,
+            Identifier structureId,
+            RegistryKey<World> originDimKey,  // 🌟 Added origin dimension
+            BlockPos originPos               // 🌟 Added origin position
+    ) {
+        MinecraftServer server = player.getServer();
+        if (server == null) return;
+
+        ServerWorld destWorld = server.getWorld(targetDimKey);
+        if (destWorld == null) {
+            System.out.println("[DTRH ERROR] Could not find world for dimension: " + targetDimKey.getValue());
+            return;
+        }
+
+        StorybookInstanceManager manager = StorybookInstanceManager.getServerState(server);
+
+        // 🌟 Pass originDimKey and originPos to the instance manager!
+        BlockPos instancePos = manager.getOrCreatePlayerInstance(
+                server,
+                ownerUuid,
+                targetDimKey,
+                structureId,
+                originDimKey,
+                originPos
+        );
+
+        System.out.println("[DTRH DEBUG] Teleporting player to: " + instancePos.toString() + " in " + targetDimKey.getValue());
+
+        destWorld.getChunkManager().addTicket(
+                ChunkTicketType.START,
+                new ChunkPos(instancePos),
+                2,
+                Unit.INSTANCE
+        );
+
+        teleport(player, targetDimKey, instancePos.getX() + 0.5, instancePos.getY() + 1.0, instancePos.getZ() + 0.5);
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
+    }
+
+    public static void teleportFromHat(ServerPlayerEntity player, RegistryKey<World> targetDim, BlockPos targetPos) {
+        MinecraftServer server = player.getServer();
+        if (server == null) return;
+
+        ServerWorld destWorld = server.getWorld(targetDim);
+        if (destWorld == null) return;
+
+        destWorld.getChunkManager().addTicket(
+                net.minecraft.server.world.ChunkTicketType.START,
+                new ChunkPos(targetPos),
+                2,
+                net.minecraft.util.Unit.INSTANCE
+        );
+
+        int spawnY = destWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, targetPos).getY();
+        if (spawnY <= destWorld.getBottomY()) {
+            spawnY = 80;
+        }
+
+        teleport(player, targetDim, targetPos.getX() + 0.5, spawnY + 1.0, targetPos.getZ() + 0.5);
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
+    }
+
+    public static void checkAndHandleVoidReturn(ServerPlayerEntity player) {
+        if (player.getWorld().getRegistryKey().equals(ModDimensions.STORYBOOK_LEVEL_KEY) && player.getY() < -5) {
+            MinecraftServer server = player.getServer();
+            if (server == null) return;
+
+            StorybookInstanceManager manager = StorybookInstanceManager.getServerState(server);
+            StorybookInstanceManager.ReturnLocation returnLoc = manager.getReturnLocation(player.getUuid());
+
+            if (returnLoc != null) {
+                ServerWorld originWorld = server.getWorld(returnLoc.dimension());
+                if (originWorld != null) {
+
+                    // 🌟 Offset landing spot 2 blocks NORTH of the origin hat position
+                    BlockPos originPos = returnLoc.pos();
+                    double spawnX = originPos.getX() + 0.5;
+                    double spawnY = originPos.getY() + 1.0;
+                    double spawnZ = originPos.getZ() - 1.5; // Offset away from the hat!
+
+                    // Set teleport cooldown so landing doesn't re-trigger portal
+                    updateTeleportCooldown(player);
+
+                    player.teleport(
+                            originWorld,
+                            spawnX,
+                            spawnY,
+                            spawnZ,
+                            player.getYaw(),
+                            player.getPitch()
+                    );
+
+                    player.setVelocity(0, 0, 0);
+                    player.fallDistance = 0.0f;
+                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 60, 0));
+                }
+            }
+        }
     }
 
     public static BlockPos teleportToBiome(ServerPlayerEntity player, RegistryKey<World> targetDim, RegistryKey<Biome> primaryBiome, RegistryKey<Biome>... fallbacks) {
