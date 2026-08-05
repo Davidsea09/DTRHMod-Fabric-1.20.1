@@ -13,6 +13,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.predicate.entity.EntityPredicates;
@@ -41,6 +42,16 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
+    private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation ACTIVE = RawAnimation.begin().thenPlay("active");
+    private static final RawAnimation FAIL = RawAnimation.begin().thenPlay("fail").thenPlay("active");
+    private static final RawAnimation PORTAL = RawAnimation.begin().thenPlay("success").thenLoop("spinning");
+    private static final RawAnimation STOP = RawAnimation.begin().thenPlay("stopping");
+
+    private boolean playFailAnimation = false;
+    private boolean playStopAnimation = false;
+    private int animationTimer = 0;
+
     private UUID portalOwnerUuid;
     private int ritualTicks = 0;
     private int portalCooldownTicks = 300; // 15 seconds (300 ticks)
@@ -55,11 +66,32 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
 
     private ItemStack storedRecipeItem = ItemStack.EMPTY;
 
+    public enum AnimState {
+        NONE,
+        FAIL,
+        STOP
+    }
+
+    private AnimState currentAnimState = AnimState.NONE;
+    private int animTicks = 0;
+
     public MadHatterHatBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MAD_HATTER_HAT, pos, state);
     }
     public static void tick(World world, BlockPos pos, BlockState state, MadHatterHatBlockEntity entity) {
         if (world.isClient) return;
+
+        // ==========================================
+        // 0. HANDLE FAIL ANIMATION TIMER DECREMENT
+        // ==========================================
+        if (entity.currentAnimState == AnimState.FAIL) {
+            entity.animTicks++;
+            if (entity.animTicks > 40) { // Adjust based on how long your fail animation takes
+                entity.currentAnimState = AnimState.NONE;
+                entity.animTicks = 0;
+                entity.markDirty();
+            }
+        }
 
         MadHatterHatBlock.HatState currentState = state.get(MadHatterHatBlock.STATE);
 
@@ -67,25 +99,21 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
         // 1. PORTAL ACTIVE PHASE
         // ==========================================
         if (currentState == MadHatterHatBlock.HatState.PORTAL) {
-
             if (entity.isInstanceDimension) {
-                // INSTANCED REALM (Storybook): Freeze 15s timer while player is inside
                 if (entity.targetDimension != null) {
                     var targetWorld = world.getServer().getWorld(entity.targetDimension);
                     int playerCount = (targetWorld != null) ? targetWorld.getPlayers().size() : 0;
 
                     if (playerCount > 0) {
-                        entity.portalCooldownTicks = 300; // Keep full 15s delay ready
+                        entity.portalCooldownTicks = 300;
                     } else {
                         entity.portalCooldownTicks--;
                     }
                 }
             } else {
-                // PERSISTENT REALMS (Wonderland / Overworld): Always count down 15s
                 entity.portalCooldownTicks--;
             }
 
-            // 🌟 PORTAL TIMER EXPIRED: Destroy origin hat & refund recipe item directly to owner!
             if (entity.portalCooldownTicks <= 0) {
                 entity.expirePersistentPortalAndRefund(world, pos);
                 return;
@@ -93,22 +121,38 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
         }
 
         // ==========================================
-        // 2. IDLE SCANNING PHASE
+        // 2. REDSTONE ACTIVATION SCANNING PHASE
         // ==========================================
         if (!entity.isSpinning && currentState == MadHatterHatBlock.HatState.IDLE) {
             Box box = new Box(pos).expand(0.3, 0.5, 0.3);
             List<ItemEntity> items = world.getEntitiesByClass(ItemEntity.class, box, EntityPredicates.VALID_ENTITY);
 
             if (!items.isEmpty()) {
-                entity.evaluateRecipeAndStructure(world, pos, items);
-                entity.isSpinning = true;
-                entity.ritualTicks = 0;
-                world.setBlockState(pos, state.with(MadHatterHatBlock.STATE, MadHatterHatBlock.HatState.SPINNING));
+                // Check if Redstone Dust is present to trigger the activation sequence
+                boolean hasRedstone = items.stream().anyMatch(item -> item.getStack().isOf(Items.REDSTONE));
+
+                if (hasRedstone) {
+                    // Consume 1 Redstone dust to power the ritual
+                    for (ItemEntity item : items) {
+                        if (item.getStack().isOf(Items.REDSTONE)) {
+                            item.getStack().decrement(1);
+                            if (item.getStack().isEmpty()) {
+                                item.discard();
+                            }
+                            break;
+                        }
+                    }
+
+                    // Evaluate the remaining items against recipes & check structure
+                    entity.evaluateRecipeAndStructure(world, pos, items);
+                    entity.isSpinning = true;
+                    entity.ritualTicks = 0;
+                }
             }
         }
 
         // ==========================================
-        // 3. SPINNING SEQUENCE PHASE
+        // 3. SPINNING / ACTIVATION SEQUENCE PHASE
         // ==========================================
         if (entity.isSpinning) {
             entity.ritualTicks++;
@@ -117,7 +161,7 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
                 entity.isSpinning = false;
 
                 if (entity.isRecipeValid) {
-                    entity.portalCooldownTicks = 300; // Reset to 15 seconds
+                    entity.portalCooldownTicks = 300;
                     world.setBlockState(pos, state.with(MadHatterHatBlock.STATE, MadHatterHatBlock.HatState.PORTAL));
                     world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 } else {
@@ -169,6 +213,10 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     }
 
     private void expirePersistentPortalAndRefund(World world, BlockPos pos) {
+        this.currentAnimState = AnimState.STOP;
+        this.animTicks = 0;
+        markDirty();
+
        ItemStack hatToRefund = new ItemStack(ModBlocks.MAD_HATTER_HAT.asItem());
 
         if (this.portalOwnerUuid != null && world.getServer() != null) {
@@ -228,15 +276,17 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
         List<ItemEntity> items = world.getEntitiesByClass(ItemEntity.class, box, EntityPredicates.VALID_ENTITY);
 
         if (!items.isEmpty()) {
-            // Destroy 1 item as penalty
             ItemEntity penalty = items.remove(0);
             penalty.discard();
 
-            // Spit remaining items back out
             for (ItemEntity item : items) {
                 item.setVelocity((world.random.nextDouble() - 0.5) * 0.2, 0.3, (world.random.nextDouble() - 0.5) * 0.2);
             }
         }
+
+        this.currentAnimState = AnimState.FAIL;
+        this.animTicks = 0;
+        markDirty();
     }
 
     public void triggerTeleport(PlayerEntity player) {
@@ -319,12 +369,24 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, state -> {
+            // 1. High priority: Play active transient animations if triggered
+            if (this.currentAnimState == AnimState.FAIL) {
+                return state.setAndContinue(FAIL);
+            }
+            if (this.currentAnimState == AnimState.STOP) {
+                return state.setAndContinue(STOP);
+            }
+
+            // 2. Standard persistent BlockState handling
             MadHatterHatBlock.HatState hatState = getCachedState().get(MadHatterHatBlock.STATE);
 
             return switch (hatState) {
-                case SPINNING -> state.setAndContinue(RawAnimation.begin().thenLoop("animation.hat.spin"));
-                case PORTAL -> state.setAndContinue(RawAnimation.begin().thenLoop("animation.hat.portal_open"));
-                default -> state.setAndContinue(RawAnimation.begin().thenLoop("animation.hat.idle"));
+                case PORTAL -> state.setAndContinue(PORTAL);
+                case IDLE -> {
+                    boolean inStructure = checkStructure(getWorld(), getPos());
+                    yield inStructure ? state.setAndContinue(ACTIVE) : state.setAndContinue(IDLE);
+                }
+                default -> state.setAndContinue(IDLE);
             };
         }));
     }

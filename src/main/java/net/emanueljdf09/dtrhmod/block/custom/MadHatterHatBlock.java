@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 public class MadHatterHatBlock extends BlockWithEntity implements BlockEntityProvider {
     public static final EnumProperty<HatState> STATE = EnumProperty.of("state", HatState.class);
 
-    // Collision box shapes
     private static final VoxelShape IDLE_SHAPE = Block.createCuboidShape(3.0, 0.0, 3.0, 13.0, 10.0, 13.0);
     private static final VoxelShape PORTAL_SHAPE = VoxelShapes.fullCube();
 
@@ -43,7 +42,7 @@ public class MadHatterHatBlock extends BlockWithEntity implements BlockEntityPro
     @Override
     public BlockRenderType getRenderType(BlockState state) {
        // return BlockRenderType.ENTITYBLOCK_ANIMATED;
-        return BlockRenderType.MODEL;
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -70,7 +69,6 @@ public class MadHatterHatBlock extends BlockWithEntity implements BlockEntityPro
 
     public enum HatState implements StringIdentifiable {
         IDLE("idle"),
-        SPINNING("spinning"),
         PORTAL("portal");
 
         private final String name;
