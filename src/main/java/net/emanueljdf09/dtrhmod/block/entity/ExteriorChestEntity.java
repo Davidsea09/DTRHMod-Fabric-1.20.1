@@ -8,6 +8,7 @@ import net.emanueljdf09.dtrhmod.util.ModEffects;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -19,21 +20,20 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ExteriorChestEntity extends BlockEntity implements GeoBlockEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private static final RawAnimation CLOSED = RawAnimation.begin().thenPlay("closed");
-    private static final RawAnimation OPEN_AND_GROW_SEQUENCE = RawAnimation.begin()
-            .thenPlay("opening_normal")
-            .thenPlay("open_empty")
+    public static final RawAnimation CLOSED = RawAnimation.begin().thenPlay("closed");
+    public static final RawAnimation OPEN_NORMAL = RawAnimation.begin().thenPlay("opening_normal").thenLoop("open_empty");
+    public static final RawAnimation OPEN_AND_GROW_SEQUENCE = RawAnimation.begin()
             .thenPlay("growing")
             .thenLoop("open_grown");
+    public static final RawAnimation TAKE_GROWN_ITEMS = RawAnimation.begin().thenPlay("take_grown_items").thenLoop("invisible");
 
-    private static final RawAnimation TAKE_GROWN_ITEMS = RawAnimation.begin().thenPlay("take_grown_items").thenLoop("invisible");
-    private static final RawAnimation INVISIBLE = RawAnimation.begin().thenLoop("invisible");
     public ExteriorChestEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.EXTERIOR_CHEST_ENTITY, pos, state);
     }
@@ -55,10 +55,10 @@ public class ExteriorChestEntity extends BlockEntity implements GeoBlockEntity {
                 player.sendMessage(Text.translatable("exterior.player.openchest"), true);
                 player.giveItemStack(ModItems.EAT_ME.getDefaultStack());
                 component.setOpenedExtChest(true);
+
                 world.updateListeners(pos, getCachedState(), getCachedState(), 3);
                 ModComponents.PROGRESSION_COMPONENT.sync((ServerPlayerEntity) player);
-            } else {
-                triggerAnim("chest_controller", "open_and_grow");
+                markDirty();
             }
             return ActionResult.SUCCESS;
         }
@@ -69,10 +69,12 @@ public class ExteriorChestEntity extends BlockEntity implements GeoBlockEntity {
                 player.giveItemStack(ModItems.DRINK_ME.getDefaultStack());
                 player.giveItemStack(ModItems.EXTERIOR_KEY.getDefaultStack());
                 component.setOpenedExtGrownChest(true);
+
+                triggerAnim("chest_controller", "take_grown_items");
+
                 world.updateListeners(pos, getCachedState(), getCachedState(), 3);
                 ModComponents.PROGRESSION_COMPONENT.sync((ServerPlayerEntity) player);
-            } else {
-                triggerAnim("chest_controller", "take_grown_items");
+                markDirty();
             }
             return ActionResult.SUCCESS;
         }
@@ -92,9 +94,9 @@ public class ExteriorChestEntity extends BlockEntity implements GeoBlockEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "chest_controller", 4, state -> {
+        controllers.add(new AnimationController<>(this, "chest_controller", 0, state -> {
             if (this.getWorld() != null && this.getWorld().isClient()) {
-                return ClientAnimationHelper.handleChestAnimation(state, CLOSED, INVISIBLE);
+                return ClientAnimationHelper.handleChestAnimation(state, CLOSED, OPEN_NORMAL, TAKE_GROWN_ITEMS, OPEN_AND_GROW_SEQUENCE);
             }
             return state.setAndContinue(CLOSED);
         })

@@ -32,6 +32,7 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
 
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation ACTIVE = RawAnimation.begin().thenPlay("active");
-    private static final RawAnimation FAIL = RawAnimation.begin().thenPlay("fail").thenPlay("active");
+    private static final RawAnimation FAIL = RawAnimation.begin().thenPlay("fail");
     private static final RawAnimation PORTAL = RawAnimation.begin().thenPlay("success").thenLoop("spinning");
     private static final RawAnimation STOP = RawAnimation.begin().thenPlay("stopping");
 
@@ -81,14 +82,45 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     public static void tick(World world, BlockPos pos, BlockState state, MadHatterHatBlockEntity entity) {
         if (world.isClient) return;
 
-        // ==========================================
-        // 0. HANDLE FAIL ANIMATION TIMER DECREMENT
-        // ==========================================
+        if (entity.currentAnimState == AnimState.STOP) {
+            entity.animTicks++;
+            if (entity.animTicks > 100) {
+                ItemStack hatToRefund = new ItemStack(ModBlocks.MAD_HATTER_HAT.asItem());
+                if (entity.portalOwnerUuid != null && world.getServer() != null) {
+                    PlayerEntity owner = world.getServer().getPlayerManager().getPlayer(entity.portalOwnerUuid);
+                    if (owner != null) {
+                        owner.getInventory().insertStack(hatToRefund);
+                    } else {
+                        world.spawnEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, hatToRefund));
+                    }
+                } else {
+                    world.spawnEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, hatToRefund));
+                }
+
+                world.breakBlock(pos, false);
+                return;
+            }
+        }
+
+        // Handle Fail Animation Timer & Cleanup
         if (entity.currentAnimState == AnimState.FAIL) {
             entity.animTicks++;
-            if (entity.animTicks > 40) { // Adjust based on how long your fail animation takes
+            if (entity.animTicks == 40) {
+                entity.spawnBurpedItems(world, pos);
+            }
+            if (entity.animTicks > 80) {
                 entity.currentAnimState = AnimState.NONE;
                 entity.animTicks = 0;
+
+                var manager = entity.getAnimatableInstanceCache().getManagerForId(entity.hashCode());
+                if (manager != null) {
+                    var controller = manager.getAnimationControllers().get("controller");
+                    if (controller != null) {
+                        controller.stop();
+                        controller.forceAnimationReset();
+                    }
+                }
+
                 entity.markDirty();
             }
         }
@@ -120,9 +152,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
             }
         }
 
-        // ==========================================
-        // 2. REDSTONE ACTIVATION SCANNING PHASE
-        // ==========================================
         if (!entity.isSpinning && currentState == MadHatterHatBlock.HatState.IDLE) {
             Box box = new Box(pos).expand(0.3, 0.5, 0.3);
             List<ItemEntity> items = world.getEntitiesByClass(ItemEntity.class, box, EntityPredicates.VALID_ENTITY);
@@ -143,31 +172,26 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
                         }
                     }
 
-                    // Evaluate the remaining items against recipes & check structure
                     entity.evaluateRecipeAndStructure(world, pos, items);
-                    entity.isSpinning = true;
-                    entity.ritualTicks = 0;
-                }
-            }
-        }
 
-        // ==========================================
-        // 3. SPINNING / ACTIVATION SEQUENCE PHASE
-        // ==========================================
-        if (entity.isSpinning) {
-            entity.ritualTicks++;
+                    if (entity.isRecipeValid) {
+                        var manager = entity.getAnimatableInstanceCache().getManagerForId(entity.hashCode());
+                        if (manager != null) {
+                            var controller = manager.getAnimationControllers().get("controller");
+                            if (controller != null) {
+                                controller.stop();
+                                controller.forceAnimationReset();
+                            }
+                        }
 
-            if (entity.ritualTicks >= 60) { // 3 seconds spinning animation
-                entity.isSpinning = false;
-
-                if (entity.isRecipeValid) {
-                    entity.portalCooldownTicks = 300;
-                    world.setBlockState(pos, state.with(MadHatterHatBlock.STATE, MadHatterHatBlock.HatState.PORTAL));
-                    world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.BLOCKS, 1.0f, 1.0f);
-                } else {
-                    world.setBlockState(pos, state.with(MadHatterHatBlock.STATE, MadHatterHatBlock.HatState.IDLE));
-                    world.playSound(null, pos, SoundEvents.ENTITY_DONKEY_DEATH, SoundCategory.BLOCKS, 1.0f, 0.5f);
-                    entity.burpItems(world, pos);
+                        entity.currentAnimState = AnimState.NONE;
+                        entity.portalCooldownTicks = 300;
+                        world.setBlockState(pos, state.with(MadHatterHatBlock.STATE, MadHatterHatBlock.HatState.PORTAL));
+                        world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                    } else {
+                        world.playSound(null, pos, SoundEvents.ENTITY_DONKEY_DEATH, SoundCategory.BLOCKS, 1.0f, 0.5f);
+                        entity.startFailSequence(world, pos);
+                    }
                 }
             }
         }
@@ -176,9 +200,9 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     private void evaluateRecipeAndStructure(World world, BlockPos pos, List<ItemEntity> items) {
         this.originDimension = world.getRegistryKey();
         this.originPos = pos;
+        this.isRecipeValid = false;
 
         if (!checkStructure(world, pos)) {
-            this.isRecipeValid = false;
             return;
         }
 
@@ -213,38 +237,14 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     }
 
     private void expirePersistentPortalAndRefund(World world, BlockPos pos) {
+        if (this.currentAnimState == AnimState.STOP) return; // Prevent multiple executions
+
         this.currentAnimState = AnimState.STOP;
         this.animTicks = 0;
         markDirty();
 
-       ItemStack hatToRefund = new ItemStack(ModBlocks.MAD_HATTER_HAT.asItem());
-
-        if (this.portalOwnerUuid != null && world.getServer() != null) {
-            PlayerEntity owner = world.getServer().getPlayerManager().getPlayer(this.portalOwnerUuid);
-            if (owner != null) {
-                owner.getInventory().insertStack(hatToRefund);
-            } else {
-                world.spawnEntity(new ItemEntity(
-                        world,
-                        pos.getX() + 0.5,
-                        pos.getY() + 0.5,
-                        pos.getZ() + 0.5,
-                        hatToRefund
-                ));
-            }
-        } else {
-            world.spawnEntity(new ItemEntity(
-                    world,
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    hatToRefund
-            ));
-        }
-
+        triggerAnim("controller", "stop_anim");
         world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 0.5f);
-
-        world.breakBlock(pos, false);
     }
 
     private boolean checkStructure(World world, BlockPos pos) {
@@ -271,22 +271,51 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
         }
     }
 
-    private void burpItems(World world, BlockPos pos) {
+    private void startFailSequence(World world, BlockPos pos) {
         Box box = new Box(pos).expand(0.3, 0.5, 0.3);
         List<ItemEntity> items = world.getEntitiesByClass(ItemEntity.class, box, EntityPredicates.VALID_ENTITY);
 
-        if (!items.isEmpty()) {
-            ItemEntity penalty = items.remove(0);
-            penalty.discard();
-
-            for (ItemEntity item : items) {
-                item.setVelocity((world.random.nextDouble() - 0.5) * 0.2, 0.3, (world.random.nextDouble() - 0.5) * 0.2);
-            }
+        for (ItemEntity item : items) {
+            item.discard();
         }
 
         this.currentAnimState = AnimState.FAIL;
         this.animTicks = 0;
+
+        // Cleanly wipe the controller's trigger queue and force it to accept a fresh trigger
+        var manager = this.getAnimatableInstanceCache().getManagerForId(this.hashCode());
+        if (manager != null) {
+            var controller = manager.getAnimationControllers().get("controller");
+            if (controller != null) {
+                controller.stop();
+                controller.forceAnimationReset();
+            }
+        }
+
+        triggerAnim("controller", "fail_anim");
         markDirty();
+    }
+
+    private void spawnBurpedItems(World world, BlockPos pos) {
+        // This runs after the delay to actually throw/spawn the rejected items out of the hat
+        ItemStack penaltyStack = new ItemStack(Items.ROTTEN_FLESH); // Or whatever penalty item you want to burp out
+
+        ItemEntity burpedItem = new ItemEntity(
+                world,
+                pos.getX() + 0.5,
+                pos.getY() + 1.0,
+                pos.getZ() + 0.5,
+                penaltyStack
+        );
+
+        burpedItem.setVelocity(
+                (world.random.nextDouble() - 0.5) * 0.3,
+                0.4,
+                (world.random.nextDouble() - 0.5) * 0.3
+        );
+
+        world.spawnEntity(burpedItem);
+        world.playSound(null, pos, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.BLOCKS, 1.0f, 1.0f);
     }
 
     public void triggerTeleport(PlayerEntity player) {
@@ -369,15 +398,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, state -> {
-            // 1. High priority: Play active transient animations if triggered
-            if (this.currentAnimState == AnimState.FAIL) {
-                return state.setAndContinue(FAIL);
-            }
-            if (this.currentAnimState == AnimState.STOP) {
-                return state.setAndContinue(STOP);
-            }
-
-            // 2. Standard persistent BlockState handling
             MadHatterHatBlock.HatState hatState = getCachedState().get(MadHatterHatBlock.STATE);
 
             return switch (hatState) {
@@ -388,7 +408,9 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
                 }
                 default -> state.setAndContinue(IDLE);
             };
-        }));
+        })
+                .triggerableAnim("fail_anim", FAIL)
+                .triggerableAnim("stop_anim", STOP));
     }
 
     @Override

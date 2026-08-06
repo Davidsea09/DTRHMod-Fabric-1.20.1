@@ -19,26 +19,4 @@ public class ExteriorChestRenderer extends GeoBlockRenderer<ExteriorChestEntity>
         super(new ExteriorChestModel());
     }
 
-    @Override
-    public void actuallyRender(MatrixStack poseStack, ExteriorChestEntity animatable, BakedGeoModel model, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        var player = MinecraftClient.getInstance().player;
-        if (player != null) {
-            ProgressionComponent component = ModComponents.PROGRESSION_COMPONENT.get(player);
-
-            if (!component.hasOpenedExtChest()) {
-                var controller = animatable.getAnimatableInstanceCache()
-                        .getManagerForId(0)
-                        .getAnimationControllers().get("chest_controller");
-
-                if (controller != null) {
-                    controller.forceAnimationReset();
-                }
-            }
-        }
-
-        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender,
-                partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-    }
-
-
 }

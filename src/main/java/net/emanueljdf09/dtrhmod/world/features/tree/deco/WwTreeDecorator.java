@@ -2,6 +2,7 @@ package net.emanueljdf09.dtrhmod.world.features.tree.deco;
 
 import com.mojang.serialization.Codec;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.gen.treedecorator.TreeDecorator;
@@ -20,22 +21,29 @@ public class WwTreeDecorator extends TreeDecorator {
     public void generate(Generator generator) {
         Random random = generator.getRandom();
 
-        // Loop through every single leaf block placed by the Acacia Foliage Placer
+        // Loop through every single leaf block placed during tree generation
         for (BlockPos pos : generator.getLeavesPositions()) {
 
-            // Only drop trails from the outer/lower leaves to keep it looking realistic (35% chance)
+            // Drop hanging leaf strands from outer or lower leaves (35% chance per leaf)
             if (random.nextFloat() < 0.35f) {
                 BlockPos currentPos = pos.down();
 
-                // Determine a random length for this willow strand (e.g., 2 to 4 blocks long)
+                // Random length for this hanging strand (2 to 4 blocks long)
                 int strandLength = random.nextBetween(2, 4);
 
                 for (int i = 0; i < strandLength; i++) {
                     if (generator.isAir(currentPos)) {
-                        generator.replace(currentPos, ModBlocks.WW_HANGING_LEAVES.getDefaultState());
+                        // Check if this is the very last block of the strand to apply the tip block
+                        boolean isBottomTip = (i == strandLength - 1);
+
+                        BlockState blockStateToPlace = isBottomTip
+                                ? ModBlocks.WW_HANGING_LEAVES.getDefaultState()
+                                : ModBlocks.WW_HANGING_LEAVES_PLANT.getDefaultState();
+
+                        generator.replace(currentPos, blockStateToPlace);
                         currentPos = currentPos.down(); // Move down to continue the chain
                     } else {
-                        break; // Stop drawing this strand if we hit a solid block or another leaf
+                        break; // Stop if we hit a solid block or obstruction
                     }
                 }
             }

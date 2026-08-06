@@ -238,8 +238,8 @@ public class TeleportUtil {
 
             BlockPos found = TeleportUtil.teleportToBiome(player,
                     ModDimensions.WONDERLAND_LEVEL_KEY,
-                    ModBiomes.TULGEY_FOREST,
-                    ModBiomes.TEAR_LAKE_VALLEY
+                    ModBiomes.TULGEY_WOOD,
+                    ModBiomes.VALE_OF_TEARS
             );
             component.setWonderlandSpawn(found);
         }

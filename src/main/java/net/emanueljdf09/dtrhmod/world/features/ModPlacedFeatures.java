@@ -45,22 +45,22 @@ public class ModPlacedFeatures {
         register(context, DISK_SAND_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.DISK_SAND), CountPlacementModifier.of(3), SquarePlacementModifier.of(), PlacedFeatures.OCEAN_FLOOR_WG_HEIGHTMAP, BlockFilterPlacementModifier.of(BlockPredicate.matchingFluids(new Fluid[]{Fluids.WATER})), BiomePlacementModifier.of());
 
 
-        register(context, TH_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.TH_TREE),
-                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
+        register(context, TH_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.TH_TREE_SELECTOR),
+                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(PlacedFeatures.createCountExtraModifier(6, 0.2f, 1),
                         ModBlocks.TH_SAPLING));
 
-        register(context, BB_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BB_TREE),
-                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
+        register(context, BB_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BB_TREE_SELECTOR),
+                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(PlacedFeatures.createCountExtraModifier(6, 0.2f, 1),
                         ModBlocks.BB_SAPLING));
 
         register(context, TULGEY_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.TULGEY_TREE_SELECTOR),
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
-                        PlacedFeatures.createCountExtraModifier(10, 0.1f, 3),
+                        PlacedFeatures.createCountExtraModifier(6, 0.2f, 2),
                         ModBlocks.TH_SAPLING));
 
-        register(context, WW_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.WW_TREE),
+        register(context, WW_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.WW_TREE_SELECTOR),
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
-                        PlacedFeatures.createCountExtraModifier(3, 0.1f, 2),
+                        PlacedFeatures.createCountExtraModifier(4, 0.2f, 1),
                         ModBlocks.WW_SAPLING));
 
         register(context, BIG_BLUE_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_BLUE_MUSHROOM),

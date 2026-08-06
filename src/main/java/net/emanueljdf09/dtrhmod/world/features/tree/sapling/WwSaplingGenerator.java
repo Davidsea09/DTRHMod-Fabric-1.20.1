@@ -1,4 +1,4 @@
-package net.emanueljdf09.dtrhmod.world.features.tree;
+package net.emanueljdf09.dtrhmod.world.features.tree.sapling;
 
 import net.emanueljdf09.dtrhmod.world.features.ModConfiguredFeatures;
 import net.minecraft.block.sapling.SaplingGenerator;
@@ -10,6 +10,6 @@ import org.jetbrains.annotations.Nullable;
 public class WwSaplingGenerator extends SaplingGenerator {
     @Override
     protected @Nullable RegistryKey<ConfiguredFeature<?, ?>> getTreeFeature(Random random, boolean bees) {
-        return ModConfiguredFeatures.WW_TREE;
+        return ModConfiguredFeatures.WW_TREE_SELECTOR;
     }
 }

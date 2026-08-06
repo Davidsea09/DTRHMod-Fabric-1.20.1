@@ -10,14 +10,14 @@ import net.minecraft.world.biome.*;
 import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
 
 public class ModBiomes {
-    public static final RegistryKey<Biome> TULGEY_FOREST =
-            register("tulgey_forest");
+    public static final RegistryKey<Biome> TULGEY_WOOD =
+            register("tulgey_wood");
 
     public static final RegistryKey<Biome> CHESSBOARD_FIELDS =
             register("chessboard_fields");
 
-    public static final RegistryKey<Biome> TEAR_LAKE_VALLEY =
-            register("tear_lake_valley");
+    public static final RegistryKey<Biome> VALE_OF_TEARS =
+            register("vale_of_tears");
 
     public static final RegistryKey<Biome> THE_EXTERIOR =
             register("the_exterior");
@@ -37,10 +37,10 @@ public class ModBiomes {
     }
 
     public static void bootstrap(Registerable<Biome> context) {
-        context.register(TULGEY_FOREST, tulgeyForest(context));
+        context.register(TULGEY_WOOD, tulgeyForest(context));
         context.register(THE_EXTERIOR, theExterior(context));
         context.register(ENCHANTED_FOREST, enchantedForest(context));
-        context.register(TEAR_LAKE_VALLEY, tearLakeValley(context));
+        context.register(VALE_OF_TEARS, tearLakeValley(context));
         context.register(CHESSBOARD_FIELDS, chessBoardFields(context));
     }
 
@@ -61,11 +61,11 @@ public class ModBiomes {
                 .temperature(0.7f)
                 .downfall(0.8f)
                 .effects(new BiomeEffects.Builder()
-                        .waterColor(4159204)
-                        .waterFogColor(329011)
-                        .fogColor(12632256)
-                        .skyColor(7907327)
-                        .grassColor(7907327)
+                        .waterColor(2977143)
+                        .waterFogColor(2977143)
+                        .fogColor(4416619)
+                        .skyColor(4416619)
+                        .grassColor(4416619)
                         .build())
                 .spawnSettings(spawnBuilder.build())
                 .generationSettings(biomeBuilder.build())
@@ -87,11 +87,11 @@ public class ModBiomes {
                 .temperature(0.7f)
                 .downfall(0.8f)
                 .effects(new BiomeEffects.Builder()
-                        .waterColor(4159204)
-                        .waterFogColor(329011)
-                        .fogColor(12632256)
-                        .skyColor(7907986)
-                        .grassColor(7907986)
+                        .waterColor(2919324)
+                        .waterFogColor(2919324)
+                        .fogColor(4418396)
+                        .skyColor(4747926)
+                        .grassColor(4418396)
                         .build())
                 .spawnSettings(spawnBuilder.build())
                 .generationSettings(biomeBuilder.build())
@@ -111,11 +111,11 @@ public class ModBiomes {
                 .temperature(0.7f)
                 .downfall(0.8f)
                 .effects(new BiomeEffects.Builder()
-                        .waterColor(4159204)
-                        .waterFogColor(329011)
-                        .fogColor(12632256)
-                        .skyColor(7907853)
-                        .grassColor(7907853)
+                        .waterColor(2461864)
+                        .waterFogColor(2461864)
+                        .fogColor(6000314)
+                        .skyColor(6000314)
+                        .grassColor(3576124)
                         .build())
                 .spawnSettings(spawnBuilder.build())
                 .generationSettings(biomeBuilder.build())

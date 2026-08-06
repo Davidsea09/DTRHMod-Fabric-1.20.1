@@ -3,11 +3,10 @@ package net.emanueljdf09.dtrhmod.block;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.custom.*;
 import net.emanueljdf09.dtrhmod.block.custom.mirror.MirrorBlock;
-import net.emanueljdf09.dtrhmod.item.block.ExteriorChestItem;
 import net.emanueljdf09.dtrhmod.world.features.ModConfiguredFeatures;
-import net.emanueljdf09.dtrhmod.world.features.tree.BbSaplingGenerator;
-import net.emanueljdf09.dtrhmod.world.features.tree.ThSaplingGenerator;
-import net.emanueljdf09.dtrhmod.world.features.tree.WwSaplingGenerator;
+import net.emanueljdf09.dtrhmod.world.features.tree.sapling.BbSaplingGenerator;
+import net.emanueljdf09.dtrhmod.world.features.tree.sapling.ThSaplingGenerator;
+import net.emanueljdf09.dtrhmod.world.features.tree.sapling.WwSaplingGenerator;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -149,7 +148,7 @@ public class ModBlocks {
             new LeavesBlock(FabricBlockSettings.copyOf(Blocks.OAK_LEAVES).strength(0.2f).nonOpaque()));
     public static final Block WW_HANGING_LEAVES = registerBlockWithItem("ww_hanging_leaves",
                 new WHangingLeavesHeadBlock(FabricBlockSettings.create().sounds(BlockSoundGroup.VINE).nonOpaque().noCollision().ticksRandomly().breakInstantly().pistonBehavior(PistonBehavior.DESTROY)));
-public static final Block WW_HANGING_LEAVES_PLANT = registerBlockWithItem("ww_hanging_leaves_plant",
+    public static final Block WW_HANGING_LEAVES_PLANT = registerBlockWithItem("ww_hanging_leaves_plant",
                 new WHangingLeavesBodyBlock(FabricBlockSettings.create().sounds(BlockSoundGroup.VINE).nonOpaque().noCollision().ticksRandomly().breakInstantly().pistonBehavior(PistonBehavior.DESTROY)));
 
     public static final Block BB_SAPLING = registerBlockWithItem("bb_sapling",

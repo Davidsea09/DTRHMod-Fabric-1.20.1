@@ -1,6 +1,20 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
+		"active": {
+			"loop": true,
+			"animation_length": 11.8333,
+			"bones": {
+				"hat": {
+					"position": {
+						"vector": [0, "math.sin(query.anim_time * 90) * 1", 0]
+					},
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				}
+			}
+		},
 		"idle": {
 			"loop": true,
 			"bones": {
@@ -10,20 +24,6 @@
 					},
 					"position": {
 						"vector": [0, 0, 0]
-					},
-					"scale": {
-						"vector": [1, 1, 1]
-					}
-				}
-			}
-		},
-		"active": {
-			"loop": true,
-			"animation_length": 11.8333,
-			"bones": {
-				"hat": {
-					"position": {
-						"vector": [0, "math.sin(query.anim_time * 90) * 1", 0]
 					},
 					"scale": {
 						"vector": [1, 1, 1]
@@ -76,7 +76,7 @@
 			}
 		},
 		"success": {
-			"animation_length": 9,
+			"animation_length": 4,
 			"bones": {
 				"hat": {
 					"rotation": {
@@ -86,10 +86,6 @@
 						"4.0": {
 							"vector": [0, 1200, 0],
 							"easing": "easeInQuad"
-						},
-						"9.0": {
-							"vector": [0, 3700, 0],
-							"easing": "linear"
 						}
 					},
 					"position": {
@@ -98,6 +94,9 @@
 						},
 						"2.0": {
 							"vector": [0, 0, 0]
+						},
+						"4.0": {
+							"vector": [0, -7, 0]
 						}
 					},
 					"scale": {
@@ -108,7 +107,8 @@
 							"vector": [1, 1, 1]
 						},
 						"4.0": {
-							"vector": [1.8, 1, 1.8]
+							"vector": [6, 1, 6],
+							"easing": "easeInQuad"
 						}
 					}
 				}
@@ -130,10 +130,10 @@
 						}
 					},
 					"position": {
-						"vector": [0, 0, 0]
+						"vector": [0, -7, 0]
 					},
 					"scale": {
-						"vector": [1.8, 1, 1.8]
+						"vector": [6, 1, 6]
 					}
 				}
 			}
@@ -154,18 +154,20 @@
 					},
 					"position": {
 						"0.0": {
-							"vector": [0, 0, 0]
+							"vector": [0, -7, 0]
 						},
 						"5.0": {
-							"vector": [0, 0, 0]
+							"vector": [0, 0, 0],
+							"easing": "easeOutQuad"
 						}
 					},
 					"scale": {
 						"0.0": {
-							"vector": [1.8, 1, 1.8]
+							"vector": [6, 1, 6]
 						},
 						"5.0": {
-							"vector": [1, 1, 1]
+							"vector": [1, 1, 1],
+							"easing": "easeOutQuad"
 						}
 					}
 				}

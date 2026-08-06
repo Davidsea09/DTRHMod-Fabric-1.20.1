@@ -25,8 +25,8 @@ public class ModBiomeTagProvider extends FabricTagProvider<Biome> {
 
         getOrCreateTagBuilder(ModTags.Biomes.WONDERLAND_BIOMES)
                 .add(ModBiomes.CHESSBOARD_FIELDS)
-                .add(ModBiomes.TEAR_LAKE_VALLEY)
-                .add(ModBiomes.TULGEY_FOREST);
+                .add(ModBiomes.VALE_OF_TEARS)
+                .add(ModBiomes.TULGEY_WOOD);
 
         getOrCreateTagBuilder(ModTags.Biomes.IS_CHESSBOARD)
                 .add(ModBiomes.CHESSBOARD_FIELDS);

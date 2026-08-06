@@ -69,7 +69,7 @@ public class MadHatterHatBlock extends BlockWithEntity implements BlockEntityPro
 
     public enum HatState implements StringIdentifiable {
         IDLE("idle"),
-        PORTAL("portal");
+        PORTAL("portal"); // Make sure this is added so blockstates match up!
 
         private final String name;
         HatState(String name) { this.name = name; }

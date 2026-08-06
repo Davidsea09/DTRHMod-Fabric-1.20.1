@@ -20,18 +20,24 @@ public class ClientAnimationHelper {
         return state.setAndContinue(idle);
     }
 
-    public static PlayState handleChestAnimation(AnimationState<?> state, RawAnimation closed, RawAnimation invisible) {
+    public static PlayState handleChestAnimation(AnimationState<?> state, RawAnimation closed, RawAnimation openNormal, RawAnimation takeGrownItems, RawAnimation openGrown) {
         MinecraftClient client = MinecraftClient.getInstance();
 
         if (client.player != null) {
             ProgressionComponent component = ModComponents.PROGRESSION_COMPONENT.get(client.player);
 
             if (component.hasOpenedExtGrownChest()) {
-                state.getController().setAnimation(invisible);
-                return PlayState.CONTINUE;
+                return state.setAndContinue(takeGrownItems);
+            }
+
+            if (component.hasOpenedExtChest() && client.player.hasStatusEffect(ModEffects.GROW)) {
+                return state.setAndContinue(openGrown);
+            }
+            if (component.hasOpenedExtChest()) {
+                return state.setAndContinue(openNormal);
             }
         }
 
-        return PlayState.CONTINUE;
+        return state.setAndContinue(closed);
     }
 }

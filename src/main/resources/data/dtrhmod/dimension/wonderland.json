@@ -8,7 +8,7 @@
       "preset": null,
       "biomes": [
         {
-          "biome": "dtrhmod:tulgey_forest",
+          "biome": "dtrhmod:tulgey_wood",
           "parameters": {
             "temperature": [
               -0.5,
@@ -35,7 +35,7 @@
           }
         },
         {
-          "biome": "dtrhmod:tear_lake_valley",
+          "biome": "dtrhmod:vale_of_tears",
           "parameters": {
             "temperature": [
               -0.6,
