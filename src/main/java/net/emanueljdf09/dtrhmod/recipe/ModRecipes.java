@@ -22,5 +22,8 @@ public class ModRecipes {
         Registry.register(Registries.RECIPE_TYPE,
                 new Identifier(DownTheRabbitHole.MOD_ID, "hat_ritual"),
                 HatRitualRecipe.Type.INSTANCE);
+
+        DownTheRabbitHole.LOGGER.info("Registering Recipes for " + DownTheRabbitHole.MOD_ID);
+
     }
 }

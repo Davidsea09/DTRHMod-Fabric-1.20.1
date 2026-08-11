@@ -3,6 +3,7 @@ package net.emanueljdf09.dtrhmod.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementRewards;
 import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
@@ -53,7 +54,7 @@ public class HatRitualRecipeJsonBuilder {
         Advancement.Builder recipeAdvancement = Advancement.Builder.createUntelemetered()
                 .parent(CraftingRecipeJsonBuilder.ROOT)
                 .criterion("has_the_recipe", RecipeUnlockedCriterion.create(id))
-                .rewards(net.minecraft.advancement.AdvancementRewards.Builder.recipe(id));
+                .rewards(AdvancementRewards.Builder.recipe(id));
 
         this.advancementBuilder.getCriteria().forEach(recipeAdvancement::criterion);
 

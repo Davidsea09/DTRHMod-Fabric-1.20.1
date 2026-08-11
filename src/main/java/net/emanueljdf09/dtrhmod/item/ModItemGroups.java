@@ -2,17 +2,24 @@ package net.emanueljdf09.dtrhmod.item;
 
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
-import net.emanueljdf09.dtrhmod.util.ModEffects;
+import net.emanueljdf09.dtrhmod.compat.jei.TeapotRecipeVariant;
+import net.emanueljdf09.dtrhmod.recipe.TeapotRecipe;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
-import net.minecraft.potion.Potions;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModItemGroups {
 
@@ -24,7 +31,6 @@ public class ModItemGroups {
                         entries.add(ModItems.POCKETWATCH);
                         entries.add(ModItems.EXTERIOR_KEY);
                         entries.add(ModItems.EMPTY_CUP);
-                        entries.add(ModItems.FILLED_TEA_CUP);
                         entries.add(ModBlocks.TEAPOT_BLOCK.asItem());
                         entries.add(ModBlocks.BLUE_MUSHROOM.asItem());
                         entries.add(ModBlocks.BLUE_MUSHROOM_BLOCK.asItem());
@@ -66,6 +72,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.TH_TRAPDOOR.asItem());
                         entries.add(ModBlocks.TH_BUTTON.asItem());
                         entries.add(ModBlocks.TH_PRESSURE_PLATE.asItem());
+                        entries.add(ModItems.TH_SIGN);
+                        entries.add(ModItems.HANGING_TH_SIGN);
 
                         entries.add(ModBlocks.WW_SAPLING.asItem());
                         entries.add(ModBlocks.WW_LEAVES.asItem());
@@ -84,6 +92,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.WW_TRAPDOOR.asItem());
                         entries.add(ModBlocks.WW_BUTTON.asItem());
                         entries.add(ModBlocks.WW_PRESSURE_PLATE.asItem());
+                        entries.add(ModItems.WW_SIGN);
+                        entries.add(ModItems.HANGING_WW_SIGN);
 
                         entries.add(ModBlocks.BB_SAPLING.asItem());
                         entries.add(ModBlocks.BB_LEAVES.asItem());
@@ -101,6 +111,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.BB_TRAPDOOR.asItem());
                         entries.add(ModBlocks.BB_BUTTON.asItem());
                         entries.add(ModBlocks.BB_PRESSURE_PLATE.asItem());
+                        entries.add(ModItems.BB_SIGN);
+                        entries.add(ModItems.HANGING_BB_SIGN);
 
 
                         entries.add(ModBlocks.LAWN_DAISY_PATCH.asItem());
@@ -112,8 +124,44 @@ public class ModItemGroups {
                         entries.add(ModBlocks.EXTERIOR_PORTAL.asItem());
                         entries.add(ModBlocks.MIRROR_BLOCK.asItem());
 
+                        MinecraftClient client = MinecraftClient.getInstance();
+                        if (client.world != null) {
+                            for (ItemStack stack : getTeaVariants(client.getServer())) {
+                                entries.add(stack);
+                            }
+                        }
                     }).build());
 
+    public static List<ItemStack> getTeaVariants(MinecraftServer server) {
+        List<ItemStack> teaVariants = new ArrayList<>();
+
+        RecipeManager recipeManager = null;
+        if (server != null && server.getOverworld() != null) {
+            recipeManager = server.getOverworld().getRecipeManager();
+        } else {
+            MinecraftClient client = MinecraftClient.getInstance();
+            if (client.world != null) {
+                recipeManager = client.world.getRecipeManager();
+            }
+        }
+
+        if (recipeManager == null) return teaVariants;
+
+        List<TeapotRecipe> recipes = recipeManager.listAllOfType(TeapotRecipe.Type.INSTANCE);
+        var registryManager = MinecraftClient.getInstance().world.getRegistryManager();
+
+        for (TeapotRecipe recipe : recipes) {
+            for (TeapotRecipeVariant.LiquidType liquidType : TeapotRecipeVariant.LiquidType.values()) {
+                TeapotRecipeVariant variant = new TeapotRecipeVariant(recipe, liquidType);
+                ItemStack variantStack = variant.getOutput(registryManager);
+
+                if (!variantStack.isEmpty()) {
+                    teaVariants.add(variantStack);
+                }
+            }
+        }
+        return teaVariants;
+    }
 
     public static void registerItemGroups() {
         DownTheRabbitHole.LOGGER.info("Registering Item Groups for " + DownTheRabbitHole.MOD_ID);

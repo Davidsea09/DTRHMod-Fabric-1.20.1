@@ -41,7 +41,6 @@ public class MadHatterHatBlock extends BlockWithEntity implements BlockEntityPro
 
     @Override
     public BlockRenderType getRenderType(BlockState state) {
-       // return BlockRenderType.ENTITYBLOCK_ANIMATED;
         return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
@@ -69,7 +68,7 @@ public class MadHatterHatBlock extends BlockWithEntity implements BlockEntityPro
 
     public enum HatState implements StringIdentifiable {
         IDLE("idle"),
-        PORTAL("portal"); // Make sure this is added so blockstates match up!
+        PORTAL("portal");
 
         private final String name;
         HatState(String name) { this.name = name; }

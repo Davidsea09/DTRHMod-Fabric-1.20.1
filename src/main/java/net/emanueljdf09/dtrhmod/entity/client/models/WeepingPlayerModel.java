@@ -5,7 +5,6 @@ import net.emanueljdf09.dtrhmod.entity.custom.WeepingPlayerEntity;
 import net.emanueljdf09.dtrhmod.util.TextureProcessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,9 +40,7 @@ public class WeepingPlayerModel extends GeoModel<WeepingPlayerEntity> {
         int poolIndex = animatable.getSkinPoolIndex();
         MinecraftClient client = MinecraftClient.getInstance();
 
-        // --- CASE 1: IMITATE CLOSEST PLAYER ---
         if (poolIndex == -1 && client.world != null) {
-            // Find the closest active player in rendering distance
             PlayerEntity closestPlayer = client.world.getClosestPlayer(animatable.getX(), animatable.getY(), animatable.getZ(), 24.0, false);
 
             if (closestPlayer instanceof AbstractClientPlayerEntity player) {
@@ -57,7 +54,6 @@ public class WeepingPlayerModel extends GeoModel<WeepingPlayerEntity> {
                     Identifier originalSkin = player.getSkinTexture();
                     NativeImage originalNative = NativeImage.read(client.getResourceManager().getResource(originalSkin).get().getInputStream());
 
-                    // Run your grayscale conversion processor
                     NativeImage stoneNative = TextureProcessor.convertToStone(originalNative);
                     NativeImageBackedTexture dynamicTex = new NativeImageBackedTexture(stoneNative);
                     Identifier stoneIdentifier = new Identifier(DownTheRabbitHole.MOD_ID, "dynamic_stone_" + player.getUuid());
@@ -72,7 +68,6 @@ public class WeepingPlayerModel extends GeoModel<WeepingPlayerEntity> {
             return FALLBACK_STONE_TEXTURE;
         }
 
-        // --- CASE 2: OFFLINE LOCAL POOL SKINS (ALSO GRAYSCALE) ---
         if (poolIndex >= LOCAL_SKIN_POOL.size() || poolIndex < 0) poolIndex = 0;
         Identifier localSkinPath = LOCAL_SKIN_POOL.get(poolIndex);
         String cacheKey = localSkinPath.toString();

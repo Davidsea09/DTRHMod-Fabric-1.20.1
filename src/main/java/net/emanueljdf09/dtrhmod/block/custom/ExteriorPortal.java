@@ -2,6 +2,7 @@ package net.emanueljdf09.dtrhmod.block.custom;
 
 import net.emanueljdf09.dtrhmod.util.TeleportUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,4 +23,8 @@ public class ExteriorPortal extends Block {
         TeleportUtil.teleportToWonderland(player);
     }
 
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.INVISIBLE;
+    }
 }

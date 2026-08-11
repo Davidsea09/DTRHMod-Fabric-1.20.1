@@ -4,6 +4,7 @@ import net.emanueljdf09.dtrhmod.block.ModBlockEntities;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.entity.custom.WhiteRabbitEntity;
 import net.emanueljdf09.dtrhmod.util.ModComponents;
+import net.emanueljdf09.dtrhmod.util.ModEffects;
 import net.emanueljdf09.dtrhmod.util.TeleportUtil;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
 import net.emanueljdf09.dtrhmod.world.biome.ModBiomes;
@@ -21,6 +22,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -33,7 +35,7 @@ public class RabbitHoleBlockEntity extends BlockEntity {
     }
 
     public void handlePlayerCollision(ServerPlayerEntity player) {
-        if (!player.isInSwimmingPose()) return;
+        if (!player.isInSwimmingPose() || player.hasStatusEffect(ModEffects.GROW)) return;
 
         ProgressionComponent component = ModComponents.PROGRESSION_COMPONENT.get(player);
         RegistryKey<World> currentDim = player.getWorld().getRegistryKey();
@@ -51,7 +53,7 @@ public class RabbitHoleBlockEntity extends BlockEntity {
             } else {
                 TeleportUtil.teleportToWonderland(player);
             }
-            return; // Stops execution immediately so it doesn't leak into the next if-statement
+            return;
         }
 
         if (currentDim == ModDimensions.EXTERIOR_LEVEL_KEY) {
@@ -91,7 +93,6 @@ public class RabbitHoleBlockEntity extends BlockEntity {
         }
     }
 
-    // --- BACKGROUND GUIDING RABBIT RADAR ---
     public static void tick(World world, BlockPos pos, BlockState state, RabbitHoleBlockEntity blockEntity) {
         blockEntity.scanCooldown++;
         if (blockEntity.scanCooldown < 20) return;
@@ -99,10 +100,8 @@ public class RabbitHoleBlockEntity extends BlockEntity {
 
         ServerWorld serverWorld = (ServerWorld) world;
 
-        // Don't spawn guide rabbits if the hole block is located inside Wonderland or the Exterior drop world!
         if (world.getRegistryKey() != World.OVERWORLD) return;
 
-        // Check for active rabbits
         Box checkRabbitBox = new Box(pos).expand(40);
         List<WhiteRabbitEntity> nearbyRabbits = serverWorld.getEntitiesByClass(
                 WhiteRabbitEntity.class,
@@ -111,7 +110,6 @@ public class RabbitHoleBlockEntity extends BlockEntity {
         );
         if (!nearbyRabbits.isEmpty()) return;
 
-        // Check for eligible players
         Box checkPlayerBox = new Box(pos).expand(40);
         List<ServerPlayerEntity> nearbyPlayers = serverWorld.getEntitiesByClass(
                 ServerPlayerEntity.class,
@@ -125,7 +123,13 @@ public class RabbitHoleBlockEntity extends BlockEntity {
             if (!component.hasMetWhiteRabbit()) {
                 WhiteRabbitEntity rabbit = ModEntities.WHITE_RABBIT.create(serverWorld);
                 if (rabbit != null) {
-                    BlockPos spawnPos = pos.up();
+
+                    int offsetX = world.random.nextInt(11) - 5;
+                    int offsetZ = world.random.nextInt(11) - 5;
+
+                    BlockPos targetPos = pos.add(offsetX, 0, offsetZ);
+
+                    BlockPos spawnPos = serverWorld.getTopPosition(Heightmap.Type.WORLD_SURFACE, targetPos);
                     rabbit.refreshPositionAndAngles(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, world.random.nextFloat() * 360F, 0);
                     rabbit.setRabbitHolePos(pos);
                     serverWorld.spawnEntityAndPassengers(rabbit);

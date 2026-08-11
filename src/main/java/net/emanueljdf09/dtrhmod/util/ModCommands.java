@@ -12,10 +12,8 @@ public class ModCommands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(CommandManager.literal("dtrh")
-                    // Requires Level 2 Operator (OP) permissions to run
                     .requires(source -> source.hasPermissionLevel(2))
 
-                    // --- SUBCOMMAND: SET ---
                     .then(CommandManager.literal("stage")
                             .then(CommandManager.literal("set")
                                     .then(CommandManager.argument("target", EntityArgumentType.player())
@@ -27,14 +25,12 @@ public class ModCommands {
                                                         ProgressionComponent story = ModComponents.PROGRESSION_COMPONENT.get(player);
                                                         story.setCompletedStages(targetStage);
 
-                                                        // Mirror unlocks automatically if they jump to stage 1 or higher
                                                         if (targetStage >= 1) {
                                                             story.setWonderlandMirrorUnlocked(true);
                                                         } else {
                                                             story.setWonderlandMirrorUnlocked(false);
                                                         }
 
-                                                        // Sync data directly across the packet pipeline
                                                         ModComponents.PROGRESSION_COMPONENT.sync(player);
 
                                                         context.getSource().sendFeedback(() -> Text.literal(
@@ -47,7 +43,6 @@ public class ModCommands {
                                             )
                                     )
                             )
-                            // --- SUBCOMMAND: QUERY (Check current stage) ---
                             .then(CommandManager.literal("query")
                                     .then(CommandManager.argument("target", EntityArgumentType.player())
                                             .executes(context -> {

@@ -2,8 +2,6 @@ package net.emanueljdf09.dtrhmod.block.custom;
 
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.minecraft.block.*;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -16,13 +14,12 @@ public class WHangingLeavesHeadBlock extends AbstractPlantStemBlock {
     public static final VoxelShape SHAPE = Block.createCuboidShape(4.0, 9.0, 4.0, 12.0, 16.0, 12.0);
 
     public WHangingLeavesHeadBlock(Settings settings) {
-        super(settings, Direction.DOWN, SHAPE, false, 0.1);
-        this.setDefaultState(this.stateManager.getDefaultState().with(AGE, 0));
-    }
+        super(settings, Direction.DOWN, SHAPE, false, 0.14D);
+        this.setDefaultState(this.stateManager.getDefaultState().with(AGE, 0)); }
 
     @Override
     protected int getGrowthLength(Random random) {
-        return 5;
+        return random.nextInt(4) + 2;
     }
 
     @Override
@@ -48,11 +45,10 @@ public class WHangingLeavesHeadBlock extends AbstractPlantStemBlock {
         return blockState.isOf(ModBlocks.WW_LEAVES) ||
                 blockState.isOf(ModBlocks.WW_HANGING_LEAVES_PLANT) ||
                 blockState.isSideSolidFullSquare(world, blockPos, Direction.DOWN);
-
     }
 
     @Override
     public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
-        return true;
+        return world.getBlockState(pos.down()).isAir();
     }
 }

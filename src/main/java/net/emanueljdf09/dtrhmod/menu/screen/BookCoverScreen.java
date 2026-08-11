@@ -55,7 +55,7 @@ public class BookCoverScreen extends Screen {
 
         public BookCoverScreen(String triggerKey) {
             super(NarratorManager.EMPTY);
-            this.bookStack = ItemStack.EMPTY; // No item required!
+            this.bookStack = ItemStack.EMPTY;
             this.triggerKey = triggerKey;
 
             if ("wonderland_intro".equals(triggerKey)) {

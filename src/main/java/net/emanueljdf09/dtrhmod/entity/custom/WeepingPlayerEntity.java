@@ -4,16 +4,24 @@ import net.emanueljdf09.dtrhmod.entity.ai.goals.StalkerGoal;
 import net.emanueljdf09.dtrhmod.entity.client.models.WeepingPlayerModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -25,6 +33,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class WeepingPlayerEntity extends PathAwareEntity implements GeoEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private int poseChangeTimer = 0;
 
     public WeepingPlayerEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
@@ -42,7 +51,7 @@ public class WeepingPlayerEntity extends PathAwareEntity implements GeoEntity {
     @Override
     protected void initDataTracker() {
         super.initDataTracker();
-        this.dataTracker.startTracking(POSE_ID, this.random.nextInt(6));
+        this.dataTracker.startTracking(POSE_ID, this.random.nextInt(3));
         this.dataTracker.startTracking(SKIN_POOL_INDEX, this.random.nextInt(4) - 1);
         this.dataTracker.startTracking(IS_SLIM_MODEL, false);
     }
@@ -109,12 +118,27 @@ public class WeepingPlayerEntity extends PathAwareEntity implements GeoEntity {
 
     @Override
     public boolean isPushable() {
-        return false;
+        return true;
     }
-
     @Override
     public void pushAwayFrom(Entity entity) {
 
+        if (entity instanceof WeepingPlayerEntity) {
+            double distanceSq = this.squaredDistanceTo(entity);
+            if (distanceSq < 2.25D) {
+                double dx = this.getX() - entity.getX();
+                double dz = this.getZ() - entity.getZ();
+                double f = Math.sqrt(dx * dx + dz * dz);
+                if (f != 0.0) {
+                    dx /= f;
+                    dz /= f;
+                    double pushPower = 0.1D;
+                    this.addVelocity(dx * pushPower, 0.0D, dz * pushPower);
+                }
+            }
+            return;
+        }
+        super.pushAwayFrom(entity);
     }
 
     @Override
@@ -131,7 +155,41 @@ public class WeepingPlayerEntity extends PathAwareEntity implements GeoEntity {
                     this.dataTracker.set(IS_SLIM_MODEL, shouldBeSlim);
                 }
             }
+
+            if (!this.isAiFrozen()) {
+                this.poseChangeTimer++;
+                if (this.poseChangeTimer >= 100) {
+                    this.poseChangeTimer = 0;
+                    int newPose = this.random.nextInt(3);
+                    this.dataTracker.set(POSE_ID, newPose);
+                }
+            } else {
+                this.poseChangeTimer = 0;
+            }
         }
+
+    }
+
+    @Override
+    public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+        EntityData data = super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+
+        initEquipment(random, difficulty);
+
+        return data;
+    }
+
+    protected void initEquipment(Random random, LocalDifficulty localDifficulty) {
+        super.initEquipment(random, localDifficulty);
+        if (random.nextFloat() < (this.getWorld().getDifficulty() == Difficulty.HARD ? 0.05F : 0.01F)) {
+            int i = random.nextInt(3);
+            if (i == 0) {
+                this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+            } else {
+                this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SHOVEL));
+            }
+        }
+
     }
 
     @Override
@@ -173,3 +231,5 @@ public class WeepingPlayerEntity extends PathAwareEntity implements GeoEntity {
         return this.cache;
     }
 }
+
+

@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.item.ModItems;
-import net.emanueljdf09.dtrhmod.util.ModUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -26,6 +25,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +96,7 @@ public class StoryBookScreen extends Screen {
         }  else if (stack.isOf(ModItems.SNOW_WHITE_STORYBOOK)) {
             bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/sw_open.png");
         } else {
-            bookTexture = BOOK_TEXTURE; // fallback
+            bookTexture = BOOK_TEXTURE;
         }
     }
 
@@ -119,19 +119,15 @@ public class StoryBookScreen extends Screen {
     }
 
     protected static StoryBookScreen.Contents createTranslatableContents(String textKey) {
-        net.minecraft.util.Language language = net.minecraft.util.Language.getInstance();
-
+        Language language = Language.getInstance();
         String rawText = language.get(textKey);
 
-        List<String> rawPages = ModUtils.splitIntoPages(rawText);
+        String[] rawPages = rawText.split("\n\n");
         List<StringVisitable> formattedPages = new ArrayList<>();
 
-        boolean isFirstPage = true;
         for (String pageText : rawPages) {
-            formattedPages.add(Text.Serializer.fromLenientJson(pageText) != null
-                ? Text.Serializer.fromLenientJson(pageText)
-                : Text.literal(pageText));
-            }
+            formattedPages.add(Text.literal(pageText.trim()));
+        }
 
         return new StoryBookScreen.Contents() {
             @Override
@@ -177,6 +173,7 @@ public class StoryBookScreen extends Screen {
         this.leftPos = (this.width - 295) / 2;
         this.topPos = (this.height - 180) / 2;
         createWidgets();
+        updatePageButtons();
     }
 
     protected void createWidgets() {
@@ -251,20 +248,17 @@ public class StoryBookScreen extends Screen {
 
         if (!(this.getFocused() instanceof TextFieldWidget)) {
 
-            // Close inventory key
             if (MinecraftClient.getInstance().options.inventoryKey.matchesKey(keyCode, scanCode)) {
                 this.close();
                 return true;
             }
 
-            // Left arrow / PageUp / Left keybinding
             if (keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_PAGE_UP
                     || MinecraftClient.getInstance().options.leftKey.matchesKey(keyCode, scanCode)) {
                 this.goToPreviousPage();
                 return true;
             }
 
-            // Right arrow / PageDown / Right keybinding
             if (keyCode == GLFW.GLFW_KEY_RIGHT || keyCode == GLFW.GLFW_KEY_PAGE_DOWN
                     || MinecraftClient.getInstance().options.rightKey.matchesKey(keyCode, scanCode)) {
                 this.goToNextPage();
@@ -428,7 +422,6 @@ public class StoryBookScreen extends Screen {
            if (mouseX >= (double) (this.leftPos + 159) && mouseX < (double) (this.leftPos + 159 + 114)) {
                 isOverRightPage = true;
             } else {
-                // Check if mouse is over left page
                 if (!(mouseX >= (double) (this.leftPos + 22)) || !(mouseX < (double) (this.leftPos + 22 + 114))) {
                     return null;
                 }
@@ -449,7 +442,6 @@ public class StoryBookScreen extends Screen {
                 int linesCount = Math.min(128 / 9, pageContents.size());
                 Objects.requireNonNull(this.textRenderer);
 
-                // Check if within text area height
                 if (y < 9 * linesCount + linesCount) {
                     Objects.requireNonNull(this.textRenderer);
                     int clickedLine = y / 9;

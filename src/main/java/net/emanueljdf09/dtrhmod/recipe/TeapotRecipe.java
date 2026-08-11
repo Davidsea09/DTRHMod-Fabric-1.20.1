@@ -2,8 +2,6 @@ package net.emanueljdf09.dtrhmod.recipe;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
-import net.emanueljdf09.dtrhmod.item.ModItems;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.SimpleInventory;

@@ -9,14 +9,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class WeepingPlayerRenderer extends GeoEntityRenderer<WeepingPlayerEntity> {
 

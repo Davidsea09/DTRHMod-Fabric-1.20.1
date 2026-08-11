@@ -39,37 +39,37 @@ public class ModDimensions {
 
     public static void bootstrapType(Registerable<DimensionType> context) {
         context.register(WONDERLAND_DIM_TYPE, new DimensionType(
-                OptionalLong.of(12900), // fixedTime
-                true, //hasSkyLight
-                false, //hasCeiling
-                false, //ultraWarm
-                true, //natural
-                1.0, //coordinateSacel
-                true, //bedWorks
-                true, //respawnAnchorWorks
-                0, //minY
-                256, //MaxHeight
-                256, //logicalHeight
-                BlockTags.INFINIBURN_OVERWORLD, //infiniburn
-                DimensionTypes.OVERWORLD_ID, //effectsLocation
-                0.3f, //ambientlight              piglinsafe   Raids
+                OptionalLong.of(12900),
+                true,
+                false,
+                false,
+                true,
+                1.0,
+                true,
+                true,
+                0,
+                256,
+                256,
+                BlockTags.INFINIBURN_OVERWORLD,
+                DimensionTypes.OVERWORLD_ID,
+                0.3f,
                 new DimensionType.MonsterSettings(true, false, UniformIntProvider.create(0, 7), 7)));
 
         context.register(EXTERIOR_DIM_TYPE, new DimensionType(
-                OptionalLong.of(6000), // fixedTime
-                false, //hasSkyLight
-                false, //hasCeiling
-                false, //ultraWarm
-                false, //natural
-                1.0, //coordinateScale
-                false, //bedWorks
-                false, //respawnAnchorWorks
-                0, //minY
-                256, //MaxHeight
-                256, //logicalHeight
-                BlockTags.INFINIBURN_OVERWORLD, //infiniburn
-                DimensionTypes.THE_END_ID, //effectsLocation
-                0.3f, //ambientlight              piglinsafe   Raids
+                OptionalLong.of(6000),
+                false,
+                false,
+                false,
+                false,
+                1.0,
+                false,
+                false,
+                0,
+                256,
+                256,
+                BlockTags.INFINIBURN_OVERWORLD,
+                DimensionTypes.THE_END_ID,
+                0.3f,
                 new DimensionType.MonsterSettings(true, false, UniformIntProvider.create(0, 0), 0)));
 
         context.register(STORYBOOK_DIM_TYPE, new DimensionType(

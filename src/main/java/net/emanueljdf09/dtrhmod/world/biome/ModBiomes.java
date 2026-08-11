@@ -7,7 +7,6 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.*;
-import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
 
 public class ModBiomes {
     public static final RegistryKey<Biome> TULGEY_WOOD =
@@ -24,6 +23,9 @@ public class ModBiomes {
 
     public static final RegistryKey<Biome> ENCHANTED_FOREST =
             register("enchanted_forest");
+
+    public static final RegistryKey<Biome> WONDERLAND_OCEAN =
+            register("wonderland_ocean");
 
     public static final RegistryKey<Biome> LAND_OF_FLOWERS =
             register("land_of_flowers");
@@ -44,9 +46,6 @@ public class ModBiomes {
         context.register(CHESSBOARD_FIELDS, chessBoardFields(context));
     }
 
-    public static void globalWonderlandGeneration(GenerationSettings.LookupBackedBuilder builder) {
-    }
-
     public  static Biome tulgeyForest(Registerable<Biome> context) {
         SpawnSettings.Builder spawnBuilder = new SpawnSettings.Builder();
 
@@ -57,7 +56,7 @@ public class ModBiomes {
         WonderBiomeFeatures.addDefaultDisks(biomeBuilder);
         WonderBiomeFeatures.addTulgeyWoodsVegetation(biomeBuilder);
         return new Biome.Builder()
-                .precipitation(true)
+                .precipitation(false)
                 .temperature(0.7f)
                 .downfall(0.8f)
                 .effects(new BiomeEffects.Builder()
@@ -83,7 +82,7 @@ public class ModBiomes {
         WonderBiomeFeatures.addValeOfTearsVegetation(biomeBuilder);
 
         return new Biome.Builder()
-                .precipitation(true)
+                .precipitation(false)
                 .temperature(0.7f)
                 .downfall(0.8f)
                 .effects(new BiomeEffects.Builder()
@@ -107,7 +106,7 @@ public class ModBiomes {
 
         WonderBiomeFeatures.addDefaultDisks(biomeBuilder);
         return new Biome.Builder()
-                .precipitation(true)
+                .precipitation(false)
                 .temperature(0.7f)
                 .downfall(0.8f)
                 .effects(new BiomeEffects.Builder()

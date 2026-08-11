@@ -3,12 +3,13 @@ package net.emanueljdf09.dtrhmod.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementCriterion;
+import net.minecraft.advancement.AdvancementRewards;
 import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.registry.Registries;
@@ -23,7 +24,7 @@ public class TeapotRecipeJsonBuilder {
     private final Item output;
     private final int outputCount;
     private final List<Ingredient> ingredients = new ArrayList<>();
-    private Ingredient fluid = Ingredient.ofItems(net.minecraft.item.Items.WATER_BUCKET);
+    private Ingredient fluid = Ingredient.ofItems(Items.WATER_BUCKET);
     private int cupCount = 4;
     private final List<JsonObject> effects = new ArrayList<>();
 
@@ -81,7 +82,7 @@ public class TeapotRecipeJsonBuilder {
         Advancement.Builder recipeAdvancement = Advancement.Builder.createUntelemetered()
                 .parent(CraftingRecipeJsonBuilder.ROOT)
                 .criterion("has_the_recipe", RecipeUnlockedCriterion.create(id))
-                .rewards(net.minecraft.advancement.AdvancementRewards.Builder.recipe(id));
+                .rewards(AdvancementRewards.Builder.recipe(id));
 
         this.advancementBuilder.getCriteria().forEach(recipeAdvancement::criterion);
 

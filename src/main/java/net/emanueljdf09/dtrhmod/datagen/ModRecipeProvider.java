@@ -55,7 +55,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "mushroom_tea"));
 
         HatRitualRecipeJsonBuilder.create(new Identifier(DownTheRabbitHole.MOD_ID, "storybook"), true)
-                .structureId(new Identifier(DownTheRabbitHole.MOD_ID, "portal/mirror_room_complete")) // 🌟 Set structure ID
+                .structureId(new Identifier(DownTheRabbitHole.MOD_ID, "portal/mirror_room_complete"))
                 .addIngredient(ModItems.SNOW_WHITE_STORYBOOK)
                 .offerTo(consumer, new Identifier(DownTheRabbitHole.MOD_ID, "snow_white_hat_ritual"));
 

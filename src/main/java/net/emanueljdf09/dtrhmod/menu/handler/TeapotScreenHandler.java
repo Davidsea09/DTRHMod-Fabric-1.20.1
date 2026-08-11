@@ -7,8 +7,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
@@ -43,9 +41,9 @@ public class TeapotScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 3, 27, 12) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return stack.isOf(net.minecraft.item.Items.WATER_BUCKET)
-                        || stack.isOf(net.minecraft.item.Items.LAVA_BUCKET)
-                        || stack.isOf(net.minecraft.item.Items.MILK_BUCKET);
+                return stack.isOf(Items.WATER_BUCKET)
+                        || stack.isOf(Items.LAVA_BUCKET)
+                        || stack.isOf(Items.MILK_BUCKET);
             }
         });
 

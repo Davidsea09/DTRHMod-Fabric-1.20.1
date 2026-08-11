@@ -5,6 +5,8 @@ import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.item.ModItemGroups;
 import net.emanueljdf09.dtrhmod.item.ModItems;
 import net.emanueljdf09.dtrhmod.util.ModEffects;
+import net.emanueljdf09.dtrhmod.world.biome.ModBiomes;
+import net.emanueljdf09.dtrhmod.world.dimension.ModDimensions;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 
@@ -16,72 +18,69 @@ public class ModLanguageProvider extends FabricLanguageProvider {
     @Override
     public void generateTranslations(TranslationBuilder builder) {
 
-        builder.add(ModItemGroups.DTRH_GROUP.toString(), "Down the Rabbit Hole");
         builder.add("itemgroup.dtrh", "Down the Rabbit Hole");
+
+        // Storybooks
 
         builder.add(ModItems.AURORA_STORYBOOK, "The Sleeping Beauty");
         builder.add("storybook.aurora.title", "The Sleeping Beauty");
         builder.add("storybook.aurora.ogTitle", "Dornröschen");
         builder.add("storybook.aurora.author", "Jacob & Wilhelm Grimm");
         builder.add("storybook.aurora.text", """
-                In a magnificent castle surrounded by enchanted forests and blooming gardens, a princess was born to a joyful king and queen. They invited fairies to bless the child with gifts of beauty, grace, and wisdom.
-                
-                But one wicked fairy, angry at being forgotten, cursed the princess. “Before your sixteenth birthday, you will prick your finger on a spinning wheel and die,” she declared, her voice echoing like thunder.
-                
-                A kind fairy softened the curse, “Instead of death, you shall fall into a deep sleep for one hundred years, only to be awakened by the kiss of true love.”
-                
-                The king ordered all spinning wheels destroyed, but on her birthday, the curious princess found a hidden spinning wheel in a dusty tower.
-                
-                “Let me try,” she said, reaching out.
-                
-                The spindle pricked her finger, and she fell into a sleep as deep as the ocean trenches.
-                
-                The entire castle, from servants to animals, fell asleep too, and a thick hedge of thorny vines grew around the castle, hiding it from the world.
-                
-                A century passed until a brave prince heard stories of the sleeping beauty.
-                
-                He fought his way through the thick thorns, the branches tearing at his clothes like spider webs.
-                
-                Finally, he found the princess, lying peaceful and radiant.
-                
-                He leaned down and kissed her gently.
-                
-                The curse broke, and the castle awoke with a joyful cheer.
-                
-                The wicked fairy was punished, and the prince and princess were married, their love blossoming like the spring flowers.
-                """);
+        Deep within a forgotten realm, framed by ancient woods and thickets of wild roses, a king and queen welcomed a long-awaited daughter. To celebrate her birth, they summoned the realm's wise guardians—mystic spirits who bestowed upon the child gifts of grace, sharp wit, and unyielding spirit.
+        
+        Yet, one solitary entity, brooding in the shadows of an uninvited exile, cast a bitter curse over the hall. "Before the sun sets upon her sixteenth harvest," she hissed, her voice cutting through the warmth like a phantom's chill, "a spindle's sharp barb shall prick her blood, and her breath shall fail."
+        
+        A guardian of gentler counsel tempered the doom, decreeing: "Not unto death, but unto a profound, century-long slumber shall she pass, waiting beneath the dust until a true heart breaks the spell."
+        
+        To forestall fate, the king commanded every spinning instrument across the land to be cast into the depths of lava or broken to dust. But destiny is a stubborn thing. On her sixteenth birthday, drawn by a strange hum behind a weathered oak door in a forgotten spire, the princess discovered an ancient spindle turning in the dark.
+        
+        "Let me see how this quaint craft is wrought," she whispered, extending a curious hand.
+        
+        The iron barb bit deep. Instantly, a darkness as heavy as deepslate fell over her eyes, and she collapsed into an endless sleep. 
+        
+        With her slumber, a quiet hush swept the citadel. The guards at the gates, the hounds by the hearth, and the hearthfires themselves froze in time. Around the ramparts, a towering wall of cruel, thorned brambles surged upward, sealing the castle away from the waking world.
+        
+        A hundred winters drifted by like falling leaves, until a wandering traveler—wearied by endless wanderings—heard whispers of the hidden keep. He hacked his way through the dense, clutching thorns, enduring the biting briars that tore at his armor like the claws of a woodland beast.
+        
+        At last, he reached the grand chamber. There, untouched by time, lay the princess, radiant beneath the pale light of a single candle.
+        
+        He knelt, his hand trembling, and pressed his lips to hers.
+        
+        The ancient bond shattered. The dust stirred, the hearths blazed anew with life, and the castle blinked open its eyes from a century-long dream. Hand in hand, they stepped out into the golden dawn, leaving the shadows of the sleep behind forever.
+        """);
 
         builder.add(ModItems.CINDERELLA_STORYBOOK, "Cinderella");
         builder.add("storybook.cinderella.title", "Cinderella");
         builder.add("storybook.cinderella.ogTitle", "Aschenputtel");
         builder.add("storybook.cinderella.author", "Jacob & Wilhelm Grimm");
         builder.add("storybook.cinderella.text", """
-                In a quiet village surrounded by thick forests and rolling hills, there lived a young girl named Aschenputtel. Her hair shone like polished gold, but her life was filled with sorrow. After her mother passed away, her father remarried a woman who was cruel and proud. Along with her two daughters, the stepmother forced Aschenputtel to work endlessly.
-                
-                “Cinder girl, clean the cobblestone floors again,” the stepmother ordered, pointing to the soot-covered hearth. The stepsisters laughed as they put on their bright, enchanted gowns. “You’re nothing but ashes and dirt,” they sneered.
-                
-                Each day, Aschenputtel tended the animals, swept the dirt floors, and picked berries in the wild woods for their meager meals. At night, she would sit beneath the ancient oak tree near the village well, whispering to the stars, “If only I could go to the prince’s ball…”
-                
-                One evening, as the sun dipped behind the mountains, a soft glow appeared among the tree’s roots. A gentle voice whispered, “Your kindness and patience will not go unnoticed.” Suddenly, a tiny sprite emerged, shimmering like a diamond in the moonlight.
-                
-                “I can grant your wish,” said the sprite, waving her hand. “With dust from the End, water from the enchanted well, and feathers from the phoenix bird, I will make you a gown no eye has seen.”
-                
-                Aschenputtel watched in awe as a dazzling dress appeared, woven from spider silk and glowing softly with enchanted light. Upon her feet, glass slippers sparkled like the rarest diamonds found deep in the caves.
-                
-                At the castle, the ball was in full swing. The prince’s eyes searched the crowd until they landed on Aschenputtel. “Would you honor me with a dance?” he asked, extending his hand.
-                
-                They moved gracefully across the stone floor, the music echoing in the grand hall. As the clock began to strike midnight, Aschenputtel gasped, “I must go!” She fled, leaving behind one slipper that shimmered on the steps.
-                
-                Determined to find the mysterious girl, the prince traveled through villages, carrying the glass slipper. When he arrived at Aschenputtel’s humble home, the stepsisters rushed to try it on.
-                
-                “Let me try!” the older one insisted, forcing her foot into the slipper. Blood began to trickle as her toes were too large, but she hid it well. “It fits!” she lied.
-                
-                The prince’s trusted birds flew overhead, squawking loudly. They spotted the blood and alerted the prince, who uncovered the deception.
-                
-                Finally, Aschenputtel placed her foot into the slipper. It fit perfectly, glowing warmly with magic. The prince smiled, “You are the one I have searched for.”
-                
-                At the wedding feast, the enchanted birds pecked at the stepsisters’ eyes for their cruelty and lies, and they were left blind. Aschenputtel and the prince were married, their love brighter than any enchanted jewel, and they ruled their kingdom in peace and kindness.
-                """);
+        In a quiet homestead embraced by ancient woods and whispering hills, there dwelt a gentle maiden named Aschenputtel. Though her hair fell like strands of spun gold, her days were weighed down by endless grief. When her mother passed beneath the quiet earth, her father brought home a second wife—a woman of proud spirit and bitter heart, accompanied by two daughters cut from the very same cruel cloth.
+
+        "Cinder-drudge, sweep the hearth-stone once more," the stepmother would snap, her voice grating like iron on flint, while the stepsisters rustled in gowns of velvet and silk. "You are fit for nothing better than ashes and soot," they mocked, tossing refuse into the cold fires.
+    
+        From dawn till dusk, Aschenputtel knelt upon the stone flags, tending the beasts, clearing the grease-smoke from the kitchen, and foraging for wild berries beneath the gloomy canopy of the forest. When night fell like a shroud, she would steal away to the roots of an old hazel tree that grew beside her mother's grave, weeping into the dark and whispering to the silent stars: "If only a path might open to the prince's great hall..."
+    
+        One evening, as the sun melted into a sea of blood-red clouds over the mountains, a strange, pulsing luminescence stirred among the tree's gnarled roots. A quiet rustle parted the leaves, and a guardian spirit of the earth emerged, shining like a rare diamond buried deep in the bedrock.
+    
+        "Your quiet endurance has been heard beneath the stone," the spirit murmured, raising a slender hand. "Take heart; a seed of hope may yet sprout from the ashes."
+    
+        With a sweep of her palm, the woodland magic took hold. A gown woven from the silver threads of moonlit spiderwebs manifested before her, and upon her feet rested slippers of pure, brittle crystal glass, cold and flawless as glacier ice.
+    
+        Within the castle walls, torchlight danced across vaulted stone as the feast reached its midnight fever. The young lord of the keep turned his gaze across the sea of faces until they locked upon Aschenputtel, standing like a phantom of light in the hall. "Will you tread a measure with me?" he asked, bowing low.
+    
+        They moved together across the flagstones, the music swelling against the high rafters. But as the towering clock in the courtyard struck the twelfth heavy toll, the spell began to fray. Aschenputtel pulled away, her heart hammering against her ribs like a trapped bird, and fled into the night. On the frost-rimed steps, one fragile shoe of crystal slipped from her foot and remained behind.
+    
+        Vowing to scour every corner of the realm, the prince set forth with the solitary shoe. When he crossed the threshold of Aschenputtel's home, the ambitious sisters lunged forward.
+    
+        "Let me force my foot within!" cried the elder, carving at her own heel with a kitchen blade to make the bone fit the narrow vessel, hiding her pain behind a tight, bloodless smile. "See? It fits!"
+    
+        Yet, the wise doves perched upon the lintel raised a sudden, warning cry, their wings beating a frantic tattoo as they sang of the crimson deceit staining the silver shoe. The prince looked down, saw the falsehood, and turned away in disgust.
+    
+        At last, quiet Aschenputtel stepped from the shadows and slid her foot into the crystal shell. It settled with the ease of a key turning in an ancient lock, glowing with a soft, warm ember-light. The prince knelt, taking her hand. "You are the one."
+    
+        And as the wedding bells rang out beneath a vaulted sky, the cruel sisters found their reckoning—blinded by the sharp-eyed birds of the wood as punishment for their malice—while Aschenputtel and her prince walked into the long days together, their bond enduring as the deep, unyielding stone of the earth.
+        """);
 
         builder.add(ModItems.RAPUNZEL_STORYBOOK, "Rapunzel");
         builder.add("storybook.rapunzel.title", "Rapunzel");
@@ -288,42 +287,154 @@ public class ModLanguageProvider extends FabricLanguageProvider {
                 """);
 
         builder.add("cover.title.open", "Once upon a time...");
+        builder.add("storybook.wonderland.intro.text", """
+                Down the curving, sunlit path of the upper meadow, Alice spotted something peculiar darting through the tall clover.
+                
+                A sleek, immaculate rabbit with a crimson waistcoat hurried past, frantically pulling a massive silver pocket-watch from his coat. 
+                
+                Oh dear! Oh dear! I shall be too late! he cried, his voice echoing over the rolling hills.
+                
+                Without a second thought, Alice chased after him across the grass, straight toward the base of a massive, ancient oak tree where he tumbled down into the dark earth.
+                """);
 
+        // Entities
+        builder.add(ModItems.WHITE_RABBIT_SPAWN_EGG, "White Rabbit Spawn Egg (WIP)");
+        builder.add(ModEntities.WHITE_RABBIT, "White Rabbit");
+        builder.add("entity.dtrhmod.white_rabbit.greet_msg", "Hey! I´m... OH NO! I´m Late!");
+        builder.add("entity.dtrhmod.white_rabbit.busy_msg", "Can´t talk right now! I´M LATE!");
+        builder.add("entity.dtrhmod.white_rabbit.wonderland_remember_msg", "Oh hey, i know who you are; you followed me here.");
+        builder.add("entity.dtrhmod.white_rabbit.wonderland_stranger_msg", "Who are you?");
+
+        builder.add(ModItems.WEEPING_PLAYERS_SPAWN_EGG, "Weeping Player Spawn Egg (WIP)");
+        builder.add(ModEntities.WEEPING_PLAYER, "Weeping Player");
+
+        // Items
         builder.add(ModItems.POCKETWATCH, "Pocketwatch");
         builder.add(ModItems.EXTERIOR_KEY, "Door Key");
         builder.add(ModItems.EAT_ME, "§d§o§l\"Eat me\"");
         builder.add(ModItems.DRINK_ME, "§d§o§l\"Drink me\"");
 
 
+        builder.add(ModItems.EMPTY_CUP, "Empty Cup");
+        builder.add(ModItems.FILLED_TEA_CUP, "Tea Cup");
+
+        // Blocks
+
+        // Special Blocks
+        builder.add(ModBlocks.RABBIT_HOLE, "Rabbit Hole");
+        builder.add(ModBlocks.EXTERIOR_PORTAL, "Exterior Gateway");
+        builder.add(ModBlocks.MIRROR_BLOCK, "Mirror");
+        builder.add(ModBlocks.MAD_HATTER_HAT, "Mad Hatter´s Hat (WIP)");
+
+        // Exterior Chest
         builder.add(ModBlocks.EXTERIOR_CHEST, "A Tiny Chest");
         builder.add("exterior.player.openchest", "§d§o§l\"Eat me\"§r What is this?");
         builder.add("exterior.player.opengrownchest", "§d§o§l\"Drink me\"§r What will this one do?");
         builder.add("exterior.player.failchestGrow", "The chest is empty...");
         builder.add("exterior.player.failchest", "There's nothing here");
 
+        // Exterior Door
         builder.add(ModBlocks.EXTERIOR_DOOR, "A Tiny Door");
         builder.add("exterior.player.faileddoorgrowth", "You're too big to fit in here!");
         builder.add("exterior.player.faileddoor", "I'm locked, did you grab the key?");
         builder.add("exterior.player.opendoor", "Now we're talking");
 
+        // Teapot Block
         builder.add("container.dtrhmod.teapot", "Teapot");
-
-        builder.add(ModBlocks.RABBIT_HOLE, "Rabbit Hole");
-        builder.add(ModBlocks.EXTERIOR_PORTAL, "Exterior Gateway");
-        builder.add(ModBlocks.MIRROR_BLOCK, "Mirror");
         builder.add(ModBlocks.TEAPOT_BLOCK, "Teapot");
-        builder.add(ModItems.EMPTY_CUP, "Empty Cup");
 
+        // Wood Types
+        builder.add(ModBlocks.BB_BUTTON, "Tulgey Oak Button");
+        builder.add(ModBlocks.BB_DOOR, "Tulgey Oak Door");
+        builder.add(ModBlocks.BB_FENCE, "Tulgey Oak Fence");
+        builder.add(ModBlocks.BB_FENCE_GATE, "Tulgey Oak Fence Gate");
+        builder.add(ModBlocks.BB_LEAVES, "Tulgey Oak Leaves");
+        builder.add(ModBlocks.BB_LOG, "Tulgey Oak Log");
+        builder.add(ModBlocks.BB_PLANKS, "Tulgey Oak Planks");
+        builder.add(ModBlocks.BB_PRESSURE_PLATE, "Tulgey Oak Pressure Plate");
+        builder.add(ModBlocks.BB_SAPLING, "Tulgey Oak Sapling");
+        builder.add(ModBlocks.BB_SLABS, "Tulgey Oak Slabs");
+        builder.add(ModBlocks.BB_STAIRS, "Tulgey Oak Stairs");
+        builder.add(ModBlocks.BB_TRAPDOOR, "Tulgey Oak Trapdoor");
+        builder.add(ModBlocks.BB_WALL, "Tulgey Oak Wall");
+        builder.add(ModBlocks.BB_WOOD, "Tulgey Oak Wood");
+        builder.add(ModBlocks.STRIPPED_BB_WOOD, "Stripped Tulgey Oak Wood");
+        builder.add(ModBlocks.STRIPPED_BB_LOG, "Stripped Tulgey Oak Log");
+        builder.add(ModBlocks.BB_SIGN, "Tulgey Oak Sign");
+        builder.add(ModBlocks.BB_HANGING_SIGN, "Tulgey Oak Hanging Sign");
 
-        builder.add(ModEntities.WHITE_RABBIT, "White Rabbit");
-        builder.add(ModItems.WHITE_RABBIT_SPAWN_EGG, "White Rabbit Spawn Egg");
+        builder.add(ModBlocks.TH_BUTTON, "Dark Tulgey Oak Button");
+        builder.add(ModBlocks.TH_DOOR, "Dark Tulgey Oak Door");
+        builder.add(ModBlocks.TH_FENCE, "Dark Tulgey Oak Fence");
+        builder.add(ModBlocks.TH_FENCE_GATE, "Dark Tulgey Oak Fence Gate");
+        builder.add(ModBlocks.TH_LEAVES, "Dark Tulgey Oak Leaves");
+        builder.add(ModBlocks.TH_LOG, "Dark Tulgey Oak Log");
+        builder.add(ModBlocks.TH_PLANKS, "Dark Tulgey Oak Planks");
+        builder.add(ModBlocks.TH_PRESSURE_PLATE, "Dark Tulgey Oak Pressure Plate");
+        builder.add(ModBlocks.TH_SAPLING, "Dark Tulgey Oak Sapling");
+        builder.add(ModBlocks.TH_SLABS, "Dark Tulgey Oak Slabs");
+        builder.add(ModBlocks.TH_STAIRS, "Dark Tulgey Oak Stairs");
+        builder.add(ModBlocks.TH_TRAPDOOR, "Dark Tulgey Oak Trapdoor");
+        builder.add(ModBlocks.TH_WALL, "Dark Tulgey Oak Wall");
+        builder.add(ModBlocks.TH_WOOD, "Dark Tulgey Oak Wood");
+        builder.add(ModBlocks.STRIPPED_TH_WOOD, "Stripped Dark Tulgey Oak Wood");
+        builder.add(ModBlocks.STRIPPED_TH_LOG, "Stripped Dark Tulgey Oak Log");
+        builder.add(ModBlocks.TH_SIGN, "Dark Tulgey Oak Sign");
+        builder.add(ModBlocks.TH_HANGING_SIGN, "Dark Tulgey Oak Hanging Sign");
 
-        builder.add(ModEntities.WEEPING_PLAYER, "Weeping Player");
-        builder.add(ModItems.WEEPING_PLAYERS_SPAWN_EGG, "Weeping Player Spawn Egg");
+        builder.add(ModBlocks.WW_BUTTON, "Twisted Willow Button");
+        builder.add(ModBlocks.WW_DOOR, "Twisted Willow Door");
+        builder.add(ModBlocks.WW_FENCE, "Twisted Willow Fence");
+        builder.add(ModBlocks.WW_FENCE_GATE, "Twisted Willow Fence Gate");
+        builder.add(ModBlocks.WW_LEAVES, "Twisted Willow Leaves");
+        builder.add(ModBlocks.WW_HANGING_LEAVES, "Twisted Willow Hanging Leaves");
+        builder.add(ModBlocks.WW_HANGING_LEAVES_PLANT, "Twisted Willow Hanging Leaves");
+        builder.add(ModBlocks.WW_LOG, "Twisted Willow Log");
+        builder.add(ModBlocks.WW_PLANKS, "Twisted Willow Planks");
+        builder.add(ModBlocks.WW_PRESSURE_PLATE, "Twisted Willow Pressure Plate");
+        builder.add(ModBlocks.WW_SAPLING, "Twisted Willow Sapling");
+        builder.add(ModBlocks.WW_SLABS, "Twisted Willow Slabs");
+        builder.add(ModBlocks.WW_STAIRS, "Twisted Willow Stairs");
+        builder.add(ModBlocks.WW_TRAPDOOR, "Twisted Willow Trapdoor");
+        builder.add(ModBlocks.WW_WALL, "Twisted Willow Wall");
+        builder.add(ModBlocks.WW_WOOD, "Twisted Willow Wood");
+        builder.add(ModBlocks.STRIPPED_WW_WOOD, "Stripped Twisted Willow Wood");
+        builder.add(ModBlocks.STRIPPED_WW_LOG, "Stripped Twisted Willow Log");
+        builder.add(ModBlocks.WW_SIGN, "Twisted Willow Sign");
+        builder.add(ModBlocks.WW_HANGING_SIGN, "Twisted Willow Hanging Sign");
 
+        // Mushrooms
+        builder.add(ModBlocks.BLUE_MUSHROOM_BLOCK, "Blue Mushroom Block");
+        builder.add(ModBlocks.BLUE_MUSHROOM, "Blue Mushroom");
+        builder.add(ModBlocks.YELLOW_MUSHROOM_BLOCK, "Yellow Mushroom Block");
+        builder.add(ModBlocks.YELLOW_MUSHROOM, "Yellow Mushroom");
+        builder.add(ModBlocks.MAGENTA_MUSHROOM_BLOCK, "Magenta Mushroom Block");
+        builder.add(ModBlocks.MAGENTA_MUSHROOM, "Magenta Mushroom");
 
-        builder.add(ModEffects.SHRINK.toString(), "Shrink");
-        builder.add(ModEffects.GROW.toString(), "Grow");
+        // Foliage
+        builder.add(ModBlocks.WONDER_DIRT, "Under Dirt");
+        builder.add(ModBlocks.WONDER_GRASS, "Under Grass");
+        builder.add(ModBlocks.LAWN_DAISY_PATCH, "Lawn Daisy Patch");
+
+        // Extras
+
+        // World Gen
+
+        // Dimensions
+        builder.add("travelerstitles.dtrhmod.exterior", "The Exterior");
+        builder.add("travelerstitles.dtrhmod.wonderland", "Wonderland");
+        builder.add("travelerstitles.dtrhmod.storybook", "Once Upon A Time in..");
+
+        // Biomes
+        builder.add("biome.dtrhmod.chessboard_fields", "Chessboard Fields");
+        builder.add("biome.dtrhmod.enchanted_forest", "The Enchanted Forest");
+        builder.add("biome.dtrhmod.the_exterior", "The Exterior");
+        builder.add("biome.dtrhmod.tulgey_wood", "Tulgey Woods");
+        builder.add("biome.dtrhmod.vale_of_tears", "Vale of Tears");
+
+        // Effects
+        builder.add(ModEffects.SHRINK.getTranslationKey(), "Shrink");
+        builder.add(ModEffects.GROW.getTranslationKey(), "Grow");
 
     }
 }

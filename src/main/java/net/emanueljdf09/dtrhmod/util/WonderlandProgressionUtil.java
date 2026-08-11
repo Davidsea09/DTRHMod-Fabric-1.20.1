@@ -3,8 +3,13 @@ package net.emanueljdf09.dtrhmod.util;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
 import net.emanueljdf09.dtrhmod.world.dimension.ModDimensions;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.toast.Toast;
+import net.minecraft.client.toast.ToastManager;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,14 +22,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.Biome;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 public class WonderlandProgressionUtil {
-    // Cache to remember every player's last known safe coordinates from the previous tick
     private static final Map<UUID, Vec3d> LAST_SAFE_POSITIONS = new HashMap<>();
+    private static final Map<UUID, Long> TOAST_COOLDOWNS = new HashMap<>();
 
     public static void register() {
         ServerTickEvents.START_SERVER_TICK.register(server -> {
@@ -32,15 +38,15 @@ public class WonderlandProgressionUtil {
                 if (player.getWorld().getRegistryKey() == ModDimensions.WONDERLAND_LEVEL_KEY) {
                     evaluateBiomeProgression(player);
                 } else {
-                    // Clean up cache if they leave the dimension
+                    TOAST_COOLDOWNS.remove(player.getUuid());
                     LAST_SAFE_POSITIONS.remove(player.getUuid());
                 }
             }
         });
 
-        // Clean up disconnects to prevent memory leaks
-        net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             LAST_SAFE_POSITIONS.remove(handler.getPlayer().getUuid());
+            TOAST_COOLDOWNS.remove(handler.getPlayer().getUuid());
         });
     }
 
@@ -77,6 +83,10 @@ public class WonderlandProgressionUtil {
     }
 
     private static void evaluateBiomeProgression(ServerPlayerEntity player) {
+        if (player.isCreative() || player.isSpectator()) {
+            return;
+        }
+
         BlockPos pos = player.getBlockPos();
         Optional<RegistryKey<Biome>> currentBiomeKey = player.getWorld().getBiome(pos).getKey();
 
@@ -86,11 +96,10 @@ public class WonderlandProgressionUtil {
         ProgressionComponent story = ModComponents.PROGRESSION_COMPONENT.get(player);
         int stage = story.getCompletedStages();
 
-        // Check if the current biome is locked for this player
         boolean isLocked = false;
         String warningMessage = "";
 
-        if (biomeId.getPath().equals("tear_lake_valley") && stage < 1) {
+        if (biomeId.getPath().equals("vale_of_tears") && stage < 1) {
             isLocked = true;
             warningMessage = "The Mad Hatter's Woods are sealed by a spatial distortion!";
         } else if (biomeId.getPath().equals("chessboard_fields") && stage < 2) {
@@ -99,7 +108,15 @@ public class WonderlandProgressionUtil {
         }
 
         if (isLocked) {
-            // Player is inside a locked zone! Teleport them back to safety instantly
+            UUID uuid = player.getUuid();
+            long currentTime = player.getWorld().getTime();
+
+            if (!TOAST_COOLDOWNS.containsKey(uuid) || currentTime - TOAST_COOLDOWNS.get(uuid) > 100) {
+                TOAST_COOLDOWNS.put(uuid, currentTime);
+
+                ModPackets.sendLockedBiomeToastPacket(player);
+            }
+
             handleSolidWallCollision(player, warningMessage);
         } else {
             LAST_SAFE_POSITIONS.put(player.getUuid(), player.getPos());
@@ -129,10 +146,29 @@ public class WonderlandProgressionUtil {
         world.spawnParticles(ParticleTypes.WITCH, px, py, pz, 6, 0.3, 0.4, 0.3, 0.01);
         world.spawnParticles(ParticleTypes.SMOKE, px, py, pz, 4, 0.2, 0.2, 0.2, 0.02);
 
-        // 4. FEEDBACK CHIME
         if (player.age % 10 == 0) {
-            world.playSound(null, player.getBlockPos(), net.minecraft.sound.SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, net.minecraft.sound.SoundCategory.PLAYERS, 0.6f, 0.5f);
-            player.sendMessage(Text.literal("§c" + message), true); // ActionBar notification
+            world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, SoundCategory.PLAYERS, 0.6f, 0.5f);
+            player.sendMessage(Text.literal("§c" + message), true);
         }
     }
+
+    public record LockedBiomeToast(ItemStack item) implements Toast {
+
+        private static final Identifier TEXTURE = new Identifier("textures/gui/toasts.png");
+
+        private static final Text TITLE = Text.translatable("misc.dtrhmod.biome_locked");
+        private static final Text DESCRIPTION = Text.translatable("misc.dtrhmod.biome_locked_2");
+
+        @Override
+        public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
+            context.drawTexture(TEXTURE, 0, 0, 0, 0, this.getWidth(), this.getHeight());
+            context.drawItem(this.item(), 6, 8);
+            context.drawText(manager.getClient().textRenderer, TITLE, 25,7, -256, false);
+            context.drawText(manager.getClient().textRenderer, DESCRIPTION, 25, 18, 16777215, false);
+
+
+            return startTime >= 10000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
+        }
+    }
+
 }

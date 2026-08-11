@@ -12,25 +12,30 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.StructureTemplateManager;
+import net.minecraft.text.Text;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
 
@@ -39,7 +44,7 @@ public class TeleportUtil {
     private static final Map<UUID, MirrorTranceData> ACTIVE_TRANCES = new HashMap<>();
 
     private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
-    private static final long COOLDOWN_MS = 5000; // 2.5 seconds cooldown
+    private static final long COOLDOWN_MS = 5000;
 
     public static boolean hasTeleportCooldown(ServerPlayerEntity player) {
         long currentTime = System.currentTimeMillis();
@@ -85,8 +90,8 @@ public class TeleportUtil {
             UUID ownerUuid,
             RegistryKey<World> targetDimKey,
             Identifier structureId,
-            RegistryKey<World> originDimKey,  // 🌟 Added origin dimension
-            BlockPos originPos               // 🌟 Added origin position
+            RegistryKey<World> originDimKey,
+            BlockPos originPos
     ) {
         MinecraftServer server = player.getServer();
         if (server == null) return;
@@ -99,8 +104,7 @@ public class TeleportUtil {
 
         StorybookInstanceManager manager = StorybookInstanceManager.getServerState(server);
 
-        // 🌟 Pass originDimKey and originPos to the instance manager!
-        BlockPos instancePos = manager.getOrCreatePlayerInstance(
+       BlockPos instancePos = manager.getOrCreatePlayerInstance(
                 server,
                 ownerUuid,
                 targetDimKey,
@@ -130,10 +134,10 @@ public class TeleportUtil {
         if (destWorld == null) return;
 
         destWorld.getChunkManager().addTicket(
-                net.minecraft.server.world.ChunkTicketType.START,
+                ChunkTicketType.START,
                 new ChunkPos(targetPos),
                 2,
-                net.minecraft.util.Unit.INSTANCE
+                Unit.INSTANCE
         );
 
         int spawnY = destWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, targetPos).getY();
@@ -143,6 +147,7 @@ public class TeleportUtil {
 
         teleport(player, targetDim, targetPos.getX() + 0.5, spawnY + 1.0, targetPos.getZ() + 0.5);
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
+        return;
     }
 
     public static void checkAndHandleVoidReturn(ServerPlayerEntity player) {
@@ -156,30 +161,123 @@ public class TeleportUtil {
             if (returnLoc != null) {
                 ServerWorld originWorld = server.getWorld(returnLoc.dimension());
                 if (originWorld != null) {
-
-                    // 🌟 Offset landing spot 2 blocks NORTH of the origin hat position
                     BlockPos originPos = returnLoc.pos();
                     double spawnX = originPos.getX() + 0.5;
                     double spawnY = originPos.getY() + 1.0;
-                    double spawnZ = originPos.getZ() - 1.5; // Offset away from the hat!
+                    double spawnZ = originPos.getZ() - 1.5;
 
-                    // Set teleport cooldown so landing doesn't re-trigger portal
                     updateTeleportCooldown(player);
-
-                    player.teleport(
-                            originWorld,
-                            spawnX,
-                            spawnY,
-                            spawnZ,
-                            player.getYaw(),
-                            player.getPitch()
-                    );
-
+                    player.teleport(originWorld, spawnX, spawnY, spawnZ, player.getYaw(), player.getPitch());
                     player.setVelocity(0, 0, 0);
                     player.fallDistance = 0.0f;
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 60, 0));
+
+                    return;
                 }
             }
+
+          ServerWorld overworld = server.getOverworld();
+            if (overworld != null) {
+                BlockPos spawnPos = player.getSpawnPointPosition();
+                RegistryKey<World> spawnDim = player.getSpawnPointDimension();
+                boolean isSpawnForced = player.isSpawnForced();
+                float spawnAngle = player.getSpawnAngle();
+
+                ServerWorld targetWorld = spawnDim != null ? server.getWorld(spawnDim) : overworld;
+                if (targetWorld == null) targetWorld = overworld;
+
+                if (spawnPos != null) {
+                    var respawnPos = PlayerEntity.findRespawnPosition(targetWorld, spawnPos, spawnAngle, isSpawnForced, false);
+                    if (respawnPos.isPresent()) {
+                        Vec3d pos = respawnPos.get();
+
+                        updateTeleportCooldown(player);
+                        player.teleport(targetWorld, pos.getX(), pos.getY(), pos.getZ(), spawnAngle, 0.0f);
+                        player.setVelocity(0, 0, 0);
+                        player.fallDistance = 0.0f;
+                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 60, 0));
+
+                        return;
+                    } else {
+                        player.sendMessage(Text.translatable("block.minecraft.spawn_obstructed"), true);
+                    }
+                }
+
+                BlockPos worldSpawn = overworld.getSpawnPos();
+                updateTeleportCooldown(player);
+                player.teleport(
+                        overworld,
+                        worldSpawn.getX() + 0.5,
+                        worldSpawn.getY(),
+                        worldSpawn.getZ() + 0.5,
+                        player.getYaw(),
+                        player.getPitch()
+                );
+                player.setVelocity(0, 0, 0);
+                player.fallDistance = 0.0f;
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 60, 0));
+                return;
+            }
+        }
+    }
+
+    public static void checkAndHandleWonderlandVoidReturn(ServerPlayerEntity player) {
+        if (player.getWorld().getRegistryKey().equals(ModDimensions.WONDERLAND_LEVEL_KEY) && player.getY() < -5) {
+            MinecraftServer server = player.getServer();
+            if (server == null) return;
+
+            BlockPos spawnPos = player.getSpawnPointPosition();
+            RegistryKey<World> spawnDim = player.getSpawnPointDimension();
+            boolean isSpawnForced = player.isSpawnForced();
+            float spawnAngle = player.getSpawnAngle();
+
+            ServerWorld targetWorld = spawnDim != null ? server.getWorld(spawnDim) : null;
+            if (targetWorld == null) {
+                targetWorld = server.getOverworld();
+            }
+
+            boolean successfullyTeleported = false;
+
+            if (spawnPos != null && targetWorld != null) {
+                var respawnPos = PlayerEntity.findRespawnPosition(targetWorld, spawnPos, spawnAngle, isSpawnForced, false);
+
+                if (respawnPos.isPresent()) {
+                    Vec3d pos = respawnPos.get();
+
+                    updateTeleportCooldown(player);
+                    player.teleport(
+                            targetWorld,
+                            pos.getX(),
+                            pos.getY(),
+                            pos.getZ(),
+                            spawnAngle,
+                            0.0f
+                    );
+
+                    successfullyTeleported = true;
+                } else {
+
+                    player.sendMessage(Text.translatable("block.minecraft.spawn_obstructed"), true);
+                }
+            }
+
+            if (!successfullyTeleported && targetWorld != null) {
+                BlockPos worldSpawn = targetWorld.getSpawnPos();
+
+                updateTeleportCooldown(player);
+                player.teleport(
+                        targetWorld,
+                        worldSpawn.getX() + 0.5,
+                        worldSpawn.getY(),
+                        worldSpawn.getZ() + 0.5,
+                        player.getYaw(),
+                        player.getPitch()
+                );
+            }
+
+            player.setVelocity(0, 0, 0);
+            player.fallDistance = 0.0f;
+            return;
         }
     }
 
@@ -191,10 +289,10 @@ public class TeleportUtil {
         if (destWorld == null) return null;
 
         destWorld.getChunkManager().addTicket(
-                net.minecraft.server.world.ChunkTicketType.START,
-                new net.minecraft.util.math.ChunkPos(BlockPos.ORIGIN),
+               ChunkTicketType.START,
+                new ChunkPos(BlockPos.ORIGIN),
                 1,
-                net.minecraft.util.Unit.INSTANCE
+                Unit.INSTANCE
         );
         BlockPos targetPos = locateBiomePos(destWorld, primaryBiome);
 
@@ -247,9 +345,31 @@ public class TeleportUtil {
 
     private static BlockPos locateBiomePos(ServerWorld world, RegistryKey<Biome> biomeKey) {
         BlockPos searchOrigin = new BlockPos(8, 64, 8);
-        var result = world.locateBiome(entry -> entry.matchesKey(biomeKey), searchOrigin, 10000, 8, 64);
-        return result != null ? result.getFirst() : null;
+
+        // Use .unwrapKey().map(...).orElse(false) to safely compare registry keys on Holders
+        var result = world.locateBiome(holder -> holder.getKey().map(key -> key.equals(biomeKey)).orElse(false), searchOrigin, 10000, 32, 64);
+
+        if (result != null) {
+            BlockPos initialPos = result.getFirst();
+
+            // Scan around the found position to avoid spawning precisely on a narrow boundary edge
+            BlockPos.Mutable mutable = new BlockPos.Mutable();
+            for (int x = -48; x <= 48; x += 16) {
+                for (int z = -48; z <= 48; z += 16) {
+                    mutable.set(initialPos.getX() + x, 64, initialPos.getZ() + z);
+                    var currentBiomeHolder = world.getBiome(mutable);
+
+                    boolean matches = currentBiomeHolder.getKey().map(key -> key.equals(biomeKey)).orElse(false);
+                    if (matches) {
+                        return mutable.toImmutable();
+                    }
+                }
+            }
+            return initialPos;
+        }
+        return null;
     }
+
 
     public static void startMirrorTrance(ServerPlayerEntity player, BlockPos clickedPos, ServerWorld world) {
         UUID uuid = player.getUuid();
@@ -258,19 +378,18 @@ public class TeleportUtil {
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 100, 0, false, false, false));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 255, false, false, false));
 
-        world.playSound(null, clickedPos, net.minecraft.sound.SoundEvents.BLOCK_PORTAL_TRAVEL, net.minecraft.sound.SoundCategory.BLOCKS, 0.4f, 0.5f);
+        world.playSound(null, clickedPos, SoundEvents.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 0.4f, 0.5f);
 
-        // Warm up the destination chunk immediately during the 3 second countdown sequence
         MinecraftServer server = player.getServer();
         if (server != null) {
             RegistryKey<World> targetDimKey = (world.getRegistryKey() == World.OVERWORLD) ? ModDimensions.WONDERLAND_LEVEL_KEY : World.OVERWORLD;
             ServerWorld targetWorld = server.getWorld(targetDimKey);
             if (targetWorld != null) {
                 targetWorld.getChunkManager().addTicket(
-                        net.minecraft.server.world.ChunkTicketType.START,
+                        ChunkTicketType.START,
                         new ChunkPos(clickedPos),
                         2,
-                        net.minecraft.util.Unit.INSTANCE
+                        Unit.INSTANCE
                 );
             }
         }
@@ -326,14 +445,12 @@ public class TeleportUtil {
 
         BlockPos targetPos;
 
-        // 1. PATH A: Already Linked
         if (destinationOpt.isPresent()) {
             targetPos = destinationOpt.get();
             teleportPlayerToMirrorFront(player, targetWorld, targetPos);
             return;
         }
 
-        // 2. PATH B: Structural Radius Search Scan
         BlockPos existingMirrorNearby = findMirrorInRadiusColumn(targetWorld, clickedPos, 8);
         if (existingMirrorNearby != null) {
             targetPos = existingMirrorNearby;
@@ -345,7 +462,6 @@ public class TeleportUtil {
             return;
         }
 
-        // 3. PATH C: Fallback Generation
         BlockState sourceState = sourceWorld.getBlockState(clickedPos);
         MirrorType sourceMirrorType = MirrorType.wonderland;
         Direction mirrorFacing = Direction.NORTH;
@@ -356,7 +472,7 @@ public class TeleportUtil {
         }
 
         int spawnY = targetWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, clickedPos).getY();
-        // Fallback safety to stop bedrock generation loops
+
         if (spawnY <= targetWorld.getBottomY()) {
             spawnY = (targetDim == World.OVERWORLD) ? 70 : 90;
         }
@@ -364,7 +480,6 @@ public class TeleportUtil {
 
         BlockPos actualExitMirrorPos = targetPos;
 
-        // --- BRANCH C1: STRUCTURE PORTAL ROOM TYPE ---
         if (sourceMirrorType == MirrorType.structure) {
             MinecraftServer server = player.getServer();
             if (server != null) {
@@ -419,7 +534,7 @@ public class TeleportUtil {
                 }
             }
         }
-        // --- BRANCH C2: STANDALONE PORTAL TYPE ---
+
         else {
             BlockState lowerState = ModBlocks.MIRROR_BLOCK.getDefaultState()
                     .with(MirrorBlock.HALF, DoubleBlockHalf.LOWER)
@@ -432,7 +547,6 @@ public class TeleportUtil {
             actualExitMirrorPos = targetPos;
         }
 
-        // FORCE NORMALIZE BOTH BLOCKS BEFORE DATA-LINK SYNC RUNS
         BlockState sourceLowerState = sourceWorld.getBlockState(clickedPos);
         BlockState sourceUpperState = sourceWorld.getBlockState(clickedPos.up());
         if (sourceLowerState.isOf(ModBlocks.MIRROR_BLOCK)) {

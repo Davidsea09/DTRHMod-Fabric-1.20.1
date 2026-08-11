@@ -4,18 +4,18 @@ import net.emanueljdf09.dtrhmod.block.entity.MirrorBlockEntity;
 import net.emanueljdf09.dtrhmod.item.ModItems;
 import net.emanueljdf09.dtrhmod.util.ModComponents;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
+import net.emanueljdf09.dtrhmod.world.dimension.ModDimensions;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
@@ -105,7 +105,7 @@ public class MirrorBlock extends BlockWithEntity {
             BlockPos lowerPos = (state.get(HALF) == DoubleBlockHalf.LOWER) ? pos : pos.down();
 
             ServerWorld overworld = world.getServer().getWorld(World.OVERWORLD);
-            ServerWorld wonderland = world.getServer().getWorld(net.emanueljdf09.dtrhmod.world.dimension.ModDimensions.WONDERLAND_LEVEL_KEY);
+            ServerWorld wonderland = world.getServer().getWorld(ModDimensions.WONDERLAND_LEVEL_KEY);
 
             if (overworld != null) ModComponents.MIRROR_COMPONENT.get(overworld).removeLink(lowerPos);
             if (wonderland != null) ModComponents.MIRROR_COMPONENT.get(wonderland).removeLink(lowerPos);
@@ -143,7 +143,7 @@ public class MirrorBlock extends BlockWithEntity {
                 if (!story.isWonderlandMirrorUnlocked()) {
                     serverPlayer.sendMessage(Text.literal("§cThe glass refuses to reflect a path. You have not unlocked this secret yet..."), true);
 
-                    world.playSound(null, pos, net.minecraft.sound.SoundEvents.BLOCK_GLASS_BREAK, net.minecraft.sound.SoundCategory.BLOCKS, 0.75f, 0.5f);
+                    world.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 0.75f, 0.5f);
                     return ActionResult.SUCCESS;
                 }
 
@@ -504,7 +504,6 @@ public class MirrorBlock extends BlockWithEntity {
                 default    -> { return LOWER_NORTH; }
             }
         } else {
-            // UPPER half bounding boxes
             switch (facing) {
                 case SOUTH -> { return UPPER_SOUTH; }
                 case WEST  -> { return UPPER_WEST; }
@@ -527,7 +526,6 @@ public class MirrorBlock extends BlockWithEntity {
                 default    -> { return LOWER_NORTH; }
             }
         } else {
-            // UPPER half bounding boxes
             switch (facing) {
                 case SOUTH -> { return UPPER_SOUTH; }
                 case WEST  -> { return UPPER_WEST; }

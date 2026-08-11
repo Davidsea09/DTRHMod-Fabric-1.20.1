@@ -14,6 +14,21 @@ public class ModTreeDeco {
                     new TreeDecoratorType<>(WwTreeDecorator.CODEC)
             );
 
+    public static final TreeDecoratorType<HangingLeavesTreeDeco> HANGING_LEAVES_DECORATOR =
+            Registry.register(
+                    Registries.TREE_DECORATOR_TYPE,
+                    new Identifier(DownTheRabbitHole.MOD_ID, "hanging_leaves_decorator"),
+                    new TreeDecoratorType<>(HangingLeavesTreeDeco.CODEC)
+            );
+
+    public static final TreeDecoratorType<HangFromTreeDeco> HANG_FROM_TREE_DECORATOR =
+            Registry.register(
+                    Registries.TREE_DECORATOR_TYPE,
+                    new Identifier(DownTheRabbitHole.MOD_ID, "hang_from_tree_decorator"),
+                    new TreeDecoratorType<>(HangFromTreeDeco.CODEC)
+            );
+
+
     public static void register() {
 
     }

@@ -4,13 +4,11 @@ import net.emanueljdf09.dtrhmod.util.ModTags;
 import net.emanueljdf09.dtrhmod.world.biome.ModBiomes;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BiomeTags;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -37,5 +35,14 @@ public class ModBiomeTagProvider extends FabricTagProvider<Biome> {
         getOrCreateTagBuilder(ModTags.Biomes.HAS_MIRROR)
                 .addOptionalTag(BiomeTags.IS_OVERWORLD)
                 .addTag(ModTags.Biomes.WONDERLAND_BIOMES);
+
+        getOrCreateTagBuilder(ModTags.Biomes.HAS_RABBITHOLE)
+                .add(BiomeKeys.WINDSWEPT_FOREST)
+                .add(BiomeKeys.SUNFLOWER_PLAINS)
+                .add(BiomeKeys.PLAINS)
+                .add(BiomeKeys.MEADOW)
+                .add(BiomeKeys.FLOWER_FOREST)
+                .add(BiomeKeys.FOREST)
+                .add(BiomeKeys.CHERRY_GROVE);
     }
 }

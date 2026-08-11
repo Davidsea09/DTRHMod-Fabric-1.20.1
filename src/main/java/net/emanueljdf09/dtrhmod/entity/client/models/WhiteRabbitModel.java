@@ -2,7 +2,8 @@ package net.emanueljdf09.dtrhmod.entity.client.models;
 
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.entity.custom.WhiteRabbitEntity;
-import net.minecraft.entity.EntityData;
+import net.minecraft.client.render.entity.ZombieBaseEntityRenderer;
+import net.minecraft.client.render.entity.ZombieEntityRenderer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.constant.DataTickets;
@@ -39,4 +40,5 @@ public class WhiteRabbitModel extends GeoModel<WhiteRabbitEntity> {
             head.setRotY(entityData.netHeadYaw() * MathHelper.RADIANS_PER_DEGREE);
         }
     }
+
 }

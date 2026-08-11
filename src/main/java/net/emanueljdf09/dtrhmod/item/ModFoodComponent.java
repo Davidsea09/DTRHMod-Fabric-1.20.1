@@ -3,7 +3,6 @@ package net.emanueljdf09.dtrhmod.item;
 import net.emanueljdf09.dtrhmod.util.ModEffects;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.FoodComponent;
-import net.minecraft.item.FoodComponents;
 
 public class ModFoodComponent {
     public static final FoodComponent EAT_ME = new FoodComponent.Builder()

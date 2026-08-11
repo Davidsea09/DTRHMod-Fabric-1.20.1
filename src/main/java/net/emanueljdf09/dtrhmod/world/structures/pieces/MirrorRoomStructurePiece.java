@@ -51,20 +51,16 @@ public class MirrorRoomStructurePiece extends SimpleStructurePiece {
     @Override
     public void generate(StructureWorldAccess world, StructureAccessor structures, ChunkGenerator generator, Random random, BlockBox box, ChunkPos chunkPos, BlockPos pivot) {
 
-        // 2. Run the vanilla NBT template placement first
         super.generate(world, structures, generator, random, box, chunkPos, pivot);
 
-        // 3. Scan the exact bounding box of the pasted structure for your mirror block
-        BlockPos.iterate(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()).forEach(currentPos -> {
+         BlockPos.iterate(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()).forEach(currentPos -> {
             BlockState state = world.getBlockState(currentPos);
 
-            // 4. Force-apply the structure type property to both halves
             if (state.isOf(ModBlocks.MIRROR_BLOCK)) {
                 if (state.get(MirrorBlock.TYPE) != MirrorType.structure) {
 
                     BlockState repairedState = state.with(MirrorBlock.TYPE, MirrorType.structure);
 
-                    // Flag 2 safely modifies the chunk array without triggering early block updates
                     world.setBlockState(currentPos, repairedState, 2);
                 }
             }

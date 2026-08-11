@@ -32,15 +32,11 @@ public class TeapotBlock extends BlockWithEntity implements BlockEntityProvider 
 
     public TeapotBlock(Settings settings) {
         super(settings);
-        // 2. Set the default state to North
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        // If your model handles rotations automatically via its JSON blockstate model file,
-        // you can leave this returning SHAPE.
-        // If your bounding boxes need to flip horizontally, you would pass `state.get(FACING)` here.
         return SHAPE;
     }
 
@@ -49,14 +45,12 @@ public class TeapotBlock extends BlockWithEntity implements BlockEntityProvider 
         return SHAPE;
     }
 
-    // 3. Set facing direction when the player places down the teapot
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
-    // 4. Handle standard structure rotations (like structures loaded with structure blocks)
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
         return state.with(FACING, rotation.rotate(state.get(FACING)));
@@ -67,7 +61,6 @@ public class TeapotBlock extends BlockWithEntity implements BlockEntityProvider 
         return state.rotate(mirror.getRotation(state.get(FACING)));
     }
 
-    // 5. Build properties registry map
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
@@ -110,7 +103,7 @@ public class TeapotBlock extends BlockWithEntity implements BlockEntityProvider 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, net.emanueljdf09.dtrhmod.block.ModBlockEntities.TEAPOT_BLOCK_ENTITY,
+        return checkType(type, ModBlockEntities.TEAPOT_BLOCK_ENTITY,
                 (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
     }
 

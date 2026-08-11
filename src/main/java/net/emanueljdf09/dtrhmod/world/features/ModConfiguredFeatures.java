@@ -1,37 +1,40 @@
 package net.emanueljdf09.dtrhmod.world.features;
 
-import dev.corgitaco.ohthetreesyoullgrow.fabric.OhTheTreesYoullGrowFabric;
 import dev.corgitaco.ohthetreesyoullgrow.world.level.levelgen.feature.TYGFeatures;
-import dev.corgitaco.ohthetreesyoullgrow.world.level.levelgen.feature.TreeFromStructureNBTFeature;
 import dev.corgitaco.ohthetreesyoullgrow.world.level.levelgen.feature.configurations.TreeFromStructureNBTConfig;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
-import net.emanueljdf09.dtrhmod.world.features.tree.deco.WwTreeDecorator;
+import net.emanueljdf09.dtrhmod.world.features.tree.deco.HangingLeavesTreeDeco;
+import net.emanueljdf09.dtrhmod.world.features.tree.deco.HangFromTreeDeco;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FlowerbedBlock;
 import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DataPool;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.intprovider.BiasedToBottomIntProvider;
-import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.gen.blockpredicate.BlockPredicate;
 import net.minecraft.world.gen.feature.*;
-import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
-import net.minecraft.world.gen.foliage.*;
-import net.minecraft.world.gen.heightprovider.BiasedToBottomHeightProvider;
 import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import net.minecraft.world.gen.stateprovider.PredicatedStateProvider;
-import net.minecraft.world.gen.trunk.*;
+import net.minecraft.world.gen.stateprovider.WeightedBlockStateProvider;
 
-import javax.print.attribute.standard.DialogOwner;
 import java.util.List;
 import java.util.Set;
 
+import static net.minecraft.block.LanternBlock.HANGING;
+
 public class ModConfiguredFeatures {
+
+    public static final RegistryKey<ConfiguredFeature<?, ?>> FOREST_ROCKS = registerKey("forest_rocks");
+    public static final RegistryKey<ConfiguredFeature<?, ?>> FOREST_FLOWERBEDS = registerKey("forest_flowerbeds");
+    public static final RegistryKey<ConfiguredFeature<?, ?>> FOREST_GROUND_MUSHROOMS = registerKey("forest_ground_mushrooms");
 
     public static final RegistryKey<ConfiguredFeature<?, ?>> DISK_CLAY = registerKey("disk_clay");
     public static final RegistryKey<ConfiguredFeature<?, ?>> DISK_SAND = registerKey("disk_sand");
@@ -65,6 +68,60 @@ public class ModConfiguredFeatures {
     public static void bootstrap(Registerable<ConfiguredFeature<?, ?>> context) {
         var placedLookup = context.getRegistryLookup(RegistryKeys.PLACED_FEATURE);
         var configuredLookup = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
+
+        register(context, FOREST_ROCKS,Feature.SIMPLE_BLOCK,
+                new SimpleBlockFeatureConfig(BlockStateProvider.of(Blocks.STONE_SLAB))
+        );
+
+        DataPool.Builder<BlockState> builder_flowerbeds = new DataPool.Builder<>();
+
+        for (int i = 1; i <= 4; ++i) {
+            for (Direction direction : Direction.values()) {
+                if (direction.getAxis().isHorizontal()) {
+                    builder_flowerbeds.add(
+                            ModBlocks.LAWN_DAISY_PATCH.getDefaultState()
+                                    .with(FlowerbedBlock.FLOWER_AMOUNT, i)
+                                    .with(FlowerbedBlock.FACING, direction),
+                            1
+                    );
+                }
+            }
+        }
+
+        register(context, FOREST_FLOWERBEDS, Feature.FLOWER,
+                new RandomPatchFeatureConfig(
+                        16,
+                        6,
+                        2,
+                        PlacedFeatures.createEntry(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockFeatureConfig(
+                                        new WeightedBlockStateProvider(builder_flowerbeds)
+                                )
+                        )
+                )
+        );
+
+        register(context, FOREST_GROUND_MUSHROOMS, Feature.FLOWER,
+                new RandomPatchFeatureConfig(
+                        16,
+                        6,
+                        2,
+                        PlacedFeatures.createEntry(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockFeatureConfig(
+                                        new WeightedBlockStateProvider(
+                                                DataPool.<BlockState>builder()
+                                                        .add(ModBlocks.YELLOW_MUSHROOM.getDefaultState(), 3) // Common
+                                                        .add(ModBlocks.BLUE_MUSHROOM.getDefaultState(), 2) // Uncommon
+                                                        .add(ModBlocks.MAGENTA_MUSHROOM.getDefaultState(), 1) // Rare
+                                                        .build()
+                                        )
+                                )
+                        )
+                )
+        );
+
 
         register(context, DISK_CLAY, Feature.DISK, new DiskFeatureConfig(PredicatedStateProvider.of(Blocks.CLAY), BlockPredicate.matchingBlocks(List.of(ModBlocks.WONDER_DIRT, Blocks.CLAY)), UniformIntProvider.create(2, 3), 1));
         register(context, DISK_GRAVEL, Feature.DISK, new DiskFeatureConfig(PredicatedStateProvider.of(Blocks.GRAVEL), BlockPredicate.matchingBlocks(List.of(ModBlocks.WONDER_DIRT, Blocks.GRASS_BLOCK)), UniformIntProvider.create(2, 5), 2));
@@ -113,6 +170,16 @@ public class ModConfiguredFeatures {
                         .leavesTarget(Set.of(Blocks.OAK_LEAVES))
                         .growableOn(BlockPredicate.matchingBlockTag(BlockTags.DIRT))
                         .maxLogDepth(5)
+//                      .treeDecorators(List.of(
+//                                new HangFromTreeDeco(
+//                                        1,
+//                                        1,
+//                                        2,
+//                                        4,
+//                                        2,
+//                                        BlockStateProvider.of(Blocks.CHAIN),
+//                                        BlockStateProvider.of(Blocks.LANTERN.getDefaultState().with(HANGING, true))))
+//                        )
                         .build()
 
 
@@ -262,6 +329,7 @@ public class ModConfiguredFeatures {
                         .leavesTarget(Set.of(Blocks.OAK_LEAVES))
                         .growableOn(BlockPredicate.matchingBlockTag(BlockTags.DIRT))
                         .maxLogDepth(10)
+                        .treeDecorators(List.of(new HangingLeavesTreeDeco(0.35f)))
                         .build()
 
 
@@ -278,6 +346,7 @@ public class ModConfiguredFeatures {
                         .leavesTarget(Set.of(Blocks.OAK_LEAVES))
                         .growableOn(BlockPredicate.matchingBlockTag(BlockTags.DIRT))
                         .maxLogDepth(10)
+                        .treeDecorators(List.of(new HangingLeavesTreeDeco(0.35f)))
                         .build()
 
 
@@ -294,6 +363,7 @@ public class ModConfiguredFeatures {
                         .leavesTarget(Set.of(Blocks.OAK_LEAVES))
                         .growableOn(BlockPredicate.matchingBlockTag(BlockTags.DIRT))
                         .maxLogDepth(10)
+                        .treeDecorators(List.of(new HangingLeavesTreeDeco(0.35f)))
                         .build()
 
 
@@ -310,6 +380,7 @@ public class ModConfiguredFeatures {
                         .leavesTarget(Set.of(Blocks.OAK_LEAVES))
                         .growableOn(BlockPredicate.matchingBlockTag(BlockTags.DIRT))
                         .maxLogDepth(10)
+                        .treeDecorators(List.of(new HangingLeavesTreeDeco(0.35f)))
                         .build()
 
 

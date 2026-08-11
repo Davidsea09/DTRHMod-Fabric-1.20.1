@@ -104,6 +104,10 @@ public class ProgressionComponentImpl implements ProgressionComponent, AutoSynce
     public void setCompletedStages(int stages) {
 
         this.completedStages = stages;
+
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            ModComponents.PROGRESSION_COMPONENT.sync(serverPlayer);
+        }
     }
 
     @Override
@@ -146,7 +150,7 @@ public class ProgressionComponentImpl implements ProgressionComponent, AutoSynce
         this.metWhiteRabbit = nbtCompound.getBoolean("MetWhiteRabbit");
         this.metInOverworld = nbtCompound.getBoolean("MetInOverworld");
 
-        if (nbtCompound.contains("wonderlandSpawn", 10)) { // 10 is the ID for NbtCompound
+        if (nbtCompound.contains("wonderlandSpawn", 10)) {
             this.wonderlandSpawn = NbtHelper.toBlockPos(nbtCompound.getCompound("wonderlandSpawn"));
         } else {
             this.wonderlandSpawn = null;

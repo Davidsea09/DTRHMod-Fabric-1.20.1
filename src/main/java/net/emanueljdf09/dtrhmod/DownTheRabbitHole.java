@@ -1,5 +1,6 @@
 package net.emanueljdf09.dtrhmod;
 
+import net.emanueljdf09.dtrhmod.block.ModBlockCollections;
 import net.emanueljdf09.dtrhmod.block.ModBlockEntities;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
@@ -43,7 +44,9 @@ public class DownTheRabbitHole implements ModInitializer {
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
 		ModBlocks.registerModBlock();
+		ModBlockCollections.registerModBlockCollections();
 		ModBlockEntities.registerBlockEnities();
+		ModParticles.registerParticles();
 		ModEntities.registerModEntities();
 		ModEffects.registerModEffects();
 		ModEffects.registerBrewingRecipes();
@@ -97,9 +100,15 @@ public class DownTheRabbitHole implements ModInitializer {
 
 		ServerTickEvents.END_WORLD_TICK.register(world -> {
 			if (world.getRegistryKey().equals(ModDimensions.STORYBOOK_LEVEL_KEY)) {
-				// 🌟 Use new ArrayList<>() to avoid ConcurrentModificationException during teleportation!
+
 				for (ServerPlayerEntity player : new ArrayList<>(world.getPlayers())) {
 					TeleportUtil.checkAndHandleVoidReturn(player);
+				}
+			}
+
+			if (world.getRegistryKey().equals(ModDimensions.WONDERLAND_LEVEL_KEY)) {
+				for (ServerPlayerEntity player : new ArrayList<>(world.getPlayers())) {
+					TeleportUtil.checkAndHandleWonderlandVoidReturn(player);
 				}
 			}
 		});

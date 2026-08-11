@@ -1,6 +1,6 @@
 {
   "type": "dtrhmod:mirror_room",
-  "biomes": "#minecraft:is_overworld",
+  "biomes": "#dtrhmod:has_structure/rabbithole",
   "step": "surface_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "beard_thin"

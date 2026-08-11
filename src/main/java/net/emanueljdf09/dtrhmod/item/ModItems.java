@@ -7,9 +7,7 @@ import net.emanueljdf09.dtrhmod.item.block.ExteriorChestItem;
 import net.emanueljdf09.dtrhmod.item.custom.DynamicTeaCupItem;
 import net.emanueljdf09.dtrhmod.item.custom.StoryBook;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.SpawnEggItem;
+import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -23,7 +21,6 @@ public class ModItems {
     public static final Item EXTERIOR_KEY = registerItem("exterior_key", new Item(new FabricItemSettings()));
 
     public static BlockItem EXTERIOR_CHEST_ITEM = registerItem("exterior_chest", new ExteriorChestItem(ModBlocks.EXTERIOR_CHEST, new FabricItemSettings()));
-
 
     public static final Item CINDERELLA_STORYBOOK = registerItem("cinderella_storybook",
             new StoryBook(new Item.Settings().maxCount(1), "cinderella"));
@@ -67,7 +64,23 @@ public class ModItems {
             new SpawnEggItem(ModEntities.WEEPING_PLAYER, 0x057E36, 0x100000,
                     new FabricItemSettings()));
 
+    public static final Item WW_SIGN = registerItem("ww_sign",
+            new SignItem(new FabricItemSettings().maxCount(16), ModBlocks.WW_SIGN, ModBlocks.WALL_WW_SIGN));
 
+    public static final Item HANGING_WW_SIGN = registerItem("hanging_ww_sign",
+            new HangingSignItem(ModBlocks.WW_HANGING_SIGN, ModBlocks.WALL_WW_HANGING_SIGN, new FabricItemSettings().maxCount(16)));
+
+    public static final Item TH_SIGN = registerItem("th_sign",
+            new SignItem(new FabricItemSettings().maxCount(16), ModBlocks.TH_SIGN, ModBlocks.WALL_TH_SIGN));
+
+    public static final Item HANGING_TH_SIGN = registerItem("hanging_th_sign",
+            new HangingSignItem(ModBlocks.TH_HANGING_SIGN, ModBlocks.WALL_TH_HANGING_SIGN, new FabricItemSettings().maxCount(16)));
+
+    public static final Item BB_SIGN = registerItem("bb_sign",
+            new SignItem(new FabricItemSettings().maxCount(16), ModBlocks.BB_SIGN, ModBlocks.WALL_BB_SIGN));
+
+    public static final Item HANGING_BB_SIGN = registerItem("hanging_bb_sign",
+            new HangingSignItem(ModBlocks.BB_HANGING_SIGN, ModBlocks.WALL_BB_HANGING_SIGN, new FabricItemSettings().maxCount(16)));
 
 
     public static final List<Item> STORYBOOK_ITEMS = List.of(

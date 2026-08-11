@@ -19,6 +19,9 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -76,7 +79,7 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
     protected void initGoals() {
         this.goalSelector.add(1, new RunToRabbitHoleGoal(this));
 
-        this.goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 2.0f, 1.0f)); // 1.0f means 100% chance to activate when in range
+        this.goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 2.0f, 1.0f));
 
         this.goalSelector.add(3, new WanderAroundHoleGoal(this, 30));
 
@@ -102,11 +105,9 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
                     }
                 }
 
-                // GREETING TRACKING & LOOKING LOGIC
                 if (isGreeting()) {
                     greetTicks++;
 
-                    // Force the rabbit to face the closest player while it greets them
                     PlayerEntity closestPlayer = this.getWorld().getClosestPlayer(this, 5.0D);
                     if (closestPlayer != null) {
                         this.getLookControl().lookAt(closestPlayer, 30.0F, 30.0F);
@@ -120,26 +121,26 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
                 }
 
                 if (isReturning() && getRabbitHolePos().isPresent()) {
-                    if (this.getBlockPos().isWithinDistance(getRabbitHolePos().get(), 1.5)) {
+                    if (this.getBlockPos().isWithinDistance(getRabbitHolePos().get(), 4)) {
 
-                        if (this.getWorld() instanceof net.minecraft.server.world.ServerWorld serverWorld) {
+                        if (this.getWorld() instanceof ServerWorld serverWorld) {
                             serverWorld.spawnParticles(
-                                    ParticleTypes.CAMPFIRE_COSY_SMOKE, // A nice thick, cartoony cloud
+                                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
                                     this.getX(), this.getY() + 0.5D, this.getZ(),
-                                    15, // Number of particles to spawn
-                                    0.2D, 0.2D, 0.2D, // Random spread/radius around the rabbit
-                                    0.05D // Speed of the smoke floating away
+                                    15,
+                                    0.2D, 0.2D, 0.2D,
+                                    0.05D
                             );
 
                             serverWorld.playSound(
                                     null, this.getX(), this.getY(), this.getZ(),
-                                    net.minecraft.sound.SoundEvents.ENTITY_CHICKEN_EGG, // High-pitched pop sound
-                                    net.minecraft.sound.SoundCategory.NEUTRAL,
+                                    SoundEvents.ENTITY_CHICKEN_EGG,
+                                    SoundCategory.NEUTRAL,
                                     1.0F, 1.5F
                             );
                         }
 
-                        this.discard(); // Safely delete the rabbit after spawning the cloud
+                        this.discard();
                     }
                 }
             }
@@ -201,7 +202,7 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
         if (player instanceof ServerPlayerEntity serverPlayer) {
             ProgressionComponent component = ModComponents.PROGRESSION_COMPONENT.get(serverPlayer);
 
-            // --- OVERWORLD LOGIC (The Guide Sequence) ---
+
             if (currentWorldKey == World.OVERWORLD) {
                 if (isReturning() || isGreeting()) return ActionResult.PASS;
 
@@ -209,7 +210,7 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
                     player.sendMessage(Text.translatable("entity.dtrhmod.white_rabbit.greet_msg"), true);
 
                     component.setMetWhiteRabbit(true);
-                    component.setMetInOverworld(true); // Player officially followed the intended intro!
+                    component.setMetInOverworld(true);
                     ModComponents.PROGRESSION_COMPONENT.sync(serverPlayer);
 
                     setGreeting(true);
@@ -221,17 +222,13 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
                 }
             }
 
-            // --- WONDERLAND / STORY LOGIC ---
             else {
-                // SCENARIO A: Player met the rabbit in the Overworld first
                 if (component.hasMetInOverworld()) {
                     player.sendMessage(Text.translatable("entity.dtrhmod.white_rabbit.wonderland_remember_msg"), false);
                 }
-                // SCENARIO B: Player skipped the rabbit and fell in the hole blindly
                 else {
                     player.sendMessage(Text.translatable("entity.dtrhmod.white_rabbit.wonderland_stranger_msg"), false);
 
-                    // Mark them as met now so future interactions change
                     component.setMetWhiteRabbit(true);
                     ModComponents.PROGRESSION_COMPONENT.sync(serverPlayer);
                 }

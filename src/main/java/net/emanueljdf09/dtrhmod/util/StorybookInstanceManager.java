@@ -1,7 +1,5 @@
 package net.emanueljdf09.dtrhmod.util;
 
-import net.emanueljdf09.dtrhmod.block.ModBlocks;
-import net.emanueljdf09.dtrhmod.block.entity.MadHatterHatBlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -47,7 +45,6 @@ public class StorybookInstanceManager extends PersistentState {
             RegistryKey<World> originDimKey,
             BlockPos originPos
     ) {
-        // Always store/update return point
         playerReturnLocations.put(ownerUuid, new ReturnLocation(originDimKey, originPos));
 
         ServerWorld targetWorld = server.getWorld(targetDimKey);

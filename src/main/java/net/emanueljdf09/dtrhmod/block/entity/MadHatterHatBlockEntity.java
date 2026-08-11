@@ -4,14 +4,13 @@ import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlockEntities;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.emanueljdf09.dtrhmod.block.custom.MadHatterHatBlock;
-import net.emanueljdf09.dtrhmod.item.ModItems;
 import net.emanueljdf09.dtrhmod.recipe.HatRitualRecipe;
 import net.emanueljdf09.dtrhmod.util.TeleportUtil;
-import net.emanueljdf09.dtrhmod.world.dimension.ModDimensions;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -19,8 +18,8 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -32,7 +31,6 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
@@ -55,7 +53,7 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
 
     private UUID portalOwnerUuid;
     private int ritualTicks = 0;
-    private int portalCooldownTicks = 300; // 15 seconds (300 ticks)
+    private int portalCooldownTicks = 300;
     private boolean isSpinning = false;
     private boolean isRecipeValid = false;
 
@@ -102,7 +100,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
             }
         }
 
-        // Handle Fail Animation Timer & Cleanup
         if (entity.currentAnimState == AnimState.FAIL) {
             entity.animTicks++;
             if (entity.animTicks == 40) {
@@ -127,9 +124,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
 
         MadHatterHatBlock.HatState currentState = state.get(MadHatterHatBlock.STATE);
 
-        // ==========================================
-        // 1. PORTAL ACTIVE PHASE
-        // ==========================================
         if (currentState == MadHatterHatBlock.HatState.PORTAL) {
             if (entity.isInstanceDimension) {
                 if (entity.targetDimension != null) {
@@ -157,11 +151,9 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
             List<ItemEntity> items = world.getEntitiesByClass(ItemEntity.class, box, EntityPredicates.VALID_ENTITY);
 
             if (!items.isEmpty()) {
-                // Check if Redstone Dust is present to trigger the activation sequence
                 boolean hasRedstone = items.stream().anyMatch(item -> item.getStack().isOf(Items.REDSTONE));
 
                 if (hasRedstone) {
-                    // Consume 1 Redstone dust to power the ritual
                     for (ItemEntity item : items) {
                         if (item.getStack().isOf(Items.REDSTONE)) {
                             item.getStack().decrement(1);
@@ -206,7 +198,7 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
             return;
         }
 
-        net.minecraft.inventory.SimpleInventory inventory = new net.minecraft.inventory.SimpleInventory(items.size());
+        SimpleInventory inventory = new SimpleInventory(items.size());
         for (int i = 0; i < items.size(); i++) {
             inventory.setStack(i, items.get(i).getStack());
         }
@@ -221,7 +213,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
             this.isInstanceDimension = recipe.isInstanceDimension();
             this.structureId = recipe.getStructureId();
 
-            // Store recipe item copy for returning to inventory later
             this.storedRecipeItem = items.get(0).getStack().copy();
 
             PlayerEntity closestPlayer = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 5.0, false);
@@ -237,7 +228,7 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     }
 
     private void expirePersistentPortalAndRefund(World world, BlockPos pos) {
-        if (this.currentAnimState == AnimState.STOP) return; // Prevent multiple executions
+        if (this.currentAnimState == AnimState.STOP) return;
 
         this.currentAnimState = AnimState.STOP;
         this.animTicks = 0;
@@ -248,15 +239,15 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     }
 
     private boolean checkStructure(World world, BlockPos pos) {
-        // 1. Check block directly underneath
+
         if (!world.getBlockState(pos.down()).isOf(ModBlocks.BB_LOG)) {
             return false;
         }
 
-        // 2. Check surrounding 4 cardinal blocks for candles
+
         BlockPos[] surround = { pos.north(), pos.south(), pos.east(), pos.west() };
         for (BlockPos p : surround) {
-            if (!world.getBlockState(p).isIn(net.minecraft.registry.tag.BlockTags.CANDLES)) {
+            if (!world.getBlockState(p).isIn(BlockTags.CANDLES)) {
                 return false;
             }
         }
@@ -282,7 +273,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
         this.currentAnimState = AnimState.FAIL;
         this.animTicks = 0;
 
-        // Cleanly wipe the controller's trigger queue and force it to accept a fresh trigger
         var manager = this.getAnimatableInstanceCache().getManagerForId(this.hashCode());
         if (manager != null) {
             var controller = manager.getAnimationControllers().get("controller");
@@ -297,8 +287,7 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     }
 
     private void spawnBurpedItems(World world, BlockPos pos) {
-        // This runs after the delay to actually throw/spawn the rejected items out of the hat
-        ItemStack penaltyStack = new ItemStack(Items.ROTTEN_FLESH); // Or whatever penalty item you want to burp out
+        ItemStack penaltyStack = new ItemStack(Items.ROTTEN_FLESH);
 
         ItemEntity burpedItem = new ItemEntity(
                 world,

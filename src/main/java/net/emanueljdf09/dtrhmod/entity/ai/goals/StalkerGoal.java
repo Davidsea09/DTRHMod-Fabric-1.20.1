@@ -40,7 +40,6 @@ public class StalkerGoal extends Goal {
     public void tick() {
         if (this.targetPlayer == null) return;
 
-        // --- CONDITION 1: PLAYER IS LOOKING AT THE STATUE ---
         if (isPlayerLooking(this.targetPlayer)) {
             this.isFrozen = true;
             this.mob.getNavigation().stop();
@@ -50,10 +49,8 @@ public class StalkerGoal extends Goal {
             return;
         }
 
-        // --- CONDITION 2: PLAYER IS NOT LOOKING (STATUE IS ACTIVE) ---
         this.isFrozen = false;
 
-        // Handle the 2-second initial stalk delay before moving
         if (this.stalkDelayTimer < TWO_SECONDS_IN_TICKS) {
             this.stalkDelayTimer++;
             this.mob.getNavigation().stop();
@@ -63,16 +60,13 @@ public class StalkerGoal extends Goal {
 
         double distanceSq = this.mob.squaredDistanceTo(this.targetPlayer);
 
-        // Check if within attack reach (4.0D equals roughly 2 blocks away)
         if (distanceSq <= 4.0D) {
             this.mob.getNavigation().stop();
             this.mob.setVelocity(Vec3d.ZERO);
 
-            // Handle the 2-second attack windup delay
             if (this.attackDelayTimer < TWO_SECONDS_IN_TICKS) {
                 this.attackDelayTimer++;
             } else {
-                // Execute attack!
                 float damage = (float) this.mob.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
                 this.targetPlayer.damage(this.mob.getDamageSources().mobAttack(this.mob), damage);
                 this.targetPlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 40));
@@ -82,21 +76,15 @@ public class StalkerGoal extends Goal {
         } else {
             this.attackDelayTimer = 0;
 
-            // --- CIRCLING LOGIC ---
-            // Distribute up to 8 statues perfectly around the player using their unique Entity ID
-            // Multiplying by 45 degrees gives us 8 distinct directions (0, 45, 90, 135...)
             double angleDegrees = (this.mob.getId() * 45) % 360;
             double angleRadians = Math.toRadians(angleDegrees);
 
-            // Set the target radius (how far from the player they want to stand in the circle)
             double radius = 1.2D;
 
-            // Calculate the exact offset coordinate
             double targetX = this.targetPlayer.getX() + (Math.cos(angleRadians) * radius);
             double targetZ = this.targetPlayer.getZ() + (Math.sin(angleRadians) * radius);
             double targetY = this.targetPlayer.getY();
 
-            // Pathfind to their assigned slot in the circle instead of the player's exact center
             this.mob.getNavigation().startMovingTo(targetX, targetY, targetZ, 1.4D);
         }
     }

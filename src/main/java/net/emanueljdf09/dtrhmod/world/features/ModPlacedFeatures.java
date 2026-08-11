@@ -2,7 +2,6 @@ package net.emanueljdf09.dtrhmod.world.features;
 
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
-import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.registry.Registerable;
@@ -10,19 +9,17 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DataPool;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.gen.blockpredicate.BlockPredicate;
 import net.minecraft.world.gen.feature.*;
-import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
-import net.minecraft.world.gen.foliage.CherryFoliagePlacer;
 import net.minecraft.world.gen.placementmodifier.*;
-import net.minecraft.world.gen.stateprovider.BlockStateProvider;
-import net.minecraft.world.gen.trunk.CherryTrunkPlacer;
 
 import java.util.List;
 
 public class ModPlacedFeatures {
+
+    public static final RegistryKey<PlacedFeature> FOREST_ROCKS_PLACED = registerKey("forest_rocks_placed");
+    public static final RegistryKey<PlacedFeature> FOREST_FLOWERBEDS_PLACED = registerKey("forest_flowerbeds_placed");
+    public static final RegistryKey<PlacedFeature> FOREST_GROUND_MUSHROOMS_PLACED = registerKey("forest_ground_mushrooms_placed");
 
     public static final RegistryKey<PlacedFeature> DISK_CLAY_PLACED = registerKey("disk_clay_placed");
     public static final RegistryKey<PlacedFeature> DISK_SAND_PLACED = registerKey("disk_sand_placed");
@@ -39,6 +36,37 @@ public class ModPlacedFeatures {
 
     public static void bootstrap(Registerable<PlacedFeature> context) {
         var configuredFeatureRegistryEntryLookup = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
+
+        register(context, FOREST_ROCKS_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.FOREST_ROCKS),
+                List.of(
+                        RarityFilterPlacementModifier.of(6),
+                        SquarePlacementModifier.of(),
+                        PlacedFeatures.OCEAN_FLOOR_WG_HEIGHTMAP, // Finds the actual floor instead of water surface
+                        SurfaceWaterDepthFilterPlacementModifier.of(0), // Rejects placement if water is present above
+                        BiomePlacementModifier.of()
+                )
+        );
+
+        register(context, FOREST_FLOWERBEDS_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.FOREST_FLOWERBEDS),
+                List.of(
+                        RarityFilterPlacementModifier.of(8),
+                        SquarePlacementModifier.of(),
+                        PlacedFeatures.OCEAN_FLOOR_WG_HEIGHTMAP,
+                        SurfaceWaterDepthFilterPlacementModifier.of(0),
+                        BiomePlacementModifier.of()
+                )
+        );
+
+        register(context, FOREST_GROUND_MUSHROOMS_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.FOREST_GROUND_MUSHROOMS),
+                List.of(
+                        RarityFilterPlacementModifier.of(4),
+                        SquarePlacementModifier.of(),
+                        PlacedFeatures.OCEAN_FLOOR_WG_HEIGHTMAP,
+                        SurfaceWaterDepthFilterPlacementModifier.of(0),
+                        BiomePlacementModifier.of()
+                )
+        );
+
 
         register(context, DISK_CLAY_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.DISK_CLAY), SquarePlacementModifier.of(), PlacedFeatures.OCEAN_FLOOR_WG_HEIGHTMAP, BlockFilterPlacementModifier.of(BlockPredicate.matchingFluids(new Fluid[]{Fluids.WATER})), BiomePlacementModifier.of());
         register(context, DISK_GRAVEL_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.DISK_GRAVEL), SquarePlacementModifier.of(), PlacedFeatures.OCEAN_FLOOR_WG_HEIGHTMAP, BlockFilterPlacementModifier.of(BlockPredicate.matchingFluids(new Fluid[]{Fluids.WATER})), BiomePlacementModifier.of());

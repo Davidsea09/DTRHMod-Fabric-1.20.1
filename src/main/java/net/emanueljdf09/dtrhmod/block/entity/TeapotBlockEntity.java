@@ -175,7 +175,6 @@ public class TeapotBlockEntity extends BlockEntity implements ExtendedScreenHand
         NbtCompound nbt = resultCup.getOrCreateNbt();
         NbtList effectsList = new NbtList();
 
-        // Identify our actual fluid modifier item type from the real slot
         Item fluidItem = this.getStack(BUCKET_SLOT).getItem();
 
         for (int i = 0; i < 3; i++) {
@@ -184,7 +183,7 @@ public class TeapotBlockEntity extends BlockEntity implements ExtendedScreenHand
                 SimpleInventory singleSlotInv = new SimpleInventory(6);
                 singleSlotInv.setStack(0, slotStack.copy());
 
-                singleSlotInv.setStack(3, new ItemStack(net.minecraft.item.Items.WATER_BUCKET));
+                singleSlotInv.setStack(3, new ItemStack(Items.WATER_BUCKET));
                 singleSlotInv.setStack(4, this.getStack(CUP_SLOT).copy());
 
                 Optional<TeapotRecipe> singleRecipe = this.getWorld().getRecipeManager()
@@ -196,9 +195,9 @@ public class TeapotBlockEntity extends BlockEntity implements ExtendedScreenHand
                         int finalDuration = baseEffect.getDuration();
                         int finalAmplifier = baseEffect.getAmplifier();
 
-                        if (fluidItem == net.minecraft.item.Items.LAVA_BUCKET) {
+                        if (fluidItem == Items.LAVA_BUCKET) {
                             finalAmplifier = Math.max(finalAmplifier, 1);
-                        } else if (fluidItem == net.minecraft.item.Items.MILK_BUCKET) {
+                        } else if (fluidItem == Items.MILK_BUCKET) {
                             finalDuration = 600;
                         }
 
@@ -237,7 +236,7 @@ public class TeapotBlockEntity extends BlockEntity implements ExtendedScreenHand
         if (this.getWorld() == null) return false;
 
         ItemStack fluidStack = this.getStack(BUCKET_SLOT);
-        if (fluidStack.isEmpty() || fluidStack.isOf(net.minecraft.item.Items.BUCKET) || this.getStack(CUP_SLOT).isEmpty()) {
+        if (fluidStack.isEmpty() || fluidStack.isOf(Items.BUCKET) || this.getStack(CUP_SLOT).isEmpty()) {
             return false;
         }
 

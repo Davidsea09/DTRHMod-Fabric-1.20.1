@@ -6,6 +6,7 @@ import net.emanueljdf09.dtrhmod.util.ClientAnimationHelper;
 import net.emanueljdf09.dtrhmod.util.ModComponents;
 import net.emanueljdf09.dtrhmod.util.ModEffects;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,7 +51,7 @@ public class ExteriorDoorEntity extends BlockEntity implements GeoBlockEntity {
         if (stack.isOf(ModItems.EXTERIOR_KEY) && player.hasStatusEffect(ModEffects.SHRINK)) {
             if (!world.isClient) {
                 component.setOpenedExtDoor(true);
-                world.updateListeners(pos, getCachedState(), getCachedState(), net.minecraft.block.Block.NOTIFY_LISTENERS);
+                world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
                 player.sendMessage(Text.translatable("exterior.player.opendoor"), true);
             } else {
                 triggerAnim("door_controller", "opening");

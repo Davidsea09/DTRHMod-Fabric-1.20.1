@@ -3,6 +3,7 @@ package net.emanueljdf09.dtrhmod.item.custom;
 
 import net.emanueljdf09.dtrhmod.menu.screen.BookCoverScreen;
 import net.emanueljdf09.dtrhmod.util.ModUtils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -100,7 +101,7 @@ public class StoryBook extends WrittenBookItem {
         ItemStack stack = user.getStackInHand(hand);
 
         if (world.isClient) {
-            net.minecraft.client.MinecraftClient.getInstance()
+            MinecraftClient.getInstance()
                     .setScreen(new BookCoverScreen(stack
                     ));
         }

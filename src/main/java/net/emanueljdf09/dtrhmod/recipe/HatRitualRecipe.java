@@ -1,13 +1,17 @@
 package net.emanueljdf09.dtrhmod.recipe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
@@ -16,7 +20,7 @@ public class HatRitualRecipe implements Recipe<Inventory> {
     private final DefaultedList<Ingredient> ingredients;
     private final Identifier targetDimension;
     private final boolean isInstanceDimension;
-    private final Identifier structureId; // 🌟 Add this field
+    private final Identifier structureId;
 
     public HatRitualRecipe(Identifier id, DefaultedList<Ingredient> ingredients, Identifier targetDimension, boolean isInstanceDimension, Identifier structureId) {
         this.id = id;
@@ -117,8 +121,8 @@ public class HatRitualRecipe implements Recipe<Inventory> {
         public static final String ID = "hat_ritual";
 
         @Override
-        public HatRitualRecipe read(Identifier id, com.google.gson.JsonObject json) {
-            com.google.gson.JsonArray ingredientsJson = net.minecraft.util.JsonHelper.getArray(json, "ingredients");
+        public HatRitualRecipe read(Identifier id, JsonObject json) {
+            JsonArray ingredientsJson = JsonHelper.getArray(json, "ingredients");
             DefaultedList<Ingredient> ingredients = DefaultedList.of();
 
             for (int i = 0; i < ingredientsJson.size(); i++) {
@@ -126,17 +130,17 @@ public class HatRitualRecipe implements Recipe<Inventory> {
             }
 
             Identifier structureId = json.has("structure_id")
-                    ? new Identifier(net.minecraft.util.JsonHelper.getString(json, "structure_id"))
+                    ? new Identifier(JsonHelper.getString(json, "structure_id"))
                     : null;
 
-            Identifier targetDimension = new Identifier(net.minecraft.util.JsonHelper.getString(json, "target_dimension"));
-            boolean isInstance = net.minecraft.util.JsonHelper.getBoolean(json, "is_instance_dimension");
+            Identifier targetDimension = new Identifier(JsonHelper.getString(json, "target_dimension"));
+            boolean isInstance = JsonHelper.getBoolean(json, "is_instance_dimension");
 
             return new HatRitualRecipe(id, ingredients, targetDimension, isInstance, structureId);
         }
 
         @Override
-        public HatRitualRecipe read(Identifier id, net.minecraft.network.PacketByteBuf buf) {
+        public HatRitualRecipe read(Identifier id, PacketByteBuf buf) {
             int size = buf.readVarInt();
             DefaultedList<Ingredient> ingredients = DefaultedList.ofSize(size, Ingredient.EMPTY);
 
@@ -152,7 +156,7 @@ public class HatRitualRecipe implements Recipe<Inventory> {
         }
 
         @Override
-        public void write(net.minecraft.network.PacketByteBuf buf, HatRitualRecipe recipe) {
+        public void write(PacketByteBuf buf, HatRitualRecipe recipe) {
             buf.writeVarInt(recipe.ingredients.size());
             for (Ingredient ingredient : recipe.ingredients) {
                 ingredient.write(buf);

@@ -1,5 +1,6 @@
 package net.emanueljdf09.dtrhmod.item.custom;
 
+import net.emanueljdf09.dtrhmod.item.ModItems;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -9,13 +10,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ public class DynamicTeaCupItem extends Item {
     public static List<StatusEffectInstance> getEffectsFromStack(ItemStack stack) {
         List<StatusEffectInstance> effects = new ArrayList<>();
         NbtCompound nbt = stack.getNbt();
-        if (nbt != null && nbt.contains("Effects", 9)) { // 9 = NbtList
-            NbtList effectsList = nbt.getList("Effects", 10); // 10 = NbtCompound
+        if (nbt != null && nbt.contains("Effects", 9)) {
+            NbtList effectsList = nbt.getList("Effects", 10);
             for (int i = 0; i < effectsList.size(); i++) {
                 StatusEffectInstance effect = StatusEffectInstance.fromNbt(effectsList.getCompound(i));
                 if (effect != null) {
@@ -41,18 +42,18 @@ public class DynamicTeaCupItem extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, World world, java.util.List<net.minecraft.text.Text> tooltip, net.minecraft.client.item.TooltipContext context) {
+    public void appendTooltip(ItemStack stack, World world, java.util.List<Text> tooltip, TooltipContext context) {
         NbtCompound nbt = stack.getNbt();
         if (nbt != null && nbt.contains("Effects", 9)) {
             NbtList effectsList = nbt.getList("Effects", 10);
             for (int i = 0; i < effectsList.size(); i++) {
                 StatusEffectInstance effect = StatusEffectInstance.fromNbt(effectsList.getCompound(i));
                 if (effect != null) {
-                    net.minecraft.text.MutableText effectText = net.minecraft.text.Text.translatable(effect.getEffectType().getTranslationKey());
+                    MutableText effectText = Text.translatable(effect.getEffectType().getTranslationKey());
 
                    if (effect.getAmplifier() > 0) {
                         effectText.append(" ")
-                                .append(net.minecraft.text.Text.translatable("potion.potency." + effect.getAmplifier()));
+                                .append(Text.translatable("potion.potency." + effect.getAmplifier()));
                     }
 
                     int durationSeconds = effect.getDuration() / 20;
@@ -64,7 +65,7 @@ public class DynamicTeaCupItem extends Item {
                 }
             }
         } else {
-            tooltip.add(net.minecraft.text.Text.translatable("tooltip.dtrhmod.empty_tea").formatted(net.minecraft.util.Formatting.GRAY));
+            tooltip.add(Text.translatable("tooltip.dtrhmod.empty_tea").formatted(Formatting.GRAY));
         }
     }
 
@@ -90,9 +91,9 @@ public class DynamicTeaCupItem extends Item {
         if (user instanceof PlayerEntity player && !player.getAbilities().creativeMode) {
             stack.decrement(1);
             if (stack.isEmpty()) {
-                return new ItemStack(net.emanueljdf09.dtrhmod.item.ModItems.EMPTY_CUP);
+                return new ItemStack(ModItems.EMPTY_CUP);
             }
-            player.getInventory().insertStack(new ItemStack(net.emanueljdf09.dtrhmod.item.ModItems.EMPTY_CUP));
+            player.getInventory().insertStack(new ItemStack(ModItems.EMPTY_CUP));
         }
         return stack;
     }

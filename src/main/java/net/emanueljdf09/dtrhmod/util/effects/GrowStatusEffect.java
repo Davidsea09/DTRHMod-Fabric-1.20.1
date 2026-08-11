@@ -1,12 +1,10 @@
 package net.emanueljdf09.dtrhmod.util.effects;
 
 import net.emanueljdf09.dtrhmod.util.ModEffects;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
-import org.jetbrains.annotations.Nullable;
 import virtuoel.pehkui.api.ScaleTypes;
 
 public class GrowStatusEffect extends StatusEffect {

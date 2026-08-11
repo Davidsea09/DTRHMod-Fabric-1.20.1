@@ -22,14 +22,13 @@ public class RabbitHoleBlock extends BlockWithEntity {
 
     @Override
     public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL; // Forces the block to render its regular block JSON model
+        return BlockRenderType.MODEL;
     }
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         if (world.isClient) return;
 
-        // Route the collision logic straight down into the Block Entity
         if (entity instanceof ServerPlayerEntity player && world.getBlockEntity(pos) instanceof RabbitHoleBlockEntity rabbitHole) {
             rabbitHole.handlePlayerCollision(player);
         }

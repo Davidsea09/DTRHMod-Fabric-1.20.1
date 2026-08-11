@@ -10,7 +10,6 @@ import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentInitializer;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
-import net.emanueljdf09.dtrhmod.block.entity.MirrorBlockEntity;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponentImpl;
 import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorComponent;
