@@ -57,11 +57,11 @@ public class ModItems {
             new DynamicTeaCupItem(new FabricItemSettings().maxCount(16)));
 
     public static final Item WHITE_RABBIT_SPAWN_EGG = registerItem("white_rabbit_spawn_egg",
-            new SpawnEggItem(ModEntities.WHITE_RABBIT, 0x057E36, 0x100000,
+            new SpawnEggItem(ModEntities.WHITE_RABBIT, 0xc23232, 0xe8e3e3,
                     new FabricItemSettings()));
 
     public static final Item WEEPING_PLAYERS_SPAWN_EGG = registerItem("weeping_players_spawn_egg",
-            new SpawnEggItem(ModEntities.WEEPING_PLAYER, 0x057E36, 0x100000,
+            new SpawnEggItem(ModEntities.WEEPING_PLAYER, 0x727070, 0x211e1e,
                     new FabricItemSettings()));
 
     public static final Item WW_SIGN = registerItem("ww_sign",

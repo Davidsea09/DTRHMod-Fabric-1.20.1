@@ -300,8 +300,8 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         // Entities
         builder.add(ModItems.WHITE_RABBIT_SPAWN_EGG, "White Rabbit Spawn Egg (WIP)");
         builder.add(ModEntities.WHITE_RABBIT, "White Rabbit");
-        builder.add("entity.dtrhmod.white_rabbit.greet_msg", "Hey! I´m... OH NO! I´m Late!");
-        builder.add("entity.dtrhmod.white_rabbit.busy_msg", "Can´t talk right now! I´M LATE!");
+        builder.add("entity.dtrhmod.white_rabbit.greet_msg", "Oh dear! Oh dear! I shall be late!");
+        builder.add("entity.dtrhmod.white_rabbit.busy_msg", "I'm late, I'm late, for a very important date! No time to say 'hello, goodbye,' I'm late, I'm late, I'm late!");
         builder.add("entity.dtrhmod.white_rabbit.wonderland_remember_msg", "Oh hey, i know who you are; you followed me here.");
         builder.add("entity.dtrhmod.white_rabbit.wonderland_stranger_msg", "Who are you?");
 
@@ -417,6 +417,17 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.LAWN_DAISY_PATCH, "Lawn Daisy Patch");
 
         // Extras
+
+        // Advancements
+
+        builder.add("advancement.dtrhmod.root.title", "Down the Rabbit hole");
+        builder.add("advancement.dtrhmod.root.description", "A Very Fairy Tale focused mod!");
+
+        builder.add("advancement.dtrhmod.portal.title", "Follow the tunnel...");
+        builder.add("advancement.dtrhmod.portal.description", "...into the portal");
+
+        builder.add("misc.dtrhmod.biome_locked.title", "This Biome is Locked.");
+        builder.add("misc.dtrhmod.biome_locked.description", "Maybe you should come back later.");
 
         // World Gen
 

@@ -1,0 +1,22 @@
+{
+  "type": "dtrhmod:teapot",
+  "cup_count": 1,
+  "effects": [
+    {
+      "amplifier": 0,
+      "duration": 200,
+      "effect": "minecraft:strength"
+    }
+  ],
+  "fluid": {
+    "item": "minecraft:water_bucket"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:acacia_leaves"
+    }
+  ],
+  "result": {
+    "item": "dtrhmod:filled_tea_cup"
+  }
+}

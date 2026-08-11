@@ -3,13 +3,13 @@
 	"id": "dtrhmod",
 	"version": "${version}",
 	"name": "Down The Rabbit Hole",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A Very Fairy Tale focused mod!",
 	"authors": [
 		"Emanueljdf09"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/project/down-the-rabbit-hole",
+		"sources": "https://github.com/Davidsea09/DTRHMod-Fabric-1.20.1"
 	},
 	"license": "GPLv3",
 	"icon": "assets/dtrhmod/icon.png",

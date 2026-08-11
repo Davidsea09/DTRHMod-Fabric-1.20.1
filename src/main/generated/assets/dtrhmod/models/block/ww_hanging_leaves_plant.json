@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "dtrhmod:block/ww_hanging_leaves_plant"
+  }
+}

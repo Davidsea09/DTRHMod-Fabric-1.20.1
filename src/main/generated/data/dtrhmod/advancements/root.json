@@ -1,0 +1,32 @@
+{
+  "criteria": {
+    "entered_exterior": {
+      "conditions": {
+        "to": "dtrhmod:exterior"
+      },
+      "trigger": "minecraft:changed_dimension"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": {
+      "translate": "advancement.dtrhmod.root.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "dtrhmod:pocketwatch"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.dtrhmod.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "entered_exterior"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

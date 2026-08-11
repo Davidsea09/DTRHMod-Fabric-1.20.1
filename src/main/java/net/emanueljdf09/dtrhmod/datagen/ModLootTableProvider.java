@@ -12,7 +12,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
 
-        addDrop(ModBlocks.LAWN_DAISY_PATCH);
+        flowerbedDrops(ModBlocks.LAWN_DAISY_PATCH);
         addDrop(ModBlocks.WONDER_GRASS, ModBlocks.WONDER_DIRT);
         addDropWithSilkTouch(ModBlocks.WONDER_GRASS);
         addDrop(ModBlocks.WONDER_DIRT);
@@ -33,6 +33,10 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.TH_FENCE);
         addDrop(ModBlocks.TH_FENCE_GATE);
         addDrop(ModBlocks.TH_WALL);
+        addDrop(ModBlocks.TH_SIGN);
+        addDrop(ModBlocks.WALL_TH_SIGN);
+        addDrop(ModBlocks.TH_HANGING_SIGN);
+        addDrop(ModBlocks.WALL_TH_HANGING_SIGN);
 
         addDrop(ModBlocks.TH_LEAVES, leavesDrops(ModBlocks.TH_LEAVES, ModBlocks.TH_SAPLING, 0.0025f));
 
@@ -51,6 +55,10 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.WW_FENCE);
         addDrop(ModBlocks.WW_FENCE_GATE);
         addDrop(ModBlocks.WW_WALL);
+        addDrop(ModBlocks.WW_SIGN);
+        addDrop(ModBlocks.WALL_WW_SIGN);
+        addDrop(ModBlocks.WW_HANGING_SIGN);
+        addDrop(ModBlocks.WALL_WW_HANGING_SIGN);
 
         addDrop(ModBlocks.WW_LEAVES, leavesDrops(ModBlocks.WW_LEAVES, ModBlocks.WW_SAPLING, 0.0025f));
         addDropWithSilkTouch(ModBlocks.WW_HANGING_LEAVES);
@@ -71,6 +79,10 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.BB_FENCE);
         addDrop(ModBlocks.BB_FENCE_GATE);
         addDrop(ModBlocks.BB_WALL);
+        addDrop(ModBlocks.BB_SIGN);
+        addDrop(ModBlocks.WALL_BB_SIGN);
+        addDrop(ModBlocks.BB_HANGING_SIGN);
+        addDrop(ModBlocks.WALL_BB_HANGING_SIGN);
 
         addDrop(ModBlocks.BB_LEAVES, leavesDrops(ModBlocks.BB_LEAVES, ModBlocks.BB_SAPLING, 0.0025f));
     }

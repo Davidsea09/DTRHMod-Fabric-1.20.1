@@ -53,29 +53,23 @@ public class WonderlandProgressionUtil {
     public static void triggerMilestone(ServerPlayerEntity player, int nextStage, String bookTriggerKey) {
         ProgressionComponent story = ModComponents.PROGRESSION_COMPONENT.get(player);
 
-        // Prevent lowering a player's stage accidentally
         if (nextStage > story.getCompletedStages()) {
             story.setCompletedStages(nextStage);
 
-            // Logic Gate: Automatically unlock mirrors at Stage 1+
             if (nextStage >= 1) {
                 story.setWonderlandMirrorUnlocked(true);
             }
 
-            // 1. Sync the component data over the Cardinal Components network pipeline
             ModComponents.PROGRESSION_COMPONENT.sync(player);
 
-            // 2. Play a rewarding ding sound effect
             player.getServerWorld().playSound(
                     null, player.getBlockPos(),
                     SoundEvents.UI_TOAST_CHALLENGE_COMPLETE,
                     SoundCategory.PLAYERS, 1.0f, 1.0f
             );
 
-            // 3. Send a chat notification
             player.sendMessage(Text.literal("§d§kXX§r §l§5STORY MILESTONE UNLOCKED §r§d§kXX"), false);
 
-            // 4. Force open the custom book screen automatically if a key was provided!
             if (bookTriggerKey != null) {
                 ModPackets.sendOpenBookPacket(player, bookTriggerKey);
             }
@@ -101,10 +95,10 @@ public class WonderlandProgressionUtil {
 
         if (biomeId.getPath().equals("vale_of_tears") && stage < 1) {
             isLocked = true;
-            warningMessage = "The Mad Hatter's Woods are sealed by a spatial distortion!";
+            warningMessage = "You're not supposed to be here yet";
         } else if (biomeId.getPath().equals("chessboard_fields") && stage < 2) {
             isLocked = true;
-            warningMessage = "A wall of royal thorns blocks your passage!";
+            warningMessage = "You're not supposed to be here yet";
         }
 
         if (isLocked) {

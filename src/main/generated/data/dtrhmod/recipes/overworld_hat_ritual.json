@@ -1,0 +1,10 @@
+{
+  "type": "dtrhmod:hat_ritual",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    }
+  ],
+  "is_instance_dimension": false,
+  "target_dimension": "dtrhmod:overworld"
+}

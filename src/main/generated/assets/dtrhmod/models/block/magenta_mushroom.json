@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "dtrhmod:block/magenta_mushroom"
+  }
+}

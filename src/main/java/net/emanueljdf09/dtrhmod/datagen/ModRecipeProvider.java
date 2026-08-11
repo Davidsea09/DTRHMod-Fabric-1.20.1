@@ -76,100 +76,14 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.CLOCK), conditionsFromItem(Items.CLOCK))
                 .offerTo(consumer, new Identifier(getRecipeName(ModItems.POCKETWATCH)));
 
-        offerWoodRecipe(consumer, ModBlocks.TH_WOOD, ModBlocks.TH_LOG);
-        offerWoodRecipe(consumer, ModBlocks.STRIPPED_TH_WOOD, ModBlocks.STRIPPED_TH_LOG);
-        offerPlanksRecipe(consumer, ModBlocks.TH_PLANKS, ModTags.Items.TH_LOGS, 4);
-        offerSlabRecipe(consumer, RecipeCategory.BUILDING_BLOCKS, ModBlocks.TH_SLABS, ModBlocks.TH_PLANKS);
-        offerStairsRecipe(consumer, ModBlocks.TH_STAIRS, ModBlocks.TH_PLANKS);
-        offerButtonRecipe(consumer, ModBlocks.TH_BUTTON, ModBlocks.TH_PLANKS);
-        offerPressurePlateRecipe(consumer, ModBlocks.TH_PRESSURE_PLATE, ModBlocks.TH_PLANKS);
-        offerFenceRecipe(consumer, ModBlocks.TH_FENCE, ModBlocks.TH_PLANKS);
-        offerFenceGateRecipe(consumer, ModBlocks.TH_FENCE_GATE, ModBlocks.TH_PLANKS);
-        offerWallRecipe(consumer, RecipeCategory.BUILDING_BLOCKS, ModBlocks.TH_WALL, ModBlocks.TH_PLANKS);
-        offerDoorRecipe(consumer, ModBlocks.TH_DOOR, ModBlocks.TH_PLANKS);
-        offerTrapdoorRecipe(consumer, ModBlocks.TH_TRAPDOOR, ModBlocks.TH_PLANKS);
+        generateFamily(consumer, ModBlocks.TH_FAMILY);
+        offerHangingSignRecipe(consumer, ModItems.HANGING_TH_SIGN, ModBlocks.STRIPPED_TH_LOG);
 
-        offerWoodRecipe(consumer, ModBlocks.WW_WOOD, ModBlocks.WW_LOG);
-        offerWoodRecipe(consumer, ModBlocks.STRIPPED_WW_WOOD, ModBlocks.STRIPPED_WW_LOG);
-        offerPlanksRecipe(consumer, ModBlocks.WW_PLANKS, ModTags.Items.WW_LOGS, 4);
-        offerSlabRecipe(consumer, RecipeCategory.BUILDING_BLOCKS, ModBlocks.WW_SLABS, ModBlocks.WW_PLANKS);
-        offerStairsRecipe(consumer, ModBlocks.WW_STAIRS, ModBlocks.WW_PLANKS);
-        offerButtonRecipe(consumer, ModBlocks.WW_BUTTON, ModBlocks.WW_PLANKS);
-        offerPressurePlateRecipe(consumer, ModBlocks.WW_PRESSURE_PLATE, ModBlocks.WW_PLANKS);
-        offerFenceRecipe(consumer, ModBlocks.WW_FENCE, ModBlocks.WW_PLANKS);
-        offerFenceGateRecipe(consumer, ModBlocks.WW_FENCE_GATE, ModBlocks.WW_PLANKS);
-        offerWallRecipe(consumer, RecipeCategory.BUILDING_BLOCKS, ModBlocks.WW_WALL, ModBlocks.WW_PLANKS);
-        offerDoorRecipe(consumer, ModBlocks.WW_DOOR, ModBlocks.WW_PLANKS);
-        offerTrapdoorRecipe(consumer, ModBlocks.WW_TRAPDOOR, ModBlocks.WW_PLANKS);
+        generateFamily(consumer, ModBlocks.BB_FAMILY);
+        offerHangingSignRecipe(consumer, ModItems.HANGING_BB_SIGN, ModBlocks.STRIPPED_BB_LOG);
 
-        offerWoodRecipe(consumer, ModBlocks.BB_WOOD, ModBlocks.BB_LOG);
-        offerWoodRecipe(consumer, ModBlocks.STRIPPED_BB_WOOD, ModBlocks.STRIPPED_BB_LOG);
-        offerPlanksRecipe(consumer, ModBlocks.BB_PLANKS, ModTags.Items.BB_LOGS, 4);
-        offerSlabRecipe(consumer, RecipeCategory.BUILDING_BLOCKS, ModBlocks.BB_SLABS, ModBlocks.BB_PLANKS);
-        offerStairsRecipe(consumer, ModBlocks.BB_STAIRS, ModBlocks.BB_PLANKS);
-        offerButtonRecipe(consumer, ModBlocks.BB_BUTTON, ModBlocks.BB_PLANKS);
-        offerPressurePlateRecipe(consumer, ModBlocks.BB_PRESSURE_PLATE, ModBlocks.BB_PLANKS);
-        offerFenceRecipe(consumer, ModBlocks.BB_FENCE, ModBlocks.BB_PLANKS);
-        offerFenceGateRecipe(consumer, ModBlocks.BB_FENCE_GATE, ModBlocks.BB_PLANKS);
-        offerWallRecipe(consumer, RecipeCategory.BUILDING_BLOCKS, ModBlocks.BB_WALL, ModBlocks.BB_PLANKS);
-        offerDoorRecipe(consumer, ModBlocks.BB_DOOR, ModBlocks.BB_PLANKS);
-        offerTrapdoorRecipe(consumer, ModBlocks.BB_TRAPDOOR, ModBlocks.BB_PLANKS);
-
-
-
-
-
-    }
-
-    public static void offerStairsRecipe(Consumer<RecipeJsonProvider> consumer, ItemConvertible output, ItemConvertible input) {
-        createStairsRecipe(output, Ingredient.ofItems(new ItemConvertible[]{input}))
-                .criterion(hasItem(input), conditionsFromItem(input))
-                .offerTo(consumer);
-    }
-
-    public static void offerButtonRecipe(Consumer<RecipeJsonProvider> consumer, ItemConvertible output, ItemConvertible input) {
-            ShapelessRecipeJsonBuilder.create(RecipeCategory.REDSTONE, output, 1)
-                    .input(input)
-                    .criterion(hasItem(input), conditionsFromItem(input))
-                    .offerTo(consumer);
-    }
-
-    public static void offerFenceRecipe(Consumer<RecipeJsonProvider> consumer, ItemConvertible output, ItemConvertible input) {
-        createFenceRecipe(output, Ingredient.ofItems(new ItemConvertible[]{input}))
-                .criterion(hasItem(input), conditionsFromItem(input))
-                .offerTo(consumer);
-    }
-
-    public static void offerFenceGateRecipe(Consumer<RecipeJsonProvider> consumer, ItemConvertible output, ItemConvertible input) {
-        createFenceGateRecipe(output, Ingredient.ofItems(new ItemConvertible[]{input}))
-                .criterion(hasItem(input), conditionsFromItem(input))
-                .offerTo(consumer);
-    }
-
-    public static void offerDoorRecipe(Consumer<RecipeJsonProvider> consumer, ItemConvertible output, ItemConvertible input) {
-        createDoorRecipe(output, Ingredient.ofItems(new ItemConvertible[]{input}))
-                .criterion(hasItem(input), conditionsFromItem(input))
-                .offerTo(consumer);
-    }
-
-    public static void offerTrapdoorRecipe(Consumer<RecipeJsonProvider> consumer, ItemConvertible output, ItemConvertible input) {
-        createTrapdoorRecipe(output, Ingredient.ofItems(new ItemConvertible[]{input}))
-                .criterion(hasItem(input), conditionsFromItem(input))
-                .offerTo(consumer);
-    }
-
-    public static void offerWoodRecipe(Consumer<RecipeJsonProvider> consumer, ItemConvertible output, ItemConvertible input) {
-        createWoodRecipe(output, Ingredient.ofItems(new ItemConvertible[]{input}))
-                .criterion(hasItem(input), conditionsFromItem(input))
-                .offerTo(consumer);
-    }
-
-    public static CraftingRecipeJsonBuilder createWoodRecipe(ItemConvertible output, Ingredient input) {
-        return
-                ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, output, 3)
-                        .pattern("LL")
-                        .pattern("LL")
-                        .input('L', input);
+        generateFamily(consumer, ModBlocks.WW_FAMILY);
+        offerHangingSignRecipe(consumer, ModItems.HANGING_WW_SIGN, ModBlocks.STRIPPED_WW_LOG);
 
     }
 

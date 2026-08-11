@@ -1,0 +1,6 @@
+// 1.20.1	2026-08-11T18:07:08.9421401	Down The Rabbit Hole/Tags for minecraft:worldgen/biome
+c4abc34807725a8d231afc808a48b3e405403364 data\dtrhmod\tags\worldgen\biome\is_chessboard.json
+718cb1839b1f81889a1fcbc2b18896f0feaf42dc data\dtrhmod\tags\worldgen\biome\is_exterior.json
+6281377acb92d7faf899f0cde6ab3309aaaceb87 data\dtrhmod\tags\worldgen\biome\has_structure\rabbithole.json
+86e0c1a5b59f5d79f6df6392f23c4fffc8f230cd data\dtrhmod\tags\worldgen\biome\has_structure\mirror_room.json
+7ee1d3a0d24785e43e5608c9515ffb0ebaf4b889 data\dtrhmod\tags\worldgen\biome\wonderland_biomes.json

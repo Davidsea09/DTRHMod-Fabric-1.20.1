@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:th_trapdoor",
+    "dtrhmod:ww_trapdoor",
+    "dtrhmod:bb_trapdoor"
+  ]
+}

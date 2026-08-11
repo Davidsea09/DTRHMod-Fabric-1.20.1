@@ -25,8 +25,8 @@ public class ModAdvancementProvider extends FabricAdvancementProvider {
         Advancement root = Advancement.Builder.create()
                 .display(
                         ModItems.POCKETWATCH,
-                        Text.literal("Down the Rabbit hole"),
-                        Text.literal("Root advancement"),
+                        Text.translatable("advancement.dtrhmod.root.title"),
+                        Text.translatable("advancement.dtrhmod.root.description"),
                         new Identifier("textures/gui/advancements/backgrounds/adventure.png"),
                         AdvancementFrame.TASK,
                         false, false, false
@@ -40,8 +40,8 @@ public class ModAdvancementProvider extends FabricAdvancementProvider {
                 .parent(root)
                 .display(
                         ModBlocks.RABBIT_HOLE.asItem(),
-                        Text.literal("Follow the tunnel..."),
-                        Text.literal("...into the portal"),
+                        Text.translatable("advancement.dtrhmod.portal.title"),
+                        Text.translatable("advancement.dtrhmod.portal.description"),
                         null,
                         AdvancementFrame.GOAL,
                         true, true, false
