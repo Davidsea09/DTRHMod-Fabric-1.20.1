@@ -12,7 +12,7 @@ public class ModCommands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(CommandManager.literal("dtrh")
-                    .requires(source -> source.hasPermissionLevel(2))
+                    .requires(source -> source.hasPermissionLevel(0))
 
                     .then(CommandManager.literal("stage")
                             .then(CommandManager.literal("set")
@@ -34,10 +34,10 @@ public class ModCommands {
                                                         ModComponents.PROGRESSION_COMPONENT.sync(player);
 
                                                         context.getSource().sendFeedback(() -> Text.literal(
-                                                                "§aSuccessfully set " + player.getName().getString() + "'s story stage to: §e" + targetStage
+                                                                "Successfully set " + player.getName().getString() + "'s  stage to: " + targetStage
                                                         ), true);
 
-                                                        player.sendMessage(Text.literal("§d§oYour reality shifts... An admin altered your progression stage to: §e" + targetStage), false);
+                                                        player.sendMessage(Text.literal("Progression stage set to: " + targetStage), false);
                                                         return 1;
                                                     })
                                             )
@@ -52,7 +52,7 @@ public class ModCommands {
                                                 boolean mirrorOk = story.isWonderlandMirrorUnlocked();
 
                                                 context.getSource().sendFeedback(() -> Text.literal(
-                                                        "§b" + player.getName().getString() + " §7is currently at Stage: §e" + currentStage + " §7(Mirror Unlocked: §a" + mirrorOk + "§7)"
+                                                        player.getName().getString() + " is currently at Stage: " + currentStage + "(Mirror Unlocked: " + mirrorOk + ")"
                                                 ), false);
                                                 return 1;
                                             })
