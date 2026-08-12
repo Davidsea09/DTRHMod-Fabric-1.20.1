@@ -1,4 +1,4 @@
-// 1.20.1	2026-08-11T18:07:08.9371497	Down The Rabbit Hole/Block Loot Tables
+// 1.20.1	2026-08-11T19:58:27.677544	Down The Rabbit Hole/Block Loot Tables
 05f692159ae196fe4e32df992eded3fd4c4b8977 data\dtrhmod\loot_tables\blocks\th_planks.json
 1f2b1a7b44f6ce3c21025a6c5906c03bc592f502 data\dtrhmod\loot_tables\blocks\bb_leaves.json
 6651288dff2f3488581e1b9f5ae7e3c553bf0614 data\dtrhmod\loot_tables\blocks\stripped_th_log.json
@@ -55,8 +55,8 @@ c8d8605ad7915de179d9496c437cc8841c79d32b data\dtrhmod\loot_tables\blocks\ww_wood
 2271895efdc328e78970664d853fd92986f04da9 data\dtrhmod\loot_tables\blocks\bb_sign.json
 33acd2dc82d1268418c12cad14654a266d7d5354 data\dtrhmod\loot_tables\blocks\stripped_ww_wood.json
 875a13c66b217089d6b27fb81f5df8dffdfa0f81 data\dtrhmod\loot_tables\blocks\th_door.json
-f4414602a3c987190ba4de618d1f03685d16b742 data\dtrhmod\loot_tables\blocks\th_leaves.json
 2c612034c01339f9f94f2e5deb81968d08cb5b22 data\dtrhmod\loot_tables\blocks\bb_planks.json
+f4414602a3c987190ba4de618d1f03685d16b742 data\dtrhmod\loot_tables\blocks\th_leaves.json
 832188604b3887674b1ca4c33ae558d47bd6a9db data\dtrhmod\loot_tables\blocks\th_sign.json
 96deef1a70759a12d2d726636023f72990b71015 data\dtrhmod\loot_tables\blocks\th_slabs.json
 67012fb3a76e3b9a919df779772c594ccce32cc8 data\dtrhmod\loot_tables\blocks\ww_slabs.json

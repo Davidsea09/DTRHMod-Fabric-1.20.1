@@ -119,6 +119,8 @@ public class DownTheRabbitHole implements ModInitializer {
 
 					BlockPos spawnPos = new BlockPos(0, 62, 0);
 
+					world.setSpawnPos(new BlockPos(3, 70, 2), 0.0f);
+
 						world.getStructureTemplateManager().getTemplate(new Identifier(DownTheRabbitHole.MOD_ID, "exterior/exterior_room"))
 								.ifPresentOrElse(template -> {
 									StructurePlacementData data = new StructurePlacementData()
@@ -127,8 +129,6 @@ public class DownTheRabbitHole implements ModInitializer {
 									template.place(world, spawnPos, spawnPos, data, world.getRandom(), 3);
 
 									world.updateNeighbors(spawnPos, ModBlocks.EXTERIOR_DOOR);
-
-									world.setSpawnPos(new BlockPos(3, 70, 2), 0.0f);
 
 									System.out.println("[DTRH] Successfully placed exterior_room at 0, 62, 0");
 								}, () -> {

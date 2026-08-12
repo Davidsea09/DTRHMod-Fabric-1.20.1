@@ -1,4 +1,4 @@
-// 1.20.1	2026-08-11T18:07:08.917141	Down The Rabbit Hole/Tags for minecraft:item
+// 1.20.1	2026-08-11T19:58:27.6324277	Down The Rabbit Hole/Tags for minecraft:item
 cd4cf6ee7d6b44e08d7183948e6c1cea67e6595a data\minecraft\tags\items\planks.json
 7cf3849bb6f1f74092392263180f27ddd731a015 data\minecraft\tags\items\trapdoors.json
 80ab34c239b4ee3ee1425b1cc4fb00ae0dfa714b data\minecraft\tags\items\slabs.json
@@ -6,8 +6,8 @@ a727f833878709bac710007fbf74d174d902995e data\minecraft\tags\items\wooden_pressu
 3c473d13e718a3a8d9a1daf4d2dc121db08f7b7b data\minecraft\tags\items\leaves.json
 88771f42f40aed5f32e6672d73670e468b785642 data\minecraft\tags\items\fence_gates.json
 581c18458f5a5e4caf2b798bc180c7f9a75e7efd data\minecraft\tags\items\fences.json
-647fcd37a928e895e919325c9eb4fbac60e67050 data\minecraft\tags\items\stairs.json
 7ba390778c4123d5b5566a75e07cbbd210b1b9d1 data\dtrhmod\tags\items\bb_logs.json
+647fcd37a928e895e919325c9eb4fbac60e67050 data\minecraft\tags\items\stairs.json
 8e522ea882314404ca98f5446fc3a00c9ebd7253 data\minecraft\tags\items\walls.json
 59220676f2c2a34035064c3c50f39dfae51a6a89 data\minecraft\tags\items\logs_that_burn.json
 ef3f22b84d739c6eee11bc9f89ababb6d48b1442 data\minecraft\tags\items\buttons.json

@@ -148,9 +148,9 @@ public class HatRitualRecipe implements Recipe<Inventory> {
                 ingredients.set(i, Ingredient.fromPacket(buf));
             }
 
-            Identifier structureId = buf.readBoolean() ? buf.readIdentifier() : null;
             Identifier targetDimension = buf.readIdentifier();
             boolean isInstance = buf.readBoolean();
+            Identifier structureId = buf.readBoolean() ? buf.readIdentifier() : null;
 
             return new HatRitualRecipe(id, ingredients, targetDimension, isInstance, structureId);
         }

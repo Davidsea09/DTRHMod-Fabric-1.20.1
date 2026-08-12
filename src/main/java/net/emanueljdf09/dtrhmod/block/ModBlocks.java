@@ -58,7 +58,7 @@ public class ModBlocks {
             new ExteriorPortal(FabricBlockSettings.copyOf(Blocks.MOSS_BLOCK).noCollision()));
 
     public static final Block EXTERIOR_CHEST = registerBlock("exterior_chest",
-            new ExteriorChest(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ExteriorChest(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).strength(-1.0f, 3600000.0f)));
 
     public static final Block EXTERIOR_DOOR = registerBlockWithItem("exterior_door",
             new ExteriorDoor(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));

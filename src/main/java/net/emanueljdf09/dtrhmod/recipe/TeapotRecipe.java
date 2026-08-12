@@ -236,6 +236,7 @@ public class TeapotRecipe implements Recipe<SimpleInventory> {
                 Identifier effectId = buf.readIdentifier();
                 int duration = buf.readInt();
                 int amplifier = buf.readInt();
+
                 StatusEffect effect = Registries.STATUS_EFFECT.get(effectId);
                 if (effect != null) {
                     effects.add(new StatusEffectInstance(effect, duration, amplifier));
