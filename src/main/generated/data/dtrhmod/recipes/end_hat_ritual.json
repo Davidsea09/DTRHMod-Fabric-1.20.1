@@ -1,0 +1,16 @@
+{
+  "type": "dtrhmod:hat_ritual",
+  "ingredients": [
+    {
+      "item": "minecraft:end_stone"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:chorus_fruit"
+    }
+  ],
+  "is_instance_dimension": false,
+  "target_dimension": "minecraft:the_end"
+}

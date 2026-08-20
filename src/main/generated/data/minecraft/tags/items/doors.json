@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:th_door",
+    "dtrhmod:ww_door",
+    "dtrhmod:bb_door",
+    "dtrhmod:hh_door"
+  ]
+}

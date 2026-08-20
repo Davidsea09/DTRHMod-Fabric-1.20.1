@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:bb_sapling",
+    "dtrhmod:th_sapling",
+    "dtrhmod:ww_sapling",
+    "dtrhmod:hh_sapling"
+  ]
+}

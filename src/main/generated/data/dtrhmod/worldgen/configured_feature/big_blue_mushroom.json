@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": {
+      "feature": "dtrhmod:big_blue_mushroom4",
+      "placement": []
+    },
+    "features": [
+      {
+        "chance": 0.25,
+        "feature": {
+          "feature": "dtrhmod:big_blue_mushroom1",
+          "placement": []
+        }
+      },
+      {
+        "chance": 0.25,
+        "feature": {
+          "feature": "dtrhmod:big_blue_mushroom2",
+          "placement": []
+        }
+      },
+      {
+        "chance": 0.25,
+        "feature": {
+          "feature": "dtrhmod:big_blue_mushroom3",
+          "placement": []
+        }
+      }
+    ]
+  }
+}

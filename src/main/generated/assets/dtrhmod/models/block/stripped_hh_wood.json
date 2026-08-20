@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "dtrhmod:block/stripped_hh_log",
+    "side": "dtrhmod:block/stripped_hh_log"
+  }
+}

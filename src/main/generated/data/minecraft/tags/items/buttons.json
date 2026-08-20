@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:th_button",
+    "dtrhmod:ww_button",
+    "dtrhmod:bb_button",
+    "dtrhmod:hh_button"
+  ]
+}

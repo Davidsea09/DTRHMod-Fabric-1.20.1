@@ -1,0 +1,16 @@
+{
+  "type": "dtrhmod:hat_ritual",
+  "ingredients": [
+    {
+      "item": "minecraft:cobblestone"
+    },
+    {
+      "item": "minecraft:grass_block"
+    },
+    {
+      "item": "minecraft:apple"
+    }
+  ],
+  "is_instance_dimension": false,
+  "target_dimension": "minecraft:overworld"
+}

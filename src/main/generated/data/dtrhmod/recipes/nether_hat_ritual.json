@@ -1,0 +1,16 @@
+{
+  "type": "dtrhmod:hat_ritual",
+  "ingredients": [
+    {
+      "item": "minecraft:obsidian"
+    },
+    {
+      "item": "minecraft:netherrack"
+    },
+    {
+      "item": "minecraft:crimson_fungus"
+    }
+  ],
+  "is_instance_dimension": false,
+  "target_dimension": "minecraft:the_nether"
+}

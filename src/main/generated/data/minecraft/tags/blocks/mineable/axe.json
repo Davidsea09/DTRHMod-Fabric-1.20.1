@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:blue_mushroom",
+    "dtrhmod:blue_mushroom_block",
+    "dtrhmod:magenta_mushroom",
+    "dtrhmod:magenta_mushroom_block",
+    "dtrhmod:yellow_mushroom",
+    "dtrhmod:yellow_mushroom_block"
+  ]
+}

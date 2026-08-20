@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    }
+  },
+  "pattern": [
+    "   ",
+    "G G",
+    "GGG"
+  ],
+  "result": {
+    "count": 5,
+    "item": "dtrhmod:empty_cup"
+  },
+  "show_notification": true
+}

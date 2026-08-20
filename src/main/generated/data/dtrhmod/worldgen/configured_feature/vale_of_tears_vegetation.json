@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": {
+      "feature": "dtrhmod:ww_tree",
+      "placement": []
+    },
+    "features": [
+      {
+        "chance": 0.25,
+        "feature": {
+          "feature": "dtrhmod:big_yellow_mushroom",
+          "placement": []
+        }
+      },
+      {
+        "chance": 0.25,
+        "feature": {
+          "feature": "dtrhmod:big_magenta_mushroom",
+          "placement": []
+        }
+      },
+      {
+        "chance": 0.25,
+        "feature": {
+          "feature": "dtrhmod:big_blue_mushroom",
+          "placement": []
+        }
+      }
+    ]
+  }
+}

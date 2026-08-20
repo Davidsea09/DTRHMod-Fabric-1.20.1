@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "dtrhmod:block/stripped_th_log_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "dtrhmod:block/stripped_th_log"
+    },
+    "axis=z": {
+      "model": "dtrhmod:block/stripped_th_log_horizontal",
+      "x": 90
+    }
+  }
+}

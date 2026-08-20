@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "dtrhmod:block/th_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "dtrhmod:block/th_wood"
+    },
+    "axis=z": {
+      "model": "dtrhmod:block/th_wood",
+      "x": 90
+    }
+  }
+}

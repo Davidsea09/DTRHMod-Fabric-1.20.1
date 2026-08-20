@@ -1,0 +1,22 @@
+{
+  "type": "dtrhmod:teapot",
+  "cup_count": 1,
+  "effects": [
+    {
+      "amplifier": 0,
+      "duration": 200,
+      "effect": "minecraft:fire_resistance"
+    }
+  ],
+  "fluid": {
+    "item": "minecraft:water_bucket"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:crimson_fungus"
+    }
+  ],
+  "result": {
+    "item": "dtrhmod:filled_tea_cup"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:th_fence_gate",
+    "dtrhmod:ww_fence_gate",
+    "dtrhmod:bb_fence_gate",
+    "dtrhmod:hh_fence_gate"
+  ]
+}

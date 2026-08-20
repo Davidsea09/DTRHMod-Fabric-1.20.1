@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "dtrhmod:ww_log",
+    "dtrhmod:stripped_ww_log",
+    "dtrhmod:ww_wood",
+    "dtrhmod:stripped_ww_wood"
+  ]
+}

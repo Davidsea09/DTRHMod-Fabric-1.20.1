@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "dtrhmod:block/hh_slabs"
+    },
+    "type=double": {
+      "model": "dtrhmod:block/hh_planks"
+    },
+    "type=top": {
+      "model": "dtrhmod:block/hh_slabs_top"
+    }
+  }
+}

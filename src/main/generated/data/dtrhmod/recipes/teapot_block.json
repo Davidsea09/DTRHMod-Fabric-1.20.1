@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "N": {
+      "item": "minecraft:iron_nugget"
+    },
+    "P": {
+      "item": "minecraft:iron_block"
+    }
+  },
+  "pattern": [
+    "NIN",
+    "IBI",
+    "IPI"
+  ],
+  "result": {
+    "item": "dtrhmod:teapot_block"
+  },
+  "show_notification": true
+}

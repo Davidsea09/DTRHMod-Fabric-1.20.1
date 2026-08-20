@@ -1,0 +1,46 @@
+{
+  "carvers": {},
+  "downfall": 0.8,
+  "effects": {
+    "fog_color": 4418396,
+    "grass_color": 4418396,
+    "sky_color": 4747926,
+    "water_color": 2919324,
+    "water_fog_color": 2919324
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "dtrhmod:disk_sand_placed",
+      "dtrhmod:disk_clay_placed",
+      "dtrhmod:disk_gravel_placed"
+    ],
+    [],
+    [],
+    [
+      "minecraft:patch_grass_forest",
+      "dtrhmod:vale_of_tears_vegetation_placed",
+      "dtrhmod:forest_flowerbeds_placed",
+      "dtrhmod:forest_ground_mushrooms_placed",
+      "dtrhmod:forest_rocks_placed"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.7
+}

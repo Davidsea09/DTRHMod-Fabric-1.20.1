@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "dtrhmod:block/ww_log_top",
+    "side": "dtrhmod:block/ww_log"
+  }
+}
