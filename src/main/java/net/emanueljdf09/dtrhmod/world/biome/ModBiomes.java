@@ -1,7 +1,9 @@
 package net.emanueljdf09.dtrhmod.world.biome;
 
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
+import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.world.features.WonderBiomeFeatures;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -42,7 +44,7 @@ public class ModBiomes {
         context.register(TULGEY_WOOD, tulgeyForest(context));
         context.register(THE_EXTERIOR, theExterior(context));
         context.register(ENCHANTED_FOREST, enchantedForest(context));
-        context.register(VALE_OF_TEARS, tearLakeValley(context));
+        context.register(VALE_OF_TEARS, valeOfTears(context));
         context.register(CHESSBOARD_FIELDS, chessBoardFields(context));
     }
 
@@ -71,9 +73,8 @@ public class ModBiomes {
                 .build();
     }
 
-    public  static Biome tearLakeValley(Registerable<Biome> context) {
+    public  static Biome valeOfTears(Registerable<Biome> context) {
         SpawnSettings.Builder spawnBuilder = new SpawnSettings.Builder();
-
         GenerationSettings.LookupBackedBuilder biomeBuilder =
                 new GenerationSettings.LookupBackedBuilder(context.getRegistryLookup(RegistryKeys.PLACED_FEATURE),
                         context.getRegistryLookup(RegistryKeys.CONFIGURED_CARVER));

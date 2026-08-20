@@ -1,0 +1,13 @@
+{
+  "name": "dtrhmod:maze/entrance",
+  "fallback": "minecraft:empty",
+  "elements": [{
+    "weight": 1,
+    "element": {
+      "element_type": "minecraft:single_pool_element",
+      "location": "dtrhmod:maze/entrance",
+      "processors": "minecraft:empty",
+      "projection": "rigid"
+    }
+  }]
+}

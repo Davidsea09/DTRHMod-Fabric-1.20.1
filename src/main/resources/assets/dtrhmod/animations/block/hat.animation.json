@@ -7,10 +7,15 @@
 			"bones": {
 				"hat": {
 					"position": {
-						"vector": [0, "math.sin(query.anim_time * 90) * 1", 0]
+						"vector": [0, "1.2+math.sin(query.anim_time * 90) * 1", 0]
 					},
 					"scale": {
 						"vector": [1, 1, 1]
+					}
+				},
+				"bone": {
+					"position": {
+						"vector": [0, 3, 0]
 					}
 				}
 			}
@@ -69,8 +74,12 @@
 				},
 				"overlay": {
 					"scale": {
-						"vector": [1, 1, 1],
-						"easing": "easeInQuart"
+						"vector": ["easeInQuart", "easeInQuart", "easeInQuart"]
+					}
+				},
+				"bone": {
+					"position": {
+						"vector": [0, 3, 0]
 					}
 				}
 			}
@@ -111,6 +120,11 @@
 							"easing": "easeInQuad"
 						}
 					}
+				},
+				"bone": {
+					"position": {
+						"vector": [0, 3, 0]
+					}
 				}
 			}
 		},
@@ -134,6 +148,11 @@
 					},
 					"scale": {
 						"vector": [6, 1, 6]
+					}
+				},
+				"bone": {
+					"position": {
+						"vector": [0, 3, 0]
 					}
 				}
 			}
@@ -169,6 +188,11 @@
 							"vector": [1, 1, 1],
 							"easing": "easeOutQuad"
 						}
+					}
+				},
+				"bone": {
+					"position": {
+						"vector": [0, 3, 0]
 					}
 				}
 			}

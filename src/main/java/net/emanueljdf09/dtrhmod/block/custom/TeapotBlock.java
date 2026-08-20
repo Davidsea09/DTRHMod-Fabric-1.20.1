@@ -6,12 +6,15 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
@@ -24,11 +27,15 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class TeapotBlock extends BlockWithEntity implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
 
-    private static final VoxelShape SHAPE = makeShape();
+    private static final Map<Direction, VoxelShape> SHAPES = createDirectionalShapes();
+
 
     public TeapotBlock(Settings settings) {
         super(settings);
@@ -37,12 +44,35 @@ public class TeapotBlock extends BlockWithEntity implements BlockEntityProvider 
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        return SHAPES.getOrDefault(state.get(FACING), SHAPES.get(Direction.NORTH));
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        return SHAPES.getOrDefault(state.get(FACING), SHAPES.get(Direction.NORTH));
+    }
+
+    private static Map<Direction, VoxelShape> createDirectionalShapes() {
+        Map<Direction, VoxelShape> map = new EnumMap<>(Direction.class);
+
+        // --- NORTH Shape ---
+        VoxelShape northShape = VoxelShapes.empty();
+        northShape = VoxelShapes.combine(northShape, VoxelShapes.cuboid(0.1875, 0.0625, 0.3125, 0.8125, 0.4375, 0.6875), BooleanBiFunction.OR);
+        northShape = VoxelShapes.combine(northShape, VoxelShapes.cuboid(0.25, 0.4375, 0.375, 0.75, 0.5, 0.625), BooleanBiFunction.OR);
+        northShape = VoxelShapes.combine(northShape, VoxelShapes.cuboid(0.25, 0, 0.375, 0.75, 0.0625, 0.625), BooleanBiFunction.OR);
+        map.put(Direction.NORTH, northShape.simplify());
+        map.put(Direction.SOUTH, northShape.simplify());
+
+
+        VoxelShape eastShape = VoxelShapes.empty();
+        eastShape = VoxelShapes.combine(eastShape, VoxelShapes.cuboid(0.3125, 0.0625, 0.1875, 0.6875, 0.4375, 0.8125), BooleanBiFunction.OR);
+        eastShape = VoxelShapes.combine(eastShape, VoxelShapes.cuboid(0.375, 0.4375, 0.25, 0.625, 0.5, 0.75), BooleanBiFunction.OR);
+        eastShape = VoxelShapes.combine(eastShape, VoxelShapes.cuboid(0.375, 0, 0.25, 0.625, 0.0625, 0.75), BooleanBiFunction.OR);
+
+        map.put(Direction.EAST, eastShape.simplify());
+        map.put(Direction.WEST, eastShape.simplify());
+
+        return map;
     }
 
     @Nullable
@@ -100,22 +130,15 @@ public class TeapotBlock extends BlockWithEntity implements BlockEntityProvider 
         return ActionResult.SUCCESS;
     }
 
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+        tooltip.add(Text.translatable("block.dtrhmod.teapot.tooltip").formatted(Formatting.BOLD, Formatting.GRAY));
+    }
+
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return checkType(type, ModBlockEntities.TEAPOT_BLOCK_ENTITY,
                 (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
-    }
-
-    public static VoxelShape makeShape(){
-        VoxelShape shape = VoxelShapes.empty();
-        shape = VoxelShapes.combine(shape, VoxelShapes.cuboid(0.1875, 0.0625, 0.3125, 0.8125, 0.4375, 0.6875), BooleanBiFunction.OR);
-        shape = VoxelShapes.combine(shape, VoxelShapes.cuboid(0.25, 0.4375, 0.375, 0.75, 0.5, 0.625), BooleanBiFunction.OR);
-        shape = VoxelShapes.combine(shape, VoxelShapes.cuboid(0.25, 0, 0.375, 0.75, 0.0625, 0.625), BooleanBiFunction.OR);
-        shape = VoxelShapes.combine(shape, VoxelShapes.cuboid(0.1875, 0.125, 0.4375, 0.3125, 0.4375, 0.5625), BooleanBiFunction.OR);
-        shape = VoxelShapes.combine(shape, VoxelShapes.cuboid(0.8125, 0.125, 0.5, 1, 0.375, 0.5), BooleanBiFunction.OR);
-        shape = VoxelShapes.combine(shape, VoxelShapes.cuboid(0.40625, 0.375, 0.5, 0.59375, 0.625, 0.5), BooleanBiFunction.OR);
-
-        return shape;
     }
 }

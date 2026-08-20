@@ -1,6 +1,7 @@
 package net.emanueljdf09.dtrhmod.datagen;
 
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
+import net.emanueljdf09.dtrhmod.entity.ModBoats;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.item.ModItemGroups;
 import net.emanueljdf09.dtrhmod.item.ModItems;
@@ -300,8 +301,8 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         // Entities
         builder.add(ModItems.WHITE_RABBIT_SPAWN_EGG, "White Rabbit Spawn Egg (WIP)");
         builder.add(ModEntities.WHITE_RABBIT, "White Rabbit");
-        builder.add("entity.dtrhmod.white_rabbit.greet_msg", "Oh dear! Oh dear! I shall be late!");
-        builder.add("entity.dtrhmod.white_rabbit.busy_msg", "I'm late, I'm late, for a very important date! No time to say 'hello, goodbye,' I'm late, I'm late, I'm late!");
+        builder.add("entity.dtrhmod.white_rabbit.greet_msg", "I'm late, I'm late, for a very important date! ");
+        builder.add("entity.dtrhmod.white_rabbit.busy_msg", "No time to say 'hello, goodbye,' I'm late, I'm late, I'm late!");
         builder.add("entity.dtrhmod.white_rabbit.wonderland_remember_msg", "Oh hey, i know who you are; you followed me here.");
         builder.add("entity.dtrhmod.white_rabbit.wonderland_stranger_msg", "Who are you?");
 
@@ -341,6 +342,7 @@ public class ModLanguageProvider extends FabricLanguageProvider {
 
         // Teapot Block
         builder.add("container.dtrhmod.teapot", "Teapot");
+        builder.add("block.dtrhmod.teapot.tooltip", "You must put it on top of a heat source!");
         builder.add(ModBlocks.TEAPOT_BLOCK, "Teapot");
 
         // Wood Types
@@ -356,12 +358,13 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.BB_SLABS, "Tulgey Oak Slabs");
         builder.add(ModBlocks.BB_STAIRS, "Tulgey Oak Stairs");
         builder.add(ModBlocks.BB_TRAPDOOR, "Tulgey Oak Trapdoor");
-        builder.add(ModBlocks.BB_WALL, "Tulgey Oak Wall");
         builder.add(ModBlocks.BB_WOOD, "Tulgey Oak Wood");
         builder.add(ModBlocks.STRIPPED_BB_WOOD, "Stripped Tulgey Oak Wood");
         builder.add(ModBlocks.STRIPPED_BB_LOG, "Stripped Tulgey Oak Log");
         builder.add(ModBlocks.BB_SIGN, "Tulgey Oak Sign");
         builder.add(ModBlocks.BB_HANGING_SIGN, "Tulgey Oak Hanging Sign");
+        builder.add(ModItems.BB_BOAT, "Tulgey Oak Boat");
+        builder.add(ModItems.BB_CHEST_BOAT, "Tulgey Oak Chest Boat");
 
         builder.add(ModBlocks.TH_BUTTON, "Dark Tulgey Oak Button");
         builder.add(ModBlocks.TH_DOOR, "Dark Tulgey Oak Door");
@@ -375,12 +378,13 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.TH_SLABS, "Dark Tulgey Oak Slabs");
         builder.add(ModBlocks.TH_STAIRS, "Dark Tulgey Oak Stairs");
         builder.add(ModBlocks.TH_TRAPDOOR, "Dark Tulgey Oak Trapdoor");
-        builder.add(ModBlocks.TH_WALL, "Dark Tulgey Oak Wall");
         builder.add(ModBlocks.TH_WOOD, "Dark Tulgey Oak Wood");
         builder.add(ModBlocks.STRIPPED_TH_WOOD, "Stripped Dark Tulgey Oak Wood");
         builder.add(ModBlocks.STRIPPED_TH_LOG, "Stripped Dark Tulgey Oak Log");
         builder.add(ModBlocks.TH_SIGN, "Dark Tulgey Oak Sign");
         builder.add(ModBlocks.TH_HANGING_SIGN, "Dark Tulgey Oak Hanging Sign");
+        builder.add(ModItems.TH_BOAT, "Dark Tulgey Oak Boat");
+        builder.add(ModItems.TH_CHEST_BOAT, "Dark Tulgey Oak Chest Boat");
 
         builder.add(ModBlocks.WW_BUTTON, "Twisted Willow Button");
         builder.add(ModBlocks.WW_DOOR, "Twisted Willow Door");
@@ -396,12 +400,33 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.WW_SLABS, "Twisted Willow Slabs");
         builder.add(ModBlocks.WW_STAIRS, "Twisted Willow Stairs");
         builder.add(ModBlocks.WW_TRAPDOOR, "Twisted Willow Trapdoor");
-        builder.add(ModBlocks.WW_WALL, "Twisted Willow Wall");
         builder.add(ModBlocks.WW_WOOD, "Twisted Willow Wood");
         builder.add(ModBlocks.STRIPPED_WW_WOOD, "Stripped Twisted Willow Wood");
         builder.add(ModBlocks.STRIPPED_WW_LOG, "Stripped Twisted Willow Log");
         builder.add(ModBlocks.WW_SIGN, "Twisted Willow Sign");
         builder.add(ModBlocks.WW_HANGING_SIGN, "Twisted Willow Hanging Sign");
+        builder.add(ModItems.WW_BOAT, "Twisted Willow Boat");
+        builder.add(ModItems.WW_CHEST_BOAT, "Twisted Willow Chest Boat");
+
+        builder.add(ModBlocks.HH_BUTTON, "Heart Birch Button");
+        builder.add(ModBlocks.HH_DOOR, "Heart Birch Door");
+        builder.add(ModBlocks.HH_FENCE, "Heart Birch Fence");
+        builder.add(ModBlocks.HH_FENCE_GATE, "Heart Birch Fence Gate");
+        builder.add(ModBlocks.HH_LEAVES, "Heart Birch Leaves");
+        builder.add(ModBlocks.HH_LOG, "Heart Birch Log");
+        builder.add(ModBlocks.HH_PLANKS, "Heart Birch Planks");
+        builder.add(ModBlocks.HH_PRESSURE_PLATE, "Heart Birch Pressure Plate");
+        builder.add(ModBlocks.HH_SAPLING, "Heart Birch Sapling");
+        builder.add(ModBlocks.HH_SLABS, "Heart Birch Slabs");
+        builder.add(ModBlocks.HH_STAIRS, "Heart Birch Stairs");
+        builder.add(ModBlocks.HH_TRAPDOOR, "Heart Birch Trapdoor");
+        builder.add(ModBlocks.HH_WOOD, "Heart Birch Wood");
+        builder.add(ModBlocks.STRIPPED_HH_WOOD, "Stripped Heart Birch Wood");
+        builder.add(ModBlocks.STRIPPED_HH_LOG, "Stripped Heart Birch Log");
+        builder.add(ModBlocks.HH_SIGN, "Heart Birch Sign");
+        builder.add(ModBlocks.HH_HANGING_SIGN, "Heart Birch Hanging Sign");
+        builder.add(ModItems.HH_BOAT, "Heart Birch Boat");
+        builder.add(ModItems.HH_CHEST_BOAT, "Heart Birch Chest Boat");
 
         // Mushrooms
         builder.add(ModBlocks.BLUE_MUSHROOM_BLOCK, "Blue Mushroom Block");
@@ -427,7 +452,7 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         builder.add("advancement.dtrhmod.portal.description", "...into the portal");
 
         builder.add("misc.dtrhmod.biome_locked.title", "This Biome is Locked.");
-        builder.add("misc.dtrhmod.biome_locked.description", "Maybe you should come back later.");
+        builder.add("misc.dtrhmod.biome_locked.description", "Come back later!");
 
         // World Gen
 
@@ -446,6 +471,12 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         // Effects
         builder.add(ModEffects.SHRINK.getTranslationKey(), "Shrink");
         builder.add(ModEffects.GROW.getTranslationKey(), "Grow");
+        builder.add("item.minecraft.potion.effect.shrink_potion", "Potion of Shrinking");
+        builder.add("item.minecraft.potion.effect.grow_potion", "Potion of Growing");
+        builder.add("item.minecraft.splash_potion.effect.shrink_potion", "Splash Potion of Shrinking");
+        builder.add("item.minecraft.splash_potion.effect.grow_potion", "Splash Potion of Growing");
+        builder.add("item.minecraft.lingering_potion.effect.shrink_potion", "Lingering Potion of Shrinking");
+        builder.add("item.minecraft.lingering_potion.effect.grow_potion", "Lingering Potion of Growing");
 
     }
 }

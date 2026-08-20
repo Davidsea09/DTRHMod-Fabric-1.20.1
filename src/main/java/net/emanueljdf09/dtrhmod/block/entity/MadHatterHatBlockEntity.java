@@ -77,23 +77,38 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
     public MadHatterHatBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MAD_HATTER_HAT, pos, state);
     }
+
+    public void setPortalOwnerUuid(UUID ownerUuid) {
+        this.portalOwnerUuid = ownerUuid;
+        markDirty();
+    }
+
+    public UUID getPortalOwnerUuid() {
+        return this.portalOwnerUuid;
+    }
+
+    public RegistryKey<World> getTargetDimension() {
+        return this.targetDimension;
+    }
+
+    public boolean isInstanceDimension() {
+        return this.isInstanceDimension;
+    }
+
+    public Identifier getStructureId() {
+        return this.structureId;
+    }
+
+    public RegistryKey<World> getOriginDimension() {
+        return this.originDimension;
+    }
+
     public static void tick(World world, BlockPos pos, BlockState state, MadHatterHatBlockEntity entity) {
         if (world.isClient) return;
 
         if (entity.currentAnimState == AnimState.STOP) {
             entity.animTicks++;
             if (entity.animTicks > 100) {
-                ItemStack hatToRefund = new ItemStack(ModBlocks.MAD_HATTER_HAT.asItem());
-                if (entity.portalOwnerUuid != null && world.getServer() != null) {
-                    PlayerEntity owner = world.getServer().getPlayerManager().getPlayer(entity.portalOwnerUuid);
-                    if (owner != null) {
-                        owner.getInventory().insertStack(hatToRefund);
-                    } else {
-                        world.spawnEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, hatToRefund));
-                    }
-                } else {
-                    world.spawnEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, hatToRefund));
-                }
 
                 world.breakBlock(pos, false);
                 return;
@@ -215,11 +230,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
 
             this.storedRecipeItem = items.get(0).getStack().copy();
 
-            PlayerEntity closestPlayer = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 5.0, false);
-            if (closestPlayer != null) {
-                this.portalOwnerUuid = closestPlayer.getUuid();
-            }
-
             markDirty();
             consumeItems(items);
         } else {
@@ -305,35 +315,6 @@ public class MadHatterHatBlockEntity extends BlockEntity implements GeoBlockEnti
 
         world.spawnEntity(burpedItem);
         world.playSound(null, pos, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.BLOCKS, 1.0f, 1.0f);
-    }
-
-    public void triggerTeleport(PlayerEntity player) {
-        if (!(player instanceof ServerPlayerEntity serverPlayer) || targetDimension == null) return;
-
-        if (TeleportUtil.hasTeleportCooldown(serverPlayer)) {
-            return;
-        }
-
-        TeleportUtil.updateTeleportCooldown(serverPlayer);
-
-        if (this.isInstanceDimension) {
-            UUID owner = (this.portalOwnerUuid != null) ? this.portalOwnerUuid : serverPlayer.getUuid();
-
-            Identifier targetStructure = (this.structureId != null)
-                    ? this.structureId
-                    : new Identifier(DownTheRabbitHole.MOD_ID, "storybook/default_structure");
-
-            TeleportUtil.teleportToPlayerInstance(
-                    serverPlayer,
-                    owner,
-                    this.targetDimension,
-                    targetStructure,
-                    this.originDimension,
-                    this.pos
-            );
-        } else {
-            TeleportUtil.teleportFromHat(serverPlayer, this.targetDimension, this.pos);
-        }
     }
 
     @Override

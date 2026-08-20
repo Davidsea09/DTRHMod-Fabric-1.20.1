@@ -30,4 +30,6 @@ public interface ProgressionComponent extends Component {
 
     boolean hasMetInOverworld();
     void setMetInOverworld(boolean met);
+
+    void reset();
 }

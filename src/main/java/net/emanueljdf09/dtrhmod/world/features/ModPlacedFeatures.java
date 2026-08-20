@@ -28,11 +28,14 @@ public class ModPlacedFeatures {
     public static final RegistryKey<PlacedFeature> TH_TREE_PLACED = registerKey("th_tree_placed");
     public static final RegistryKey<PlacedFeature> BB_TREE_PLACED = registerKey("bb_tree_placed");
     public static final RegistryKey<PlacedFeature> WW_TREE_PLACED = registerKey("ww_tree_placed");
+    public static final RegistryKey<PlacedFeature> HH_TREE_PLACED = registerKey("hh_tree_placed");
     public static final RegistryKey<PlacedFeature> TULGEY_TREE_PLACED = registerKey("tulgey_tree_placed");
 
     public static final RegistryKey<PlacedFeature> BIG_BLUE_MUSHROOM_PLACED = registerKey("big_blue_mushroom_placed");
     public static final RegistryKey<PlacedFeature> BIG_YELLOW_MUSHROOM_PLACED = registerKey("big_yellow_mushroom_placed");
     public static final RegistryKey<PlacedFeature> BIG_MAGENTA_MUSHROOM_PLACED = registerKey("big_magenta_mushroom_placed");
+
+    public static final RegistryKey<PlacedFeature> VALE_OF_TEARS_SELECTOR_PLACED = registerKey("vale_of_tears_vegetation_placed");
 
     public static void bootstrap(Registerable<PlacedFeature> context) {
         var configuredFeatureRegistryEntryLookup = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
@@ -91,21 +94,31 @@ public class ModPlacedFeatures {
                         PlacedFeatures.createCountExtraModifier(4, 0.2f, 1),
                         ModBlocks.WW_SAPLING));
 
-        register(context, BIG_BLUE_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_BLUE_MUSHROOM),
+        register(context, HH_TREE_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.WW_TREE_SELECTOR),
+                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
+                        PlacedFeatures.createCountExtraModifier(2, 0.2f, 1),
+                        ModBlocks.HH_SAPLING));
+
+        register(context, BIG_BLUE_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_BLUE_MUSHROOM_SELECTOR),
                 RarityFilterPlacementModifier.of(1),
                 SquarePlacementModifier.of(),
                 PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP,
                 BiomePlacementModifier.of());
-        register(context, BIG_YELLOW_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_YELLOW_MUSHROOM),
+        register(context, BIG_YELLOW_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_YELLOW_MUSHROOM_SELECTOR),
                 RarityFilterPlacementModifier.of(2),
                 SquarePlacementModifier.of(),
                 PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP,
                 BiomePlacementModifier.of());
-        register(context, BIG_MAGENTA_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_MAGENTA_MUSHROOM),
+        register(context, BIG_MAGENTA_MUSHROOM_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.BIG_MAGENTA_MUSHROOM_SELECTOR),
                 RarityFilterPlacementModifier.of(1),
                 SquarePlacementModifier.of(),
                 PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP,
                 BiomePlacementModifier.of());
+
+        register(context, VALE_OF_TEARS_SELECTOR_PLACED, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.VALE_OF_TEARS_SELECTOR),
+                VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
+                        PlacedFeatures.createCountExtraModifier(2, 0.2f, 1),
+                        ModBlocks.WW_SAPLING));
 
     }
 

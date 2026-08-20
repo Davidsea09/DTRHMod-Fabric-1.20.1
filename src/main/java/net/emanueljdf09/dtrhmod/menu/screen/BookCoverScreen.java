@@ -19,7 +19,7 @@ import net.minecraft.util.Identifier;
 public class BookCoverScreen extends Screen {
 
     public static Identifier coverTexture;
-    public static final Identifier COVER_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/book_first.png");
+    public static final Identifier COVER_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/book_first.png");
     private final ItemStack bookStack;
     protected int leftPos;
     protected int topPos;
@@ -31,21 +31,21 @@ public class BookCoverScreen extends Screen {
             this.bookStack = bookStack;
 
             if (bookStack.isOf(ModItems.AURORA_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/aurora_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/aurora_cover.png");
             } else if (bookStack.isOf(ModItems.CINDERELLA_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/cinder_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/cinder_cover.png");
             }  else if (bookStack.isOf(ModItems.RED_RIDING_HOOD_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/lrrh_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/lrrh_cover.png");
             }  else if (bookStack.isOf(ModItems.THE_LITTLE_MERMAID_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/seashell_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/seashell_cover.png");
             }   else if (bookStack.isOf(ModItems.JACK_AND_THE_BEANSTALK_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/jb_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/jb_cover.png");
             }  else if (bookStack.isOf(ModItems.RAPUNZEL_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/hair_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/hair_cover.png");
             }  else if (bookStack.isOf(ModItems.THREE_LITTLE_PIGS_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/tlp_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/tlp_cover.png");
             }  else if (bookStack.isOf(ModItems.SNOW_WHITE_STORYBOOK)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/sw_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/sw_cover.png");
             } else {
                 coverTexture = COVER_TEXTURE;
             }
@@ -59,7 +59,7 @@ public class BookCoverScreen extends Screen {
             this.triggerKey = triggerKey;
 
             if ("wonderland_intro".equals(triggerKey)) {
-                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/enter_wonder_cover.png");
+                coverTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/enter_wonder_cover.png");
             } else {
                 coverTexture = COVER_TEXTURE;
             }

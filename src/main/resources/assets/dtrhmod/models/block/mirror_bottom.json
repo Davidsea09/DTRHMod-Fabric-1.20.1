@@ -5,7 +5,7 @@
 	"textures": {
 		"0": "dtrhmod:block/gold_frame",
 		"1": "dtrhmod:block/gold_mirror",
-		"particle": "dtrhmod:block/gold_frame"
+		"particle": "dtrhmod:block/mirror_particle"
 	},
 	"elements": [
 		{

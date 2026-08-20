@@ -1,9 +1,14 @@
 package net.emanueljdf09.dtrhmod.item;
 
+import com.terraformersmc.terraform.boat.api.item.TerraformBoatItemHelper;
+import com.terraformersmc.terraform.boat.impl.item.TerraformBoatItem;
 import net.emanueljdf09.dtrhmod.DownTheRabbitHole;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
+import net.emanueljdf09.dtrhmod.entity.ModBoats;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.item.block.ExteriorChestItem;
+import net.emanueljdf09.dtrhmod.item.block.ExteriorDoorItem;
+import net.emanueljdf09.dtrhmod.item.block.MadHatItem;
 import net.emanueljdf09.dtrhmod.item.custom.DynamicTeaCupItem;
 import net.emanueljdf09.dtrhmod.item.custom.StoryBook;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -18,9 +23,22 @@ public class ModItems {
 
     public static final Item POCKETWATCH = registerItem("pocketwatch", new Item(new FabricItemSettings()));
 
+    public static final Item MIRROR = registerItem("mirror", new
+            BlockItem(ModBlocks.MIRROR_BLOCK, new FabricItemSettings()));
+
+    public static final Item MAD_HAT_ITEM = registerItem("mad_hat",
+            new MadHatItem(ModBlocks.MAD_HATTER_HAT, new FabricItemSettings()));
+
+    public static final Item EXTERIOR_DOOR_ITEM = registerItem("exterior_door",
+            new ExteriorDoorItem(ModBlocks.EXTERIOR_DOOR, new FabricItemSettings()));
+
+    public static final Item WW_HANGING_LEAVES = registerItem("ww_hanging_leaves", new
+            BlockItem(ModBlocks.WW_HANGING_LEAVES, new FabricItemSettings()));
+
     public static final Item EXTERIOR_KEY = registerItem("exterior_key", new Item(new FabricItemSettings()));
 
-    public static BlockItem EXTERIOR_CHEST_ITEM = registerItem("exterior_chest", new ExteriorChestItem(ModBlocks.EXTERIOR_CHEST, new FabricItemSettings()));
+    public static BlockItem EXTERIOR_CHEST_ITEM = registerItem("exterior_chest",
+            new ExteriorChestItem(ModBlocks.EXTERIOR_CHEST, new FabricItemSettings()));
 
     public static final Item CINDERELLA_STORYBOOK = registerItem("cinderella_storybook",
             new StoryBook(new Item.Settings().maxCount(1), "cinderella"));
@@ -67,21 +85,38 @@ public class ModItems {
     public static final Item WW_SIGN = registerItem("ww_sign",
             new SignItem(new FabricItemSettings().maxCount(16), ModBlocks.WW_SIGN, ModBlocks.WALL_WW_SIGN));
 
-    public static final Item HANGING_WW_SIGN = registerItem("hanging_ww_sign",
+    public static final Item HANGING_WW_SIGN = registerItem("ww_hanging_sign",
             new HangingSignItem(ModBlocks.WW_HANGING_SIGN, ModBlocks.WALL_WW_HANGING_SIGN, new FabricItemSettings().maxCount(16)));
 
     public static final Item TH_SIGN = registerItem("th_sign",
             new SignItem(new FabricItemSettings().maxCount(16), ModBlocks.TH_SIGN, ModBlocks.WALL_TH_SIGN));
 
-    public static final Item HANGING_TH_SIGN = registerItem("hanging_th_sign",
+    public static final Item HANGING_TH_SIGN = registerItem("th_hanging_sign",
             new HangingSignItem(ModBlocks.TH_HANGING_SIGN, ModBlocks.WALL_TH_HANGING_SIGN, new FabricItemSettings().maxCount(16)));
 
     public static final Item BB_SIGN = registerItem("bb_sign",
             new SignItem(new FabricItemSettings().maxCount(16), ModBlocks.BB_SIGN, ModBlocks.WALL_BB_SIGN));
 
-    public static final Item HANGING_BB_SIGN = registerItem("hanging_bb_sign",
+    public static final Item HANGING_BB_SIGN = registerItem("bb_hanging_sign",
             new HangingSignItem(ModBlocks.BB_HANGING_SIGN, ModBlocks.WALL_BB_HANGING_SIGN, new FabricItemSettings().maxCount(16)));
 
+    public static final Item HH_SIGN = registerItem("hh_sign",
+            new SignItem(new FabricItemSettings().maxCount(16), ModBlocks.HH_SIGN, ModBlocks.WALL_HH_SIGN));
+
+    public static final Item HANGING_HH_SIGN = registerItem("hh_hanging_sign",
+            new HangingSignItem(ModBlocks.HH_HANGING_SIGN, ModBlocks.WALL_HH_HANGING_SIGN, new FabricItemSettings().maxCount(16)));
+
+    public static final Item TH_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.TH_BOAT_ID, ModBoats.TH_BOAT_KEY, false);
+    public static final Item TH_CHEST_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.TH_CHEST_BOAT_ID, ModBoats.TH_BOAT_KEY, true);
+
+    public static final Item BB_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.BB_BOAT_ID, ModBoats.BB_BOAT_KEY, false);
+    public static final Item BB_CHEST_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.BB_CHEST_BOAT_ID, ModBoats.BB_BOAT_KEY, true);
+
+    public static final Item WW_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.WW_BOAT_ID, ModBoats.WW_BOAT_KEY, false);
+    public static final Item WW_CHEST_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.WW_CHEST_BOAT_ID, ModBoats.WW_BOAT_KEY, true);
+
+    public static final Item HH_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.HH_BOAT_ID, ModBoats.HH_BOAT_KEY, false);
+    public static final Item HH_CHEST_BOAT = TerraformBoatItemHelper.registerBoatItem(ModBoats.HH_CHEST_BOAT_ID, ModBoats.HH_BOAT_KEY, true);
 
     public static final List<Item> STORYBOOK_ITEMS = List.of(
             CINDERELLA_STORYBOOK,

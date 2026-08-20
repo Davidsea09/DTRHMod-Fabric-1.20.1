@@ -53,7 +53,7 @@ public class StoryBookScreen extends Screen {
         }
     };
     public static Identifier bookTexture;
-    public static final Identifier BOOK_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/book_middle.png");
+    public static final Identifier BOOK_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/book_middle.png");
     public static final int TEXT_LEFT_X = 22;
     public static final int TEXT_RIGHT_X = 159;
     public static final int TEXT_Y = 21;
@@ -80,21 +80,21 @@ public class StoryBookScreen extends Screen {
         this.cachedSpread = -1;
 
         if (stack.isOf(ModItems.AURORA_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/aurora_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/aurora_open.png");
         } else if (stack.isOf(ModItems.CINDERELLA_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/cinder_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/cinder_open.png");
         }  else if (stack.isOf(ModItems.RED_RIDING_HOOD_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/lrrh_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/lrrh_open.png");
         }  else if (stack.isOf(ModItems.THE_LITTLE_MERMAID_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/seashell_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/seashell_open.png");
         }   else if (stack.isOf(ModItems.JACK_AND_THE_BEANSTALK_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/jb_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/jb_open.png");
         }  else if (stack.isOf(ModItems.RAPUNZEL_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/hair_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/hair_open.png");
         }  else if (stack.isOf(ModItems.THREE_LITTLE_PIGS_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/tlp_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/tlp_open.png");
         }  else if (stack.isOf(ModItems.SNOW_WHITE_STORYBOOK)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/sw_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/sw_open.png");
         } else {
             bookTexture = BOOK_TEXTURE;
         }
@@ -106,7 +106,7 @@ public class StoryBookScreen extends Screen {
         this.cachedSpread = -1;
 
         if ("wonderland_intro".equals(triggerKey)) {
-            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/enter_wonder_open.png");
+            bookTexture = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/storybooks/enter_wonder_open.png");
 
 
             this.contents = createTranslatableContents(

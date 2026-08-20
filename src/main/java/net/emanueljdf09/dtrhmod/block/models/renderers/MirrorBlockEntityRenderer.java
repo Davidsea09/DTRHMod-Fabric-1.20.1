@@ -92,10 +92,14 @@ public class MirrorBlockEntityRenderer implements BlockEntityRenderer<MirrorBloc
             float minY = 2.75f / 16.0f;
             float maxY = 2.0f - minX;
 
-            buffer.vertex(entry.getPositionMatrix(), minX, minY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(1f, 1f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), 0f, 0f, -1f).next();
-            buffer.vertex(entry.getPositionMatrix(), maxX, minY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(0f, 1f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), 0f, 0f, -1f).next();
-            buffer.vertex(entry.getPositionMatrix(), maxX, maxY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(0f, 0f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), 0f, 0f, -1f).next();
-            buffer.vertex(entry.getPositionMatrix(), minX, maxY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(1f, 0f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), 0f, 0f, -1f).next();
+            float normalX = entry.getNormalMatrix().m02();
+            float normalY = entry.getNormalMatrix().m12();
+            float normalZ = entry.getNormalMatrix().m22();
+
+            buffer.vertex(entry.getPositionMatrix(), minX, minY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(1f, 1f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), normalX, normalY, normalZ).next();
+            buffer.vertex(entry.getPositionMatrix(), maxX, minY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(0f, 1f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), normalX, normalY, normalZ).next();
+            buffer.vertex(entry.getPositionMatrix(), maxX, maxY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(0f, 0f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), normalX, normalY, normalZ).next();
+            buffer.vertex(entry.getPositionMatrix(), minX, maxY, 0.0f).color(1f, 1f, 1f, overlayAlpha).texture(1f, 0f).overlay(overlay).light(0xF000F0).normal(entry.getNormalMatrix(), normalX, normalY, normalZ).next();
 
             matrices.pop();
         }

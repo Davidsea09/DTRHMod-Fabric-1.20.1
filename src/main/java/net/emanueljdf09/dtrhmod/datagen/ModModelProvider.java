@@ -28,16 +28,14 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerMushroomBlock(ModBlocks.MAGENTA_MUSHROOM_BLOCK);
         blockStateModelGenerator.registerTintableCross(ModBlocks.MAGENTA_MUSHROOM, BlockStateModelGenerator.TintType.NOT_TINTED);
 
-        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.RABBIT_HOLE);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_PORTAL);
-        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.EXTERIOR_DOOR);
-        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.MAD_HATTER_HAT);
 
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.WONDER_DIRT);
 
         blockStateModelGenerator.registerTintableCross(ModBlocks.TH_SAPLING, BlockStateModelGenerator.TintType.NOT_TINTED);
         blockStateModelGenerator.registerTintableCross(ModBlocks.WW_SAPLING, BlockStateModelGenerator.TintType.NOT_TINTED);
         blockStateModelGenerator.registerTintableCross(ModBlocks.BB_SAPLING, BlockStateModelGenerator.TintType.NOT_TINTED);
+        blockStateModelGenerator.registerTintableCross(ModBlocks.HH_SAPLING, BlockStateModelGenerator.TintType.NOT_TINTED);
 
 
         blockStateModelGenerator.registerLog(ModBlocks.TH_LOG).log(ModBlocks.TH_LOG).wood(ModBlocks.TH_WOOD);
@@ -57,8 +55,13 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerLog(ModBlocks.STRIPPED_BB_LOG).log(ModBlocks.STRIPPED_BB_LOG).wood(ModBlocks.STRIPPED_BB_WOOD);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.BB_LEAVES);
 
-
         blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.BB_PLANKS).family(ModBlocks.BB_FAMILY);
+
+        blockStateModelGenerator.registerLog(ModBlocks.HH_LOG).log(ModBlocks.HH_LOG).wood(ModBlocks.HH_WOOD);
+        blockStateModelGenerator.registerLog(ModBlocks.STRIPPED_HH_LOG).log(ModBlocks.STRIPPED_HH_LOG).wood(ModBlocks.STRIPPED_HH_WOOD);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.HH_LEAVES);
+
+        blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.HH_PLANKS).family(ModBlocks.HH_FAMILY);
 
         blockStateModelGenerator.registerParentedItemModel(ModItems.WHITE_RABBIT_SPAWN_EGG, ModelIds.getMinecraftNamespacedItem("template_spawn_egg"));
         blockStateModelGenerator.registerParentedItemModel(ModItems.WEEPING_PLAYERS_SPAWN_EGG, ModelIds.getMinecraftNamespacedItem("template_spawn_egg"));
@@ -77,9 +80,23 @@ public class ModModelProvider extends FabricModelProvider {
             itemModelGenerator.register(item, Models.GENERATED);
         }
 
+        itemModelGenerator.register(ModItems.WW_HANGING_LEAVES, Models.GENERATED);
+        itemModelGenerator.register(ModItems.MIRROR, Models.GENERATED);
+
         itemModelGenerator.register(ModItems.HANGING_WW_SIGN, Models.GENERATED);
+        itemModelGenerator.register(ModItems.HANGING_HH_SIGN, Models.GENERATED);
         itemModelGenerator.register(ModItems.HANGING_BB_SIGN, Models.GENERATED);
         itemModelGenerator.register(ModItems.HANGING_TH_SIGN, Models.GENERATED);
+
+        itemModelGenerator.register(ModItems.WW_BOAT, Models.GENERATED);
+        itemModelGenerator.register(ModItems.WW_CHEST_BOAT, Models.GENERATED);
+        itemModelGenerator.register(ModItems.HH_BOAT, Models.GENERATED);
+        itemModelGenerator.register(ModItems.HH_CHEST_BOAT, Models.GENERATED);
+        itemModelGenerator.register(ModItems.TH_BOAT, Models.GENERATED);
+        itemModelGenerator.register(ModItems.TH_CHEST_BOAT, Models.GENERATED);
+        itemModelGenerator.register(ModItems.BB_BOAT, Models.GENERATED);
+        itemModelGenerator.register(ModItems.BB_CHEST_BOAT, Models.GENERATED);
+
         itemModelGenerator.register(ModItems.POCKETWATCH, Models.GENERATED);
         itemModelGenerator.register(ModItems.EMPTY_CUP, Models.GENERATED);
         itemModelGenerator.register(ModItems.DRINK_ME, Models.GENERATED);

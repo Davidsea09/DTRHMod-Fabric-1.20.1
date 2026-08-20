@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 public class ModEffects {
 
     public static final StatusEffect GROW = registerStatusEffect("grow",
-            new GrowStatusEffect(StatusEffectCategory.NEUTRAL, 0x3398FF));
+            new GrowStatusEffect(StatusEffectCategory.NEUTRAL, 0x90329f));
 
     public static final StatusEffect SHRINK = registerStatusEffect("shrink",
             new ShrinkStatusEffect(StatusEffectCategory.NEUTRAL, 0x3399FF));

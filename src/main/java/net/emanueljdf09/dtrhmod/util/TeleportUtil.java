@@ -9,11 +9,13 @@ import net.emanueljdf09.dtrhmod.util.components.Mirror.MirrorComponent;
 import net.emanueljdf09.dtrhmod.world.biome.ModBiomes;
 import net.emanueljdf09.dtrhmod.world.dimension.ModDimensions;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
@@ -34,7 +36,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -42,6 +43,10 @@ import java.util.*;
 public class TeleportUtil {
 
     private static final Map<UUID, MirrorTranceData> ACTIVE_TRANCES = new HashMap<>();
+    private static final Map<UUID, HatTranceData> ACTIVE_HAT_TRANCES = new HashMap<>();
+    private static final Map<UUID, BlockTranceData> ACTIVE_BLOCK_TRANCES = new HashMap<>();
+
+    private static final Set<UUID> TELEPORTING_PLAYERS = new HashSet<>();
 
     private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
     private static final long COOLDOWN_MS = 5000;
@@ -54,6 +59,132 @@ public class TeleportUtil {
 
     public static void updateTeleportCooldown(ServerPlayerEntity player) {
         TELEPORT_COOLDOWNS.put(player.getUuid(), System.currentTimeMillis());
+    }
+
+
+    public static class HatTranceData {
+        public final BlockPos hatPos;
+        public final RegistryKey<World> targetDim;
+        public final boolean isInstance;
+        public final Identifier structureId;
+        public final RegistryKey<World> originDim;
+        public final UUID ownerUuid;
+        public int ticksRemaining;
+
+        public HatTranceData(BlockPos hatPos, RegistryKey<World> targetDim, boolean isInstance, Identifier structureId, RegistryKey<World> originDim, UUID ownerUuid, int durationTicks) {
+            this.hatPos = hatPos;
+            this.targetDim = targetDim;
+            this.isInstance = isInstance;
+            this.structureId = structureId;
+            this.originDim = originDim;
+            this.ownerUuid = ownerUuid;
+            this.ticksRemaining = durationTicks;
+        }
+    }
+
+    public static void startHatTrance(ServerPlayerEntity player, BlockPos hatPos, RegistryKey<World> targetDim, boolean isInstance, Identifier structureId, RegistryKey<World> originDim, UUID ownerUuid) {
+        UUID uuid = player.getUuid();
+        if (ACTIVE_HAT_TRANCES.containsKey(uuid)) return;
+
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 40, 0, false, false, false));
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 40, 255, false, false, false));
+
+        player.getWorld().playSound(null, hatPos, SoundEvents.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 0.4f, 0.5f);
+
+        ACTIVE_HAT_TRANCES.put(uuid, new HatTranceData(hatPos, targetDim, isInstance, structureId, originDim, ownerUuid, 30)); // 30 ticks = 1.5 seconds
+    }
+
+    public static void tickHatTrances(MinecraftServer server) {
+        if (ACTIVE_HAT_TRANCES.isEmpty()) return;
+
+        List<UUID> completed = new ArrayList<>();
+
+        for (Map.Entry<UUID, HatTranceData> entry : ACTIVE_HAT_TRANCES.entrySet()) {
+            UUID playerUuid = entry.getKey();
+            HatTranceData data = entry.getValue();
+            ServerPlayerEntity player = server.getPlayerManager().getPlayer(playerUuid);
+
+            if (player == null) {
+                completed.add(playerUuid);
+                continue;
+            }
+
+            data.ticksRemaining--;
+
+            if (data.ticksRemaining <= 0) {
+                if (data.isInstance) {
+                    teleportToPlayerInstance(player, data.ownerUuid, data.targetDim, data.structureId, data.originDim, data.hatPos);
+                } else {
+                    teleportFromHat(player, data.targetDim, data.hatPos);
+                }
+
+                player.removeStatusEffect(StatusEffects.BLINDNESS);
+                player.removeStatusEffect(StatusEffects.SLOWNESS);
+                completed.add(playerUuid);
+            }
+        }
+
+        for (UUID uuid : completed) {
+            ACTIVE_HAT_TRANCES.remove(uuid);
+        }
+    }
+
+    public static class BlockTranceData {
+        public final BlockPos blockPos;
+        public final ServerWorld sourceWorld;
+        public final Runnable onComplete;
+        public int ticksRemaining;
+
+        public BlockTranceData(BlockPos blockPos, ServerWorld sourceWorld, Runnable onComplete, int durationTicks) {
+            this.blockPos = blockPos;
+            this.sourceWorld = sourceWorld;
+            this.onComplete = onComplete;
+            this.ticksRemaining = durationTicks;
+        }
+    }
+
+    public static void startBlockTrance(ServerPlayerEntity player, BlockPos blockPos, ServerWorld world, Runnable onComplete, int durationTicks) {
+        UUID uuid = player.getUuid();
+        if (ACTIVE_BLOCK_TRANCES.containsKey(uuid)) return;
+
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, durationTicks + 10, 0, false, false, false));
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, durationTicks + 10, 255, false, false, false));
+
+        world.playSound(null, blockPos, SoundEvents.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 0.4f, 0.5f);
+
+        ACTIVE_BLOCK_TRANCES.put(uuid, new BlockTranceData(blockPos, world, onComplete, durationTicks));
+    }
+
+    public static void tickBlockTrances(MinecraftServer server) {
+        if (ACTIVE_BLOCK_TRANCES.isEmpty()) return;
+
+        List<UUID> completedTrances = new ArrayList<>();
+
+        for (Map.Entry<UUID, BlockTranceData> entry : ACTIVE_BLOCK_TRANCES.entrySet()) {
+            UUID playerUuid = entry.getKey();
+            BlockTranceData data = entry.getValue();
+            ServerPlayerEntity player = server.getPlayerManager().getPlayer(playerUuid);
+
+            if (player == null) {
+                completedTrances.add(playerUuid);
+                continue;
+            }
+
+            data.ticksRemaining--;
+
+            if (data.ticksRemaining <= 0) {
+                if (data.onComplete != null) {
+                    data.onComplete.run();
+                }
+                player.removeStatusEffect(StatusEffects.BLINDNESS);
+                player.removeStatusEffect(StatusEffects.SLOWNESS);
+                completedTrances.add(playerUuid);
+            }
+        }
+
+        for (UUID uuid : completedTrances) {
+            ACTIVE_BLOCK_TRANCES.remove(uuid);
+        }
     }
 
     public static class MirrorTranceData {
@@ -82,7 +213,12 @@ public class TeleportUtil {
         ServerWorld world = server.getWorld(targetDim);
         if (world == null) return;
 
+        player.setVelocity(Vec3d.ZERO);
+        player.fallDistance = 0.0f;
+
         player.teleport(world, x, y, z, player.getYaw(), player.getPitch());
+
+
     }
 
     public static void teleportToPlayerInstance(
@@ -93,8 +229,14 @@ public class TeleportUtil {
             RegistryKey<World> originDimKey,
             BlockPos originPos
     ) {
+        if (TELEPORTING_PLAYERS.contains(player.getUuid())) return;
+        TELEPORTING_PLAYERS.add(player.getUuid());
+
         MinecraftServer server = player.getServer();
-        if (server == null) return;
+        if (server == null) {
+            TELEPORTING_PLAYERS.remove(player.getUuid());
+            return;
+        }
 
         ServerWorld destWorld = server.getWorld(targetDimKey);
         if (destWorld == null) {
@@ -104,7 +246,9 @@ public class TeleportUtil {
 
         StorybookInstanceManager manager = StorybookInstanceManager.getServerState(server);
 
-       BlockPos instancePos = manager.getOrCreatePlayerInstance(
+        manager.registerVisitorReturn(player.getUuid(), originDimKey, originPos);
+
+        BlockPos instancePos = manager.getOrCreatePlayerInstance(
                 server,
                 ownerUuid,
                 targetDimKey,
@@ -115,39 +259,76 @@ public class TeleportUtil {
 
         System.out.println("[DTRH DEBUG] Teleporting player to: " + instancePos.toString() + " in " + targetDimKey.getValue());
 
+        ChunkPos chunkPos = new ChunkPos(instancePos);
         destWorld.getChunkManager().addTicket(
                 ChunkTicketType.START,
-                new ChunkPos(instancePos),
+                chunkPos,
                 2,
                 Unit.INSTANCE
         );
 
         teleport(player, targetDimKey, instancePos.getX() + 0.5, instancePos.getY() + 1.0, instancePos.getZ() + 0.5);
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
+
+        server.execute(() -> {
+
+            server.getWorld(targetDimKey).getServer().submit(() -> {
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        TELEPORTING_PLAYERS.remove(player.getUuid());
+                    }
+                }, 1000);
+            });
+        });
     }
 
     public static void teleportFromHat(ServerPlayerEntity player, RegistryKey<World> targetDim, BlockPos targetPos) {
+        if (TELEPORTING_PLAYERS.contains(player.getUuid())) return;
+        TELEPORTING_PLAYERS.add(player.getUuid());
+
         MinecraftServer server = player.getServer();
-        if (server == null) return;
+        if (server == null) {
+            TELEPORTING_PLAYERS.remove(player.getUuid());
+            return;
+        }
 
         ServerWorld destWorld = server.getWorld(targetDim);
         if (destWorld == null) return;
 
+        BlockPos finalTargetPos = targetPos;
+        if (targetDim.equals(World.END)) {
+            finalTargetPos = new BlockPos(0, targetPos.getY() + 10, 0);
+        }
+
+        ChunkPos chunkPos = new ChunkPos(finalTargetPos);
         destWorld.getChunkManager().addTicket(
                 ChunkTicketType.START,
-                new ChunkPos(targetPos),
+                chunkPos,
                 2,
                 Unit.INSTANCE
         );
 
-        int spawnY = destWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, targetPos).getY();
-        if (spawnY <= destWorld.getBottomY()) {
-            spawnY = 80;
-        }
+        destWorld.getChunk(chunkPos.x, chunkPos.z);
 
-        teleport(player, targetDim, targetPos.getX() + 0.5, spawnY + 1.0, targetPos.getZ() + 0.5);
-        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
-        return;
+        BlockPos surfacePos = findCustomSurface(destWorld, targetPos.getX(), targetPos.getZ(), 120);
+
+        teleport(player, targetDim, surfacePos.getX() + 0.5, surfacePos.getY() + 1.0, surfacePos.getZ() + 0.5);
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 600, 0));
+
+        server.execute(() -> {
+
+            server.getWorld(targetDim).getServer().submit(() -> {
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        TELEPORTING_PLAYERS.remove(player.getUuid());
+                    }
+                }, 1000);
+            });
+        });
     }
 
     public static void checkAndHandleVoidReturn(ServerPlayerEntity player) {
@@ -156,67 +337,53 @@ public class TeleportUtil {
             if (server == null) return;
 
             StorybookInstanceManager manager = StorybookInstanceManager.getServerState(server);
+
             StorybookInstanceManager.ReturnLocation returnLoc = manager.getReturnLocation(player.getUuid());
+
+            if (returnLoc == null || (returnLoc.dimension().equals(World.OVERWORLD) && returnLoc.pos().equals(new BlockPos(0, 64, 0)))) {
+                double playerX = player.getX();
+                int instanceIndex = (int) Math.floor((playerX + 2500) / 5000);
+
+                for (Map.Entry<UUID, BlockPos> entry : manager.getPlayerInstancesMap().entrySet()) {
+                    BlockPos instanceCenter = entry.getValue();
+                    if (Math.abs(instanceCenter.getX() - playerX) < 2500) {
+                        StorybookInstanceManager.ReturnLocation ownerReturn = manager.getReturnLocation(entry.getKey());
+                        if (ownerReturn != null) {
+                            returnLoc = ownerReturn;
+                            break;
+                        }
+                    }
+                }
+            }
 
             if (returnLoc != null) {
                 ServerWorld originWorld = server.getWorld(returnLoc.dimension());
                 if (originWorld != null) {
                     BlockPos originPos = returnLoc.pos();
                     double spawnX = originPos.getX() + 0.5;
-                    double spawnY = originPos.getY() + 1.0;
-                    double spawnZ = originPos.getZ() - 1.5;
+
+                    int safeY = originWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, originPos).getY();
+                    if (safeY <= originWorld.getBottomY()) safeY = 80;
 
                     updateTeleportCooldown(player);
-                    player.teleport(originWorld, spawnX, spawnY, spawnZ, player.getYaw(), player.getPitch());
+                    player.teleport(originWorld, spawnX, safeY + 1.0, originPos.getZ() - 1.5, player.getYaw(), player.getPitch());
                     player.setVelocity(0, 0, 0);
                     player.fallDistance = 0.0f;
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 60, 0));
-
                     return;
                 }
             }
 
-          ServerWorld overworld = server.getOverworld();
+            ServerWorld overworld = server.getOverworld();
             if (overworld != null) {
-                BlockPos spawnPos = player.getSpawnPointPosition();
-                RegistryKey<World> spawnDim = player.getSpawnPointDimension();
-                boolean isSpawnForced = player.isSpawnForced();
-                float spawnAngle = player.getSpawnAngle();
-
-                ServerWorld targetWorld = spawnDim != null ? server.getWorld(spawnDim) : overworld;
-                if (targetWorld == null) targetWorld = overworld;
-
-                if (spawnPos != null) {
-                    var respawnPos = PlayerEntity.findRespawnPosition(targetWorld, spawnPos, spawnAngle, isSpawnForced, false);
-                    if (respawnPos.isPresent()) {
-                        Vec3d pos = respawnPos.get();
-
-                        updateTeleportCooldown(player);
-                        player.teleport(targetWorld, pos.getX(), pos.getY(), pos.getZ(), spawnAngle, 0.0f);
-                        player.setVelocity(0, 0, 0);
-                        player.fallDistance = 0.0f;
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 60, 0));
-
-                        return;
-                    } else {
-                        player.sendMessage(Text.translatable("block.minecraft.spawn_obstructed"), true);
-                    }
-                }
-
                 BlockPos worldSpawn = overworld.getSpawnPos();
+                int safeSpawnY = overworld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, worldSpawn).getY();
+
                 updateTeleportCooldown(player);
-                player.teleport(
-                        overworld,
-                        worldSpawn.getX() + 0.5,
-                        worldSpawn.getY(),
-                        worldSpawn.getZ() + 0.5,
-                        player.getYaw(),
-                        player.getPitch()
-                );
+                player.teleport(overworld, worldSpawn.getX() + 0.5, safeSpawnY + 1.0, worldSpawn.getZ() + 0.5, player.getYaw(), player.getPitch());
                 player.setVelocity(0, 0, 0);
                 player.fallDistance = 0.0f;
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 60, 0));
-                return;
             }
         }
     }
@@ -281,48 +448,6 @@ public class TeleportUtil {
         }
     }
 
-    public static BlockPos teleportToBiome(ServerPlayerEntity player, RegistryKey<World> targetDim, RegistryKey<Biome> primaryBiome, RegistryKey<Biome>... fallbacks) {
-        MinecraftServer server = player.getServer();
-        if (server == null) return null;
-
-        ServerWorld destWorld = server.getWorld(targetDim);
-        if (destWorld == null) return null;
-
-        destWorld.getChunkManager().addTicket(
-               ChunkTicketType.START,
-                new ChunkPos(BlockPos.ORIGIN),
-                1,
-                Unit.INSTANCE
-        );
-        BlockPos targetPos = locateBiomePos(destWorld, primaryBiome);
-
-        if (targetPos == null && fallbacks != null) {
-            for (RegistryKey<Biome> fallbackKey : fallbacks) {
-                targetPos = locateBiomePos(destWorld, fallbackKey);
-                if (targetPos != null) break;
-            }
-        }
-
-        if (targetPos == null) {
-            targetPos = new BlockPos(0, 80, 0);
-            System.out.println("DTRH MOD: All biomes failed. Using hard fallback at 0, 80, 0");
-        }
-
-        int spawnY = destWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, targetPos).getY();
-        if (spawnY <= destWorld.getBottomY()) {
-            spawnY = 90;
-        } else {
-            spawnY += 1;
-        }
-
-        BlockPos finalDestination = new BlockPos(targetPos.getX(), spawnY, targetPos.getZ());
-
-        player.teleport(destWorld, finalDestination.getX() + 0.5, finalDestination.getY(), finalDestination.getZ() + 0.5, player.getYaw(), player.getPitch());
-        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
-
-        return finalDestination;
-    }
-
     public static void teleportToWonderland(ServerPlayerEntity player) {
         ProgressionComponent component = ModComponents.PROGRESSION_COMPONENT.get(player);
         BlockPos savedPos = component.getWonderlandSpawn();
@@ -330,13 +455,15 @@ public class TeleportUtil {
         if (savedPos != null) {
 
             TeleportUtil.teleport(player, ModDimensions.WONDERLAND_LEVEL_KEY,
-                    savedPos.getX() + 0.5, savedPos.getY(), savedPos.getZ() + 0.5);
-            player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 300, 0));
+                    savedPos.getX() + 0.5, savedPos.getY() + 5, savedPos.getZ() + 0.5);
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 600, 0));
         } else {
 
-            BlockPos found = TeleportUtil.teleportToBiome(player,
+            BlockPos found = TeleportUtil.teleportToSafeBiomeWithStructure(
+                    player,
                     ModDimensions.WONDERLAND_LEVEL_KEY,
                     ModBiomes.TULGEY_WOOD,
+                    null,
                     ModBiomes.VALE_OF_TEARS
             );
             component.setWonderlandSpawn(found);
@@ -346,14 +473,12 @@ public class TeleportUtil {
     private static BlockPos locateBiomePos(ServerWorld world, RegistryKey<Biome> biomeKey) {
         BlockPos searchOrigin = new BlockPos(8, 64, 8);
 
-        // Use .unwrapKey().map(...).orElse(false) to safely compare registry keys on Holders
         var result = world.locateBiome(holder -> holder.getKey().map(key -> key.equals(biomeKey)).orElse(false), searchOrigin, 10000, 32, 64);
 
         if (result != null) {
             BlockPos initialPos = result.getFirst();
 
-            // Scan around the found position to avoid spawning precisely on a narrow boundary edge
-            BlockPos.Mutable mutable = new BlockPos.Mutable();
+           BlockPos.Mutable mutable = new BlockPos.Mutable();
             for (int x = -48; x <= 48; x += 16) {
                 for (int z = -48; z <= 48; z += 16) {
                     mutable.set(initialPos.getX() + x, 64, initialPos.getZ() + z);
@@ -368,6 +493,112 @@ public class TeleportUtil {
             return initialPos;
         }
         return null;
+    }
+
+    public static BlockPos teleportToSafeBiomeWithStructure(ServerPlayerEntity player, RegistryKey<World> targetDim, RegistryKey<Biome> primaryBiome, @Nullable Identifier structureToSpawn, RegistryKey<Biome>... fallbacks) {
+        MinecraftServer server = player.getServer();
+        if (server == null) return null;
+
+        ServerWorld destWorld = server.getWorld(targetDim);
+        if (destWorld == null) return null;
+
+        BlockPos targetPos = locateBiomePos(destWorld, primaryBiome);
+
+        if (targetPos == null && fallbacks != null) {
+            for (RegistryKey<Biome> fallbackKey : fallbacks) {
+                targetPos = locateBiomePos(destWorld, fallbackKey);
+                if (targetPos != null) break;
+            }
+        }
+
+        if (targetPos == null) {
+            targetPos = new BlockPos(0, 80, 0);
+        }
+
+        ChunkPos chunkPos = new ChunkPos(targetPos);
+        destWorld.getChunkManager().addTicket(ChunkTicketType.START, chunkPos, 2, Unit.INSTANCE);
+        destWorld.getChunk(chunkPos.x, chunkPos.z);
+
+        BlockPos surfacePos = findCustomSurface(destWorld, targetPos.getX(), targetPos.getZ(), 120);
+        System.out.println("[DTRH DEBUG] Helper Scanner Found Surface at: " + surfacePos);
+
+       clearLogsAndLeavesInRadius(destWorld, surfacePos, 1, 20);
+
+        if (structureToSpawn != null) {
+            StructureTemplateManager templateManager = server.getStructureTemplateManager();
+            Optional<StructureTemplate> templateOpt = templateManager.getTemplate(structureToSpawn);
+
+            if (templateOpt.isPresent()) {
+                StructurePlacementData placementData = new StructurePlacementData();
+                templateOpt.get().place(destWorld, surfacePos, surfacePos, placementData, destWorld.getRandom(), 3);
+            }
+        }
+
+        int spawnOffset = 10;
+        double spawnX = surfacePos.getX() + 0.5;
+        double spawnY = surfacePos.getY() + 1.0 + spawnOffset;
+        double spawnZ = surfacePos.getZ() + 0.5;
+
+        player.teleport(destWorld, spawnX, spawnY, spawnZ, player.getYaw(), player.getPitch());
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 600, 0));
+
+        return surfacePos;
+    }
+
+    public static void clearLogsAndLeavesInRadius(ServerWorld world, BlockPos center, int horizontalRadius, int verticalHeight) {
+        System.out.println("[DTRH DEBUG] Clearing logs and leaves around: " + center);
+
+        BlockPos.Mutable mutable = new BlockPos.Mutable();
+        int logsRemoved = 0;
+        int leavesRemoved = 0;
+
+        for (int x = -horizontalRadius; x <= horizontalRadius; x++) {
+            for (int z = -horizontalRadius; z <= horizontalRadius; z++) {
+                for (int y = 0; y <= verticalHeight; y++) {
+                    mutable.set(center.getX() + x, center.getY() + y, center.getZ() + z);
+
+                    BlockState state = world.getBlockState(mutable);
+
+                    if (state.isIn(BlockTags.LOGS)) {
+                        world.removeBlock(mutable, false);
+                        logsRemoved++;
+                    } else if (state.isIn(BlockTags.LEAVES)) {
+                        world.removeBlock(mutable, false);
+                        leavesRemoved++;
+                    }
+                }
+            }
+        }
+
+        System.out.println("[DTRH DEBUG] Clear finished! Logs removed: " + logsRemoved + ", Leaves removed: " + leavesRemoved);
+    }
+
+    public static BlockPos findCustomSurface(ServerWorld world, int x, int z, int startY) {
+        BlockPos.Mutable scanPos = new BlockPos.Mutable(x, startY, z);
+
+        while (scanPos.getY() > world.getBottomY()) {
+            BlockState state = world.getBlockState(scanPos);
+
+            if (world.getRegistryKey() == World.END) {
+                if (state.isSolid() && state.isOf(Blocks.END_STONE) ) {
+                    BlockState blockAbove = world.getBlockState(scanPos.up());
+                    if (blockAbove.isAir()) {
+                        return scanPos.toImmutable();
+                    }
+                }
+            }
+
+            if (state.isSolid() && !state.isIn(BlockTags.LEAVES) && !state.isIn(BlockTags.LOGS) && !state.isOf(Blocks.BEDROCK) ) {
+                BlockState blockAbove = world.getBlockState(scanPos.up());
+                if (blockAbove.isAir()) {
+                    return scanPos.toImmutable();
+                }
+            }
+
+            scanPos.move(Direction.DOWN);
+        }
+
+        return new BlockPos(x, 80, z);
     }
 
 

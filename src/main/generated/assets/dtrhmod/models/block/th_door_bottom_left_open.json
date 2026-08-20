@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/door_bottom_left_open",
-  "textures": {
-    "bottom": "dtrhmod:block/th_door_bottom",
-    "top": "dtrhmod:block/th_door_top"
-  }
-}

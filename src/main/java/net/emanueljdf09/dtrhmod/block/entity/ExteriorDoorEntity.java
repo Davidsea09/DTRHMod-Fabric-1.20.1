@@ -52,7 +52,11 @@ public class ExteriorDoorEntity extends BlockEntity implements GeoBlockEntity {
             if (!world.isClient) {
                 component.setOpenedExtDoor(true);
                 world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
-                player.sendMessage(Text.translatable("exterior.player.opendoor"), true);
+                player.sendMessage(Text.translatable("exterior.player.opendoor"), false);
+
+                if (!player.getAbilities().creativeMode) {
+                    stack.decrement(1);
+                }
             } else {
                 triggerAnim("door_controller", "opening");
             }
@@ -62,9 +66,9 @@ public class ExteriorDoorEntity extends BlockEntity implements GeoBlockEntity {
         else {
             if (!world.isClient) {
                 if (!component.hasOpenedExtGrownChest()) {
-                    player.sendMessage(Text.translatable("exterior.player.faileddoorgrowth"), true);
+                    player.sendMessage(Text.translatable("exterior.player.faileddoorgrowth"), false);
                 } else {
-                    player.sendMessage(Text.translatable("exterior.player.faileddoor"), true);
+                    player.sendMessage(Text.translatable("exterior.player.faileddoor"), false);
                 }
             } else {
                 triggerAnim("door_controller", "fail");

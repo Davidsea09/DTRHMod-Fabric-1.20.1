@@ -5,6 +5,7 @@ import net.emanueljdf09.dtrhmod.entity.custom.WeepingPlayerEntity;
 import net.emanueljdf09.dtrhmod.util.TextureProcessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,17 +51,32 @@ public class WeepingPlayerModel extends GeoModel<WeepingPlayerEntity> {
                     return STONE_SKIN_CACHE.get(cacheKey);
                 }
 
+                Identifier originalSkin = player.getSkinTexture();
+
                 try {
-                    Identifier originalSkin = player.getSkinTexture();
-                    NativeImage originalNative = NativeImage.read(client.getResourceManager().getResource(originalSkin).get().getInputStream());
 
-                    NativeImage stoneNative = TextureProcessor.convertToStone(originalNative);
-                    NativeImageBackedTexture dynamicTex = new NativeImageBackedTexture(stoneNative);
-                    Identifier stoneIdentifier = new Identifier(DownTheRabbitHole.MOD_ID, "dynamic_stone_" + player.getUuid());
+                    var resourceOpt = client.getResourceManager().getResource(originalSkin);
+                    if (resourceOpt.isPresent()) {
+                        NativeImage originalNative = NativeImage.read(resourceOpt.get().getInputStream());
+                        return registerAndCacheStoneTexture(client, originalNative, cacheKey, player.getUuid().toString());
+                    }
 
-                    client.getTextureManager().registerTexture(stoneIdentifier, dynamicTex);
-                    STONE_SKIN_CACHE.put(cacheKey, stoneIdentifier);
-                    return stoneIdentifier;
+                    AbstractTexture texture = client.getTextureManager().getTexture(originalSkin);
+                    if (texture instanceof NativeImageBackedTexture nativeTex) {
+                        NativeImage originalNative = nativeTex.getImage();
+                        if (originalNative != null) {
+                            NativeImage stoneNative = TextureProcessor.convertToStone(originalNative);
+                            NativeImageBackedTexture dynamicTex = new NativeImageBackedTexture(stoneNative);
+                            Identifier stoneIdentifier = new Identifier(DownTheRabbitHole.MOD_ID, "dynamic_stone_" + player.getUuid());
+
+                            client.getTextureManager().registerTexture(stoneIdentifier, dynamicTex);
+                            STONE_SKIN_CACHE.put(cacheKey, stoneIdentifier);
+                            return stoneIdentifier;
+                        }
+                    }
+
+                    return originalSkin;
+
                 } catch (Exception e) {
                     return FALLBACK_STONE_TEXTURE;
                 }
@@ -78,18 +94,21 @@ public class WeepingPlayerModel extends GeoModel<WeepingPlayerEntity> {
 
         try {
             NativeImage originalNative = NativeImage.read(client.getResourceManager().getResource(localSkinPath).get().getInputStream());
-            NativeImage stoneNative = TextureProcessor.convertToStone(originalNative);
-
-            NativeImageBackedTexture dynamicTex = new NativeImageBackedTexture(stoneNative);
-            Identifier stoneIdentifier = new Identifier(DownTheRabbitHole.MOD_ID, "pool_stone_" + poolIndex);
-
-            client.getTextureManager().registerTexture(stoneIdentifier, dynamicTex);
-            STONE_SKIN_CACHE.put(cacheKey, stoneIdentifier);
-
-            return stoneIdentifier;
+            return registerAndCacheStoneTexture(client, originalNative, cacheKey, "pool_" + poolIndex);
         } catch (Exception e) {
             return FALLBACK_STONE_TEXTURE;
         }
+    }
+
+    private Identifier registerAndCacheStoneTexture(MinecraftClient client, NativeImage originalNative, String cacheKey, String uniqueId) {
+        NativeImage stoneNative = TextureProcessor.convertToStone(originalNative);
+        NativeImageBackedTexture dynamicTex = new NativeImageBackedTexture(stoneNative);
+        Identifier stoneIdentifier = new Identifier(DownTheRabbitHole.MOD_ID, "stone_tex_" + uniqueId);
+
+        client.getTextureManager().registerTexture(stoneIdentifier, dynamicTex);
+        STONE_SKIN_CACHE.put(cacheKey, stoneIdentifier);
+
+        return stoneIdentifier;
     }
 
     public static boolean isPoolSkinSlim(int index) {

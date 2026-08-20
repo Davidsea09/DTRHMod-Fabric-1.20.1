@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
+import java.util.List;
 
 public class StalkerGoal extends Goal {
     protected final PathAwareEntity mob;
@@ -26,8 +27,11 @@ public class StalkerGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        this.targetPlayer = this.mob.getWorld().getClosestPlayer(this.mob, 32.0);
-        return this.targetPlayer != null && this.targetPlayer.isAlive();
+        this.targetPlayer = this.mob.getWorld().getClosestPlayer(
+                this.mob.getX(), this.mob.getY(), this.mob.getZ(), 32.0,
+                player -> player.isAlive() && !player.isSpectator()
+        );
+        return this.targetPlayer != null;
     }
 
     @Override
@@ -38,9 +42,16 @@ public class StalkerGoal extends Goal {
 
     @Override
     public void tick() {
+        if (this.targetPlayer == null || !this.targetPlayer.isAlive() || this.targetPlayer.isSpectator() || this.targetPlayer.isCreative() || this.mob.squaredDistanceTo(this.targetPlayer) > 1024.0D) {
+            this.targetPlayer = this.mob.getWorld().getClosestPlayer(
+                    this.mob.getX(), this.mob.getY(), this.mob.getZ(), 32.0,
+                    player -> player.isAlive() && !player.isSpectator()
+            );
+        }
+
         if (this.targetPlayer == null) return;
 
-        if (isPlayerLooking(this.targetPlayer)) {
+        if (isAnyPlayerLookingAtMob()) {
             this.isFrozen = true;
             this.mob.getNavigation().stop();
             this.mob.setVelocity(Vec3d.ZERO);
@@ -93,6 +104,21 @@ public class StalkerGoal extends Goal {
         return this.isFrozen;
     }
 
+    private boolean isAnyPlayerLookingAtMob() {
+        List<PlayerEntity> nearbyPlayers = this.mob.getWorld().getEntitiesByClass(
+                PlayerEntity.class,
+                this.mob.getBoundingBox().expand(32.0D),
+                player -> player.isAlive() && !player.isSpectator()
+        );
+
+        for (PlayerEntity player : nearbyPlayers) {
+            if (isPlayerLooking(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isPlayerLooking(PlayerEntity player) {
         Vec3d lookVec = player.getRotationVec(1.0F).normalize();
         Vec3d toMobVec = new Vec3d(
@@ -101,7 +127,6 @@ public class StalkerGoal extends Goal {
                 this.mob.getZ() - player.getZ()
         );
 
-        double distance = toMobVec.length();
         toMobVec = toMobVec.normalize();
         double dotProduct = lookVec.dotProduct(toMobVec);
 

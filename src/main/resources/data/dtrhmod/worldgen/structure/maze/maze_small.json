@@ -1,0 +1,7 @@
+{
+  "type": "dtrhmod:small_maze",
+  "biomes": "dtrhmod:chessboard_fields",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_box"
+}

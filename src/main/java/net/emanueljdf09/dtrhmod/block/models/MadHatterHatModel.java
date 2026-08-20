@@ -20,4 +20,5 @@ public class MadHatterHatModel extends GeoModel<MadHatterHatBlockEntity> {
     public Identifier getAnimationResource(MadHatterHatBlockEntity animatable) {
         return new Identifier(DownTheRabbitHole.MOD_ID, "animations/block/hat.animation.json");
     }
+
 }

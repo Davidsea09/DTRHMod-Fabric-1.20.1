@@ -3,7 +3,9 @@ package net.emanueljdf09.dtrhmod;
 import net.emanueljdf09.dtrhmod.block.ModBlockCollections;
 import net.emanueljdf09.dtrhmod.block.ModBlockEntities;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
+import net.emanueljdf09.dtrhmod.entity.ModBoats;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
+import net.emanueljdf09.dtrhmod.entity.ModSpawners;
 import net.emanueljdf09.dtrhmod.item.ModItemGroups;
 import net.emanueljdf09.dtrhmod.item.ModItems;
 import net.emanueljdf09.dtrhmod.menu.ModScreenHandlers;
@@ -43,11 +45,13 @@ public class DownTheRabbitHole implements ModInitializer {
 	public void onInitialize() {
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
-		ModBlocks.registerModBlock();
 		ModBlockCollections.registerModBlockCollections();
+		ModBlocks.registerModBlock();
 		ModBlockEntities.registerBlockEnities();
+		ModBoats.registerBoats();
 		ModParticles.registerParticles();
 		ModEntities.registerModEntities();
+		//ModSpawners.registerModSpawners();
 		ModEffects.registerModEffects();
 		ModEffects.registerBrewingRecipes();
 		ModTreeDeco.register();
@@ -97,6 +101,8 @@ public class DownTheRabbitHole implements ModInitializer {
 		LOGGER.info("Follow the tunnel...");
 
 		ServerTickEvents.START_SERVER_TICK.register(TeleportUtil::tickMirrorTrances);
+		ServerTickEvents.START_SERVER_TICK.register(TeleportUtil::tickHatTrances);
+		ServerTickEvents.START_SERVER_TICK.register(TeleportUtil::tickBlockTrances);
 
 		ServerTickEvents.END_WORLD_TICK.register(world -> {
 			if (world.getRegistryKey().equals(ModDimensions.STORYBOOK_LEVEL_KEY)) {
@@ -115,6 +121,7 @@ public class DownTheRabbitHole implements ModInitializer {
 
 		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof ServerPlayerEntity player) {
+
 				if (world.getRegistryKey().equals(EXTERIOR_LEVEL_KEY)) {
 
 					BlockPos spawnPos = new BlockPos(0, 62, 0);

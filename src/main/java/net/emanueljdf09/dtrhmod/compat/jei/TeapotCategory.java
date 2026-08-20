@@ -92,10 +92,8 @@ public class TeapotCategory implements IRecipeCategory<TeapotRecipeVariant> {
         ItemStack emptyCupDisplay = new ItemStack(ModItems.EMPTY_CUP, 1);
         builder.addSlot(RecipeIngredientRole.INPUT, 63, 56).addItemStack(emptyCupDisplay);
 
-        // Render just the specific liquid required for this isolated variant row
         builder.addSlot(RecipeIngredientRole.INPUT, 27, 12).addItemStack(variant.getLiquidType().getStack());
 
-        // Render the exact tailored output with modified nbt effects
         DynamicRegistryManager rm = MinecraftClient.getInstance().world.getRegistryManager();
         ItemStack specificOutput = variant.getOutput(rm);
         builder.addSlot(RecipeIngredientRole.OUTPUT, 130, 35).addItemStack(specificOutput);

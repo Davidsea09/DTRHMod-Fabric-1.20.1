@@ -1,5 +1,6 @@
 package net.emanueljdf09.dtrhmod;
 
+import com.terraformersmc.terraform.boat.api.client.TerraformBoatClientHelper;
 import com.terraformersmc.terraform.sign.SpriteIdentifierRegistry;
 import net.emanueljdf09.dtrhmod.block.ModBlockEntities;
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
@@ -7,6 +8,7 @@ import net.emanueljdf09.dtrhmod.block.models.renderers.ExteriorChestRenderer;
 import net.emanueljdf09.dtrhmod.block.models.renderers.ExteriorDoorRenderer;
 import net.emanueljdf09.dtrhmod.block.models.renderers.MadHatterHatBlockEntityRenderer;
 import net.emanueljdf09.dtrhmod.block.models.renderers.MirrorBlockEntityRenderer;
+import net.emanueljdf09.dtrhmod.entity.ModBoats;
 import net.emanueljdf09.dtrhmod.entity.ModEntities;
 import net.emanueljdf09.dtrhmod.entity.client.renderers.WeepingPlayerRenderer;
 import net.emanueljdf09.dtrhmod.entity.client.renderers.WhiteRabbitRenderer;
@@ -17,9 +19,11 @@ import net.emanueljdf09.dtrhmod.menu.screen.BookCoverScreen;
 import net.emanueljdf09.dtrhmod.menu.screen.TeapotScreen;
 import net.emanueljdf09.dtrhmod.util.*;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
+import net.emanueljdf09.dtrhmod.util.config.ModConfigData;
 import net.emanueljdf09.dtrhmod.util.particles.FallingBBLeafParticle;
 import net.emanueljdf09.dtrhmod.util.particles.FallingTHLeafParticle;
 import net.emanueljdf09.dtrhmod.util.particles.FallingWWLeafParticle;
+import net.emanueljdf09.dtrhmod.util.particles.WonderlandLockParticle;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -145,13 +149,25 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BB_DOOR, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BB_TRAPDOOR, RenderLayer.getCutout());
 
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HH_LEAVES, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HH_DOOR, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HH_TRAPDOOR, RenderLayer.getCutout());
+
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TH_SAPLING, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WW_SAPLING, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BB_SAPLING, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HH_SAPLING, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.YELLOW_MUSHROOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BLUE_MUSHROOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGENTA_MUSHROOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TEAPOT_BLOCK, RenderLayer.getCutout());
+
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAD_HATTER_HAT, RenderLayer.getCutout());
+
+        TerraformBoatClientHelper.registerModelLayers(ModBoats.BB_BOAT_ID, false);
+        TerraformBoatClientHelper.registerModelLayers(ModBoats.TH_BOAT_ID, false);
+        TerraformBoatClientHelper.registerModelLayers(ModBoats.WW_BOAT_ID, false);
+        TerraformBoatClientHelper.registerModelLayers(ModBoats.HH_BOAT_ID, false);
 
         BlockEntityRendererRegistry.register(ModBlockEntities.MIRROR_BLOCK_ENTITY, MirrorBlockEntityRenderer::new);
 
@@ -184,6 +200,10 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
         ParticleFactoryRegistry.getInstance().register(
                 ModParticles.WW_LEAVE_PARTICLE,
                 FallingWWLeafParticle.Factory::new
+        );
+        ParticleFactoryRegistry.getInstance().register(
+                ModParticles.WONDERLAND_LOCK_PARTICLE,
+                WonderlandLockParticle.Factory::new
         );
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -218,33 +238,37 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
                     }
                 }
 
-                if (client.world.getTime() % 10 == 0) {
-                    int radius = 8;
-                    for (int x = -radius; x <= radius; x += 2) {
-                        for (int z = -radius; z <= radius; z += 2) {
-                            BlockPos checkPos = playerPos.add(x, 0, z);
-                            Optional<RegistryKey<Biome>> biomeKey = client.world.getBiome(checkPos).getKey();
+                if (client.world.getTime() % 25 == 0) {
 
-                            if (biomeKey.isPresent()) {
-                                Identifier biomeId = biomeKey.get().getValue();
-                                boolean isLocked = false;
+                    if (ModConfigData.isBiomeLockingEnabled() && client.player != null
+                            && !client.player.isCreative() && !client.player.isSpectator()) {
+                        int radius = 8;
+                        for (int x = -radius; x <= radius; x += 2) {
+                            for (int z = -radius; z <= radius; z += 2) {
+                                BlockPos checkPos = playerPos.add(x, 0, z);
+                                Optional<RegistryKey<Biome>> biomeKey = client.world.getBiome(checkPos).getKey();
 
-                                if (biomeId.getPath().equals("vale_of_tears") && stage < 1) {
-                                    isLocked = true;
-                                } else if (biomeId.getPath().equals("chessboard_fields") && stage < 2) {
-                                    isLocked = true;
-                                }
+                                if (biomeKey.isPresent()) {
+                                    Identifier biomeId = biomeKey.get().getValue();
+                                    boolean isLocked = false;
 
-                                if (isLocked) {
-                                    double px = checkPos.getX() + 0.5;
-                                    double pz = checkPos.getZ() + 0.5;
+                                    if (biomeId.getPath().equals("vale_of_tears") && stage < 1) {
+                                        isLocked = true;
+                                    } else if (biomeId.getPath().equals("chessboard_fields") && stage < 2) {
+                                        isLocked = true;
+                                    }
 
-                                    for (double py = client.player.getY() - 1; py <= client.player.getY() + 3; py += 1.0) {
-                                        client.world.addParticle(
-                                                ParticleTypes.REVERSE_PORTAL,
-                                                px, py, pz,
-                                                0.0, 0.05, 0.0
-                                        );
+                                    if (isLocked) {
+                                        double px = checkPos.getX() + 0.5;
+                                        double pz = checkPos.getZ() + 0.5;
+
+                                        for (double py = client.player.getY() - 1; py <= client.player.getY() + 3; py += 1.0) {
+                                            client.world.addParticle(
+                                                    ModParticles.WONDERLAND_LOCK_PARTICLE,
+                                                    px, py, pz,
+                                                    0.0, 0.02, 0.0
+                                            );
+                                        }
                                     }
                                 }
                             }
@@ -262,7 +286,7 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
                             for (int i = 0; i < 4; i++) {
 
                                 double x = client.player.getX() + (client.world.random.nextDouble() - 0.5) * 32.0;
-                                double y = client.player.getY() + 15.0 + client.world.random.nextDouble() * 15.0;
+                                double y = client.player.getY() + 6.0 + client.world.random.nextDouble() * 6.0;
                                 double z = client.player.getZ() + (client.world.random.nextDouble() - 0.5) * 32.0;
 
                                 client.world.addParticle(
@@ -278,10 +302,10 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
                             }
                         }
 
-                        else if (biomeId.getPath().equals("vale_of_tears") && stage >= 1) {
+                        else if (biomeId.getPath().equals("vale_of_tears")) {
                             for (int i = 0; i < 4; i++) {
                                 double x = client.player.getX() + (client.world.random.nextDouble() - 0.5) * 32.0;
-                                double y = client.player.getY() + 15.0 + client.world.random.nextDouble() * 15.0;
+                                double y = client.player.getY() + 6.0 + client.world.random.nextDouble() * 6.0;
                                 double z = client.player.getZ() + (client.world.random.nextDouble() - 0.5) * 32.0;
 
                                 client.world.addParticle(
@@ -292,7 +316,7 @@ public class DownTheRabbitHoleClient implements ClientModInitializer {
                             }
                         }
 
-                        else if (biomeId.getPath().equals("chessboard_fields") && stage >= 2) {
+                        else if (biomeId.getPath().equals("chessboard_fields")) {
                             for (int i = 0; i < 3; i++) {
                                 double x = client.player.getX() + (client.world.random.nextDouble() - 0.5) * 32.0;
                                 double y = client.player.getY() + 15.0 + client.world.random.nextDouble() * 15.0;

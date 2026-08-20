@@ -1,0 +1,21 @@
+{
+  "structures": [
+    {
+      "structure": "dtrhmod:maze/maze_large",
+      "weight": 1
+    },{
+      "structure": "dtrhmod:maze/maze_medium",
+      "weight": 1
+    },{
+      "structure": "dtrhmod:maze/maze_small",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 32,
+    "separation": 8,
+    "salt": 47291047,
+    "spread_type": "triangular"
+  }
+}

@@ -4,6 +4,7 @@ import net.emanueljdf09.dtrhmod.block.entity.MirrorBlockEntity;
 import net.emanueljdf09.dtrhmod.item.ModItems;
 import net.emanueljdf09.dtrhmod.util.ModComponents;
 import net.emanueljdf09.dtrhmod.util.components.ProgressionComponent;
+import net.emanueljdf09.dtrhmod.util.config.ModConfigData;
 import net.emanueljdf09.dtrhmod.world.dimension.ModDimensions;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -139,12 +140,14 @@ public class MirrorBlock extends BlockWithEntity {
 
             if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
 
-                ProgressionComponent story = ModComponents.PROGRESSION_COMPONENT.get(serverPlayer);
-                if (!story.isWonderlandMirrorUnlocked()) {
-                    serverPlayer.sendMessage(Text.literal("§cThe glass refuses to reflect a path. You have not unlocked this secret yet..."), true);
+                if (ModConfigData.isBiomeLockingEnabled()) {
+                    ProgressionComponent story = ModComponents.PROGRESSION_COMPONENT.get(serverPlayer);
+                    if (!story.isWonderlandMirrorUnlocked()) {
+                        serverPlayer.sendMessage(Text.literal("You can't use this yet."), true);
 
-                    world.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 0.75f, 0.5f);
-                    return ActionResult.SUCCESS;
+                        world.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 0.75f, 0.5f);
+                        return ActionResult.SUCCESS;
+                    }
                 }
 
                 mirrorEntity.startTeleportSequence(serverPlayer, (ServerWorld) world);

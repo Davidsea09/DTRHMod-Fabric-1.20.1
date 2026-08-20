@@ -30,6 +30,7 @@ public class ModTags {
         public static final TagKey<Block> TH_LOGS = tag("th_logs");
         public static final TagKey<Block> WW_LOGS = tag("ww_logs");
         public static final TagKey<Block> BB_LOGS = tag("bb_logs");
+        public static final TagKey<Block> HH_LOGS = tag("hh_logs");
         public static final TagKey<Block> WONDERLAND_LOGS = tag("wonderland_logs");
         public static final TagKey<Block> WONDERLAND_PLANKS = tag("wonderland_planks");
         public static final TagKey<Block> HEAT_SOURCE = tag("heat_source");
@@ -44,6 +45,7 @@ public class ModTags {
         public static final TagKey<Item> TH_LOGS = tag("th_logs");
         public static final TagKey<Item> WW_LOGS = tag("ww_logs");
         public static final TagKey<Item> BB_LOGS = tag("bb_logs");
+        public static final TagKey<Item> HH_LOGS = tag("hh_logs");
         public static final TagKey<Item> WONDERLAND_LOGS = tag("wonderland_logs");
         public static final TagKey<Item> WONDERLAND_PLANKS = tag("wonderland_planks");
 

@@ -44,7 +44,7 @@ public class ModItemGroups {
                         entries.add(ModItems.WHITE_RABBIT_SPAWN_EGG);
                         entries.add(ModItems.WEEPING_PLAYERS_SPAWN_EGG);
 
-                        entries.add(ModBlocks.MAD_HATTER_HAT.asItem());
+                        entries.add(ModItems.MAD_HAT_ITEM);
                         entries.add(ModItems.RED_RIDING_HOOD_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.CINDERELLA_STORYBOOK.getDefaultStack());
                         entries.add(ModItems.SNOW_WHITE_STORYBOOK.getDefaultStack());
@@ -67,17 +67,17 @@ public class ModItemGroups {
                         entries.add(ModBlocks.TH_SLABS.asItem());
                         entries.add(ModBlocks.TH_FENCE.asItem());
                         entries.add(ModBlocks.TH_FENCE_GATE.asItem());
-                        entries.add(ModBlocks.TH_WALL.asItem());
                         entries.add(ModBlocks.TH_DOOR.asItem());
                         entries.add(ModBlocks.TH_TRAPDOOR.asItem());
                         entries.add(ModBlocks.TH_BUTTON.asItem());
                         entries.add(ModBlocks.TH_PRESSURE_PLATE.asItem());
                         entries.add(ModItems.TH_SIGN);
                         entries.add(ModItems.HANGING_TH_SIGN);
+                        entries.add(ModItems.TH_BOAT);
 
                         entries.add(ModBlocks.WW_SAPLING.asItem());
                         entries.add(ModBlocks.WW_LEAVES.asItem());
-                        entries.add(ModBlocks.WW_HANGING_LEAVES.asItem());
+                        entries.add(ModItems.WW_HANGING_LEAVES);
                         entries.add(ModBlocks.WW_LOG.asItem());
                         entries.add(ModBlocks.WW_WOOD.asItem());
                         entries.add(ModBlocks.STRIPPED_WW_LOG.asItem());
@@ -87,13 +87,13 @@ public class ModItemGroups {
                         entries.add(ModBlocks.WW_SLABS.asItem());
                         entries.add(ModBlocks.WW_FENCE.asItem());
                         entries.add(ModBlocks.WW_FENCE_GATE.asItem());
-                        entries.add(ModBlocks.WW_WALL.asItem());
                         entries.add(ModBlocks.WW_DOOR.asItem());
                         entries.add(ModBlocks.WW_TRAPDOOR.asItem());
                         entries.add(ModBlocks.WW_BUTTON.asItem());
                         entries.add(ModBlocks.WW_PRESSURE_PLATE.asItem());
                         entries.add(ModItems.WW_SIGN);
                         entries.add(ModItems.HANGING_WW_SIGN);
+                        entries.add(ModItems.WW_BOAT);
 
                         entries.add(ModBlocks.BB_SAPLING.asItem());
                         entries.add(ModBlocks.BB_LEAVES.asItem());
@@ -106,23 +106,41 @@ public class ModItemGroups {
                         entries.add(ModBlocks.BB_SLABS.asItem());
                         entries.add(ModBlocks.BB_FENCE.asItem());
                         entries.add(ModBlocks.BB_FENCE_GATE.asItem());
-                        entries.add(ModBlocks.BB_WALL.asItem());
                         entries.add(ModBlocks.BB_DOOR.asItem());
                         entries.add(ModBlocks.BB_TRAPDOOR.asItem());
                         entries.add(ModBlocks.BB_BUTTON.asItem());
                         entries.add(ModBlocks.BB_PRESSURE_PLATE.asItem());
                         entries.add(ModItems.BB_SIGN);
                         entries.add(ModItems.HANGING_BB_SIGN);
+                        entries.add(ModItems.BB_BOAT);
+
+                        entries.add(ModBlocks.HH_SAPLING.asItem());
+                        entries.add(ModBlocks.HH_LEAVES.asItem());
+                        entries.add(ModBlocks.HH_LOG.asItem());
+                        entries.add(ModBlocks.HH_WOOD.asItem());
+                        entries.add(ModBlocks.STRIPPED_HH_LOG.asItem());
+                        entries.add(ModBlocks.STRIPPED_HH_WOOD.asItem());
+                        entries.add(ModBlocks.HH_PLANKS.asItem());
+                        entries.add(ModBlocks.HH_STAIRS.asItem());
+                        entries.add(ModBlocks.HH_SLABS.asItem());
+                        entries.add(ModBlocks.HH_FENCE.asItem());
+                        entries.add(ModBlocks.HH_FENCE_GATE.asItem());
+                        entries.add(ModBlocks.HH_DOOR.asItem());
+                        entries.add(ModBlocks.HH_TRAPDOOR.asItem());
+                        entries.add(ModBlocks.HH_BUTTON.asItem());
+                        entries.add(ModBlocks.HH_PRESSURE_PLATE.asItem());
+                        entries.add(ModItems.HH_SIGN);
+                        entries.add(ModItems.HANGING_HH_SIGN);
+                        entries.add(ModItems.HH_BOAT);
+                        entries.add(ModItems.HH_CHEST_BOAT);
+
 
 
                         entries.add(ModBlocks.LAWN_DAISY_PATCH.asItem());
                         entries.add(ModBlocks.WONDER_DIRT.asItem());
                         entries.add(ModBlocks.WONDER_GRASS.asItem());
                         entries.add(ModBlocks.RABBIT_HOLE.asItem());
-                        entries.add(ModItems.EXTERIOR_CHEST_ITEM);
-                        entries.add(ModBlocks.EXTERIOR_DOOR.asItem());
-                        entries.add(ModBlocks.EXTERIOR_PORTAL.asItem());
-                        entries.add(ModBlocks.MIRROR_BLOCK.asItem());
+                        entries.add(ModItems.MIRROR);
 
                         MinecraftClient client = MinecraftClient.getInstance();
                         if (client.world != null) {

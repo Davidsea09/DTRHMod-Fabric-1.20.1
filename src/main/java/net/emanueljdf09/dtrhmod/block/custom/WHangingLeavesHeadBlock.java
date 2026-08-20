@@ -2,6 +2,7 @@ package net.emanueljdf09.dtrhmod.block.custom;
 
 import net.emanueljdf09.dtrhmod.block.ModBlocks;
 import net.minecraft.block.*;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -14,17 +15,12 @@ public class WHangingLeavesHeadBlock extends AbstractPlantStemBlock {
     public static final VoxelShape SHAPE = Block.createCuboidShape(4.0, 9.0, 4.0, 12.0, 16.0, 12.0);
 
     public WHangingLeavesHeadBlock(Settings settings) {
-        super(settings, Direction.DOWN, SHAPE, false, 0.14D);
-        this.setDefaultState(this.stateManager.getDefaultState().with(AGE, 0)); }
-
-    @Override
-    protected int getGrowthLength(Random random) {
-        return random.nextInt(4) + 2;
+        super(settings, Direction.DOWN, SHAPE, false, 0.3);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected int getGrowthLength(Random random) {
+        return 1;
     }
 
     @Override
@@ -38,17 +34,13 @@ public class WHangingLeavesHeadBlock extends AbstractPlantStemBlock {
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockPos blockPos = pos.offset(this.growthDirection.getOpposite());
-        BlockState blockState = world.getBlockState(blockPos);
-
-        return blockState.isOf(ModBlocks.WW_LEAVES) ||
-                blockState.isOf(ModBlocks.WW_HANGING_LEAVES_PLANT) ||
-                blockState.isSideSolidFullSquare(world, blockPos, Direction.DOWN);
+    protected boolean canAttachTo(BlockState state) {
+         return super.canAttachTo(state) || state.isOf(ModBlocks.WW_LOG) || state.isOf(ModBlocks.WW_LEAVES) || state.isOf(ModBlocks.WW_HANGING_LEAVES_PLANT);
     }
 
     @Override
-    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
-        return world.getBlockState(pos.down()).isAir();
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        BlockState aboveState = world.getBlockState(pos.up());
+        return aboveState.isOf(this) || aboveState.isOf(ModBlocks.WW_HANGING_LEAVES) || aboveState.isOf(ModBlocks.WW_LEAVES) || aboveState.isOf(ModBlocks.WW_HANGING_LEAVES_PLANT);
     }
 }

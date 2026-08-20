@@ -47,23 +47,19 @@ public class RabbitHoleBlockEntity extends BlockEntity {
 
         if (currentDim == World.OVERWORLD) {
             if (!component.hasDoneExterior()) {
-                TeleportUtil.teleport(player, ModDimensions.EXTERIOR_LEVEL_KEY, 3, 70, 2);
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
-                component.setExteriorDone(true);
+                TeleportUtil.startBlockTrance(player, pos, (ServerWorld) world, () -> {
+                    TeleportUtil.teleport(player, ModDimensions.EXTERIOR_LEVEL_KEY, 3, 70, 2);
+                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 200, 0));
+                    component.setExteriorDone(true);
+                    }, 40);
             } else {
-                TeleportUtil.teleportToWonderland(player);
+                TeleportUtil.startBlockTrance(player, pos, (ServerWorld) world, () -> {
+                    TeleportUtil.teleportToWonderland(player);
+                }, 40);
             }
             return;
         }
 
-        if (currentDim == ModDimensions.EXTERIOR_LEVEL_KEY) {
-            BlockPos found = TeleportUtil.teleportToBiome(player,
-                    ModDimensions.WONDERLAND_LEVEL_KEY,
-                    ModBiomes.TULGEY_WOOD,
-                    ModBiomes.VALE_OF_TEARS
-            );
-            component.setWonderlandSpawn(found);
-        }
     }
 
     private void handleReturnToSpawn(ServerPlayerEntity player) {
@@ -102,7 +98,7 @@ public class RabbitHoleBlockEntity extends BlockEntity {
 
         if (world.getRegistryKey() != World.OVERWORLD) return;
 
-        Box checkRabbitBox = new Box(pos).expand(40);
+        Box checkRabbitBox = new Box(pos).expand(100);
         List<WhiteRabbitEntity> nearbyRabbits = serverWorld.getEntitiesByClass(
                 WhiteRabbitEntity.class,
                 checkRabbitBox,
@@ -110,7 +106,7 @@ public class RabbitHoleBlockEntity extends BlockEntity {
         );
         if (!nearbyRabbits.isEmpty()) return;
 
-        Box checkPlayerBox = new Box(pos).expand(40);
+        Box checkPlayerBox = new Box(pos).expand(100);
         List<ServerPlayerEntity> nearbyPlayers = serverWorld.getEntitiesByClass(
                 ServerPlayerEntity.class,
                 checkPlayerBox,
@@ -124,8 +120,11 @@ public class RabbitHoleBlockEntity extends BlockEntity {
                 WhiteRabbitEntity rabbit = ModEntities.WHITE_RABBIT.create(serverWorld);
                 if (rabbit != null) {
 
-                    int offsetX = world.random.nextInt(11) - 5;
-                    int offsetZ = world.random.nextInt(11) - 5;
+                    int minDistance = 15;
+                    int maxDistance = 40;
+
+                    int offsetX = (world.random.nextBoolean() ? 1 : -1) * (minDistance + world.random.nextInt(maxDistance - minDistance));
+                    int offsetZ = (world.random.nextBoolean() ? 1 : -1) * (minDistance + world.random.nextInt(maxDistance - minDistance));
 
                     BlockPos targetPos = pos.add(offsetX, 0, offsetZ);
 

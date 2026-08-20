@@ -149,7 +149,7 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
 
     private BlockPos findNearbyRabbitHole() {
         BlockPos entityPos = this.getBlockPos();
-        int radius = 15;
+        int radius = 50;
 
         for (int x = -radius; x <= radius; x++) {
             for (int y = -4; y <= 4; y++) {
@@ -207,7 +207,7 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
                 if (isReturning() || isGreeting()) return ActionResult.PASS;
 
                 if (!component.hasMetWhiteRabbit()) {
-                    player.sendMessage(Text.translatable("entity.dtrhmod.white_rabbit.greet_msg"), true);
+                    player.sendMessage(Text.translatable("entity.dtrhmod.white_rabbit.greet_msg"), false);
 
                     component.setMetWhiteRabbit(true);
                     component.setMetInOverworld(true);
@@ -217,7 +217,7 @@ public class WhiteRabbitEntity extends PathAwareEntity implements GeoEntity {
                     this.getNavigation().stop();
                     return ActionResult.SUCCESS;
                 } else {
-                    player.sendMessage(Text.translatable("entity.dtrhmod.white_rabbit.busy_msg"), true);
+                    player.sendMessage(Text.translatable("entity.dtrhmod.white_rabbit.busy_msg"), false);
                     return ActionResult.SUCCESS;
                 }
             }

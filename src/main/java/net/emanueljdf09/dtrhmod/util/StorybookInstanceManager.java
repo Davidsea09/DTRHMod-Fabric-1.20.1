@@ -30,11 +30,24 @@ public class StorybookInstanceManager extends PersistentState {
 
     public static StorybookInstanceManager getServerState(MinecraftServer server) {
         ServerWorld overworld = server.getWorld(World.OVERWORLD);
+        if (overworld == null) {
+            return new StorybookInstanceManager();
+        }
+
         return overworld.getPersistentStateManager().getOrCreate(
                 StorybookInstanceManager::readNbt,
                 StorybookInstanceManager::new,
                 "storybook_instances"
         );
+    }
+
+    public void registerVisitorReturn(UUID playerUuid, RegistryKey<World> originDimKey, BlockPos originPos) {
+        playerReturnLocations.put(playerUuid, new ReturnLocation(originDimKey, originPos));
+        markDirty();
+    }
+
+    public Map<UUID, BlockPos> getPlayerInstancesMap() {
+        return playerInstances;
     }
 
     public BlockPos getOrCreatePlayerInstance(
@@ -45,7 +58,7 @@ public class StorybookInstanceManager extends PersistentState {
             RegistryKey<World> originDimKey,
             BlockPos originPos
     ) {
-        playerReturnLocations.put(ownerUuid, new ReturnLocation(originDimKey, originPos));
+        registerVisitorReturn(ownerUuid, originDimKey, originPos);
 
         ServerWorld targetWorld = server.getWorld(targetDimKey);
         BlockPos spawnPos;
@@ -106,24 +119,31 @@ public class StorybookInstanceManager extends PersistentState {
 
         NbtCompound playersNbt = nbt.getCompound("PlayerInstances");
         for (String key : playersNbt.getKeys()) {
-            UUID uuid = UUID.fromString(key);
-            long posLong = playersNbt.getLong(key);
-            manager.playerInstances.put(uuid, BlockPos.fromLong(posLong));
+            try {
+                UUID uuid = UUID.fromString(key);
+                long posLong = playersNbt.getLong(key);
+                manager.playerInstances.put(uuid, BlockPos.fromLong(posLong));
+            } catch (IllegalArgumentException ignored) {
+            }
         }
 
         if (nbt.contains("ReturnLocations")) {
             NbtCompound returnNbt = nbt.getCompound("ReturnLocations");
             for (String key : returnNbt.getKeys()) {
-                UUID uuid = UUID.fromString(key);
-                NbtCompound entryData = returnNbt.getCompound(key);
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    NbtCompound entryData = returnNbt.getCompound(key);
 
-                RegistryKey<World> dimKey = RegistryKey.of(
-                        RegistryKeys.WORLD,
-                        new Identifier(entryData.getString("Dim"))
-                );
-                BlockPos pos = BlockPos.fromLong(entryData.getLong("Pos"));
+                    String dimStr = entryData.getString("Dim");
+                    RegistryKey<World> dimKey = RegistryKey.of(
+                            RegistryKeys.WORLD,
+                            new Identifier(dimStr.isEmpty() ? "minecraft:overworld" : dimStr)
+                    );
+                    BlockPos pos = BlockPos.fromLong(entryData.getLong("Pos"));
 
-                manager.playerReturnLocations.put(uuid, new ReturnLocation(dimKey, pos));
+                    manager.playerReturnLocations.put(uuid, new ReturnLocation(dimKey, pos));
+                } catch (Exception ignored) {
+                }
             }
         }
 

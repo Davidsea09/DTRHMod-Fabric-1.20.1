@@ -12,6 +12,7 @@ public class ModParticles {
     public static final DefaultParticleType BB_LEAVE_PARTICLE = registerParticle("bb");
     public static final DefaultParticleType TH_LEAVE_PARTICLE  = registerParticle("th");
     public static final DefaultParticleType WW_LEAVE_PARTICLE  = registerParticle("ww");
+    public static final DefaultParticleType WONDERLAND_LOCK_PARTICLE  = registerParticle("wonderland_lock");
 
     private static DefaultParticleType registerParticle(String name) {
         return Registry.register(

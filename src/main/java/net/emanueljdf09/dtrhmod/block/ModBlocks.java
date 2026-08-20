@@ -9,6 +9,7 @@ import net.emanueljdf09.dtrhmod.block.custom.*;
 import net.emanueljdf09.dtrhmod.block.custom.mirror.MirrorBlock;
 import net.emanueljdf09.dtrhmod.world.features.ModConfiguredFeatures;
 import net.emanueljdf09.dtrhmod.world.features.tree.sapling.BbSaplingGenerator;
+import net.emanueljdf09.dtrhmod.world.features.tree.sapling.HhSaplingGenerator;
 import net.emanueljdf09.dtrhmod.world.features.tree.sapling.ThSaplingGenerator;
 import net.emanueljdf09.dtrhmod.world.features.tree.sapling.WwSaplingGenerator;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -33,22 +34,25 @@ public class ModBlocks {
             new MushroomBlock(FabricBlockSettings.create().mapColor(MapColor.BLUE)));
     public static final Block BLUE_MUSHROOM = registerBlockWithItem("blue_mushroom",
             new MushroomPlantBlock(FabricBlockSettings.create().mapColor(MapColor.BLUE).noCollision().ticksRandomly().breakInstantly(),
-                    ModConfiguredFeatures.BIG_BLUE_MUSHROOM));
+                    ModConfiguredFeatures.BIG_BLUE_MUSHROOM_SELECTOR));
 
     public static final Block YELLOW_MUSHROOM_BLOCK = registerBlockWithItem("yellow_mushroom_block",
             new MushroomBlock(FabricBlockSettings.create().mapColor(MapColor.YELLOW)));
     public static final Block YELLOW_MUSHROOM = registerBlockWithItem("yellow_mushroom",
             new MushroomPlantBlock(FabricBlockSettings.create().mapColor(MapColor.YELLOW).noCollision().ticksRandomly().breakInstantly(),
-                    ModConfiguredFeatures.BIG_YELLOW_MUSHROOM));
+                    ModConfiguredFeatures.BIG_YELLOW_MUSHROOM_SELECTOR));
 
     public static final Block MAGENTA_MUSHROOM_BLOCK = registerBlockWithItem("magenta_mushroom_block",
             new MushroomBlock(FabricBlockSettings.create().mapColor(MapColor.MAGENTA)));
     public static final Block MAGENTA_MUSHROOM = registerBlockWithItem("magenta_mushroom",
             new MushroomPlantBlock(FabricBlockSettings.create().mapColor(MapColor.MAGENTA).noCollision().ticksRandomly().breakInstantly(),
-                    ModConfiguredFeatures.BIG_MAGENTA_MUSHROOM));
+                    ModConfiguredFeatures.BIG_MAGENTA_MUSHROOM_SELECTOR));
 
-    public static final Block MAD_HATTER_HAT = registerBlockWithItem("mad_hatter_hat",
-            new MadHatterHatBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque().noCollision()));
+    public static final Block MAD_HATTER_HAT = registerBlock("mad_hatter_hat",
+            new MadHatterHatBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
+                    .suffocates((state, world, pos) -> false)
+                    .blockVision((state, world, pos) -> false)
+                    .nonOpaque().noCollision()));
 
 
     public static final Block RABBIT_HOLE = registerBlockWithItem("rabbit_hole",
@@ -60,19 +64,21 @@ public class ModBlocks {
     public static final Block EXTERIOR_CHEST = registerBlock("exterior_chest",
             new ExteriorChest(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).strength(-1.0f, 3600000.0f)));
 
-    public static final Block EXTERIOR_DOOR = registerBlockWithItem("exterior_door",
+    public static final Block EXTERIOR_DOOR = registerBlock("exterior_door",
             new ExteriorDoor(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
 
     public static final Block TEAPOT_BLOCK = registerBlockWithItem("teapot_block",
             new TeapotBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
 
-    public static final Block MIRROR_BLOCK = registerBlockWithItem("mirror_block",
+    public static final Block MIRROR_BLOCK = registerBlock("mirror_block",
             new MirrorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)
+                    .strength(3f, 1200.0f)
+                    .requiresTool()
                     .suffocates((state, world, pos) -> false)
                     .blockVision((state, world, pos) -> false)));
 
     public static final Block WONDER_GRASS = registerBlockWithItem("wonder_grass",
-            new WonderGrassBlock(FabricBlockSettings.copyOf(Blocks.GRASS_BLOCK)));
+            new WonderGrassBlock(FabricBlockSettings.copyOf(Blocks.GRASS_BLOCK).solid()));
     public static final Block WONDER_DIRT = registerBlockWithItem("wonder_dirt",
             new Block(FabricBlockSettings.copyOf(Blocks.DIRT)));
 
@@ -104,8 +110,7 @@ public class ModBlocks {
             new FenceBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE)));
     public static final Block TH_FENCE_GATE = registerBlockWithItem("th_fence_gate",
             new FenceGateBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE_GATE), ModBlockCollections.TH_WOOD_TYPE));
-    public static final Block TH_WALL= registerBlockWithItem("th_wall",
-            new WallBlock(FabricBlockSettings.copyOf(Blocks.BRICK_WALL)));
+
 
 
     public static final Identifier TH_SIGN_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "entity/signs/th");
@@ -116,11 +121,11 @@ public class ModBlocks {
     public static final Block TH_SIGN = registerBlock("th_sign",
             new TerraformSignBlock(TH_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_SIGN)));
     public static final Block WALL_TH_SIGN = registerBlock("wall_th_sign",
-            new TerraformWallSignBlock(TH_SIGN_TEXTURE,FabricBlockSettings.copyOf(Blocks.OAK_WALL_SIGN)));
+            new TerraformWallSignBlock(TH_SIGN_TEXTURE,FabricBlockSettings.copyOf(Blocks.OAK_WALL_SIGN).dropsLike(TH_SIGN)));
     public static final Block TH_HANGING_SIGN = registerBlock("th_hanging_sign",
             new TerraformHangingSignBlock(HANGING_TH_SIGN_TEXTURE, HANGING_TH_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_HANGING_SIGN)));
     public static final Block WALL_TH_HANGING_SIGN = registerBlock("wall_th_hanging_sign",
-            new TerraformWallHangingSignBlock(HANGING_TH_SIGN_TEXTURE, HANGING_TH_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_HANGING_SIGN)));
+            new TerraformWallHangingSignBlock(HANGING_TH_SIGN_TEXTURE, HANGING_TH_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_HANGING_SIGN).dropsLike(TH_HANGING_SIGN)));
 
     public static final Block TH_DOOR = registerBlockWithItem("th_door",
             new DoorBlock(FabricBlockSettings.copyOf(Blocks.OAK_DOOR), ModBlockCollections.TH_WOOD_SET));
@@ -157,8 +162,6 @@ public class ModBlocks {
             new FenceBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE)));
     public static final Block WW_FENCE_GATE = registerBlockWithItem("ww_fence_gate",
             new FenceGateBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE_GATE), ModBlockCollections.WW_WOOD_TYPE));
-    public static final Block WW_WALL= registerBlockWithItem("ww_wall",
-            new WallBlock(FabricBlockSettings.copyOf(Blocks.BRICK_WALL)));
 
 
     public static final Identifier WW_SIGN_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "entity/signs/ww");
@@ -169,11 +172,11 @@ public class ModBlocks {
     public static final Block WW_SIGN = registerBlock("ww_sign",
             new TerraformSignBlock(WW_SIGN_TEXTURE,FabricBlockSettings.copyOf(Blocks.OAK_SIGN)));
     public static final Block WALL_WW_SIGN = registerBlock("wall_ww_sign",
-            new TerraformWallSignBlock(WW_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_SIGN)));
+            new TerraformWallSignBlock(WW_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_SIGN).dropsLike(WW_SIGN)));
     public static final Block WW_HANGING_SIGN = registerBlock("ww_hanging_sign",
             new TerraformHangingSignBlock(HANGING_WW_SIGN_TEXTURE, HANGING_WW_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_HANGING_SIGN)));
     public static final Block WALL_WW_HANGING_SIGN = registerBlock("wall_ww_hanging_sign",
-            new TerraformWallHangingSignBlock(HANGING_WW_SIGN_TEXTURE, HANGING_WW_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_HANGING_SIGN)));
+            new TerraformWallHangingSignBlock(HANGING_WW_SIGN_TEXTURE, HANGING_WW_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_HANGING_SIGN).dropsLike(WW_HANGING_SIGN)));
 
 
     public static final Block WW_DOOR = registerBlockWithItem("ww_door",
@@ -183,9 +186,9 @@ public class ModBlocks {
 
     public static final Block WW_LEAVES = registerBlockWithItem("ww_leaves",
             new LeavesBlock(FabricBlockSettings.copyOf(Blocks.OAK_LEAVES).strength(0.2f).nonOpaque()));
-    public static final Block WW_HANGING_LEAVES = registerBlockWithItem("ww_hanging_leaves",
+    public static final Block WW_HANGING_LEAVES = registerBlock("ww_hanging_leaves",
                 new WHangingLeavesHeadBlock(FabricBlockSettings.create().sounds(BlockSoundGroup.VINE).nonOpaque().noCollision().ticksRandomly().breakInstantly().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block WW_HANGING_LEAVES_PLANT = registerBlockWithItem("ww_hanging_leaves_plant",
+    public static final Block WW_HANGING_LEAVES_PLANT = registerBlock("ww_hanging_leaves_plant",
                 new WHangingLeavesBodyBlock(FabricBlockSettings.create().sounds(BlockSoundGroup.VINE).nonOpaque().noCollision().ticksRandomly().breakInstantly().pistonBehavior(PistonBehavior.DESTROY)));
 
     public static final Block BB_SAPLING = registerBlockWithItem("bb_sapling",
@@ -215,8 +218,6 @@ public class ModBlocks {
             new FenceBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE)));
     public static final Block BB_FENCE_GATE = registerBlockWithItem("bb_fence_gate",
             new FenceGateBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE_GATE), ModBlockCollections.BB_WOOD_TYPE));
-    public static final Block BB_WALL= registerBlockWithItem("bb_wall",
-            new WallBlock(FabricBlockSettings.copyOf(Blocks.BRICK_WALL)));
 
 
     public static final Identifier BB_SIGN_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "entity/signs/bb");
@@ -227,11 +228,11 @@ public class ModBlocks {
     public static final Block BB_SIGN = registerBlock("bb_sign",
             new TerraformSignBlock(BB_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_SIGN)));
     public static final Block WALL_BB_SIGN = registerBlock("wall_bb_sign",
-            new TerraformWallSignBlock(BB_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_SIGN)));
+            new TerraformWallSignBlock(BB_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_SIGN).dropsLike(BB_SIGN)));
     public static final Block BB_HANGING_SIGN = registerBlock("bb_hanging_sign",
             new TerraformHangingSignBlock(HANGING_BB_SIGN_TEXTURE, HANGING_BB_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_HANGING_SIGN)));
     public static final Block WALL_BB_HANGING_SIGN = registerBlock("wall_bb_hanging_sign",
-            new TerraformWallHangingSignBlock(HANGING_BB_SIGN_TEXTURE, HANGING_BB_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_HANGING_SIGN)));
+            new TerraformWallHangingSignBlock(HANGING_BB_SIGN_TEXTURE, HANGING_BB_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_HANGING_SIGN).dropsLike(BB_HANGING_SIGN)));
 
 
     public static final Block BB_DOOR = registerBlockWithItem("bb_door",
@@ -241,6 +242,59 @@ public class ModBlocks {
 
     public static final Block BB_LEAVES = registerBlockWithItem("bb_leaves",
             new LeavesBlock(FabricBlockSettings.copyOf(Blocks.OAK_LEAVES).strength(0.2f).nonOpaque()));
+
+    public static final Block HH_SAPLING = registerBlockWithItem("hh_sapling",
+            new SaplingBlock(new HhSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING)));
+    public static final Block HH_LOG = registerBlockWithItem("hh_log",
+            new PillarBlock(FabricBlockSettings.copyOf(Blocks.OAK_LOG).strength(4f)));
+    public static final Block HH_WOOD = registerBlockWithItem("hh_wood",
+            new PillarBlock(FabricBlockSettings.copyOf(Blocks.OAK_WOOD).strength(4f)));
+    public static final Block STRIPPED_HH_LOG = registerBlockWithItem("stripped_hh_log",
+            new PillarBlock(FabricBlockSettings.copyOf(Blocks.STRIPPED_OAK_LOG).strength(4f)));
+    public static final Block STRIPPED_HH_WOOD = registerBlockWithItem("stripped_hh_wood",
+            new PillarBlock(FabricBlockSettings.copyOf(Blocks.STRIPPED_OAK_WOOD).strength(4f)));
+
+    public static final Block HH_PLANKS = registerBlockWithItem("hh_planks",
+            new Block(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).strength(4f)));
+    public static final Block HH_STAIRS = registerBlockWithItem("hh_stairs",
+            new StairsBlock(ModBlocks.HH_PLANKS.getDefaultState(), FabricBlockSettings.copyOf(Blocks.OAK_STAIRS).strength(4f)));
+    public static final Block HH_SLABS = registerBlockWithItem("hh_slabs",
+            new SlabBlock(FabricBlockSettings.copyOf(Blocks.OAK_SLAB).strength(4f)));
+    public static final Block HH_BUTTON = registerBlockWithItem("hh_button",
+            new ButtonBlock(FabricBlockSettings.copyOf(Blocks.OAK_BUTTON), ModBlockCollections.HH_WOOD_SET, 10, true));
+    public static final Block HH_PRESSURE_PLATE = registerBlockWithItem("hh_pressure_plate",
+            new PressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING,
+                    FabricBlockSettings.copyOf(Blocks.OAK_PRESSURE_PLATE), ModBlockCollections.HH_WOOD_SET));
+
+    public static final Block HH_FENCE = registerBlockWithItem("hh_fence",
+            new FenceBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE)));
+    public static final Block HH_FENCE_GATE = registerBlockWithItem("hh_fence_gate",
+            new FenceGateBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE_GATE), ModBlockCollections.HH_WOOD_TYPE));
+
+
+    public static final Identifier HH_SIGN_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "entity/signs/hh");
+    public static final Identifier HANGING_HH_SIGN_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "entity/signs/hanging/hh");
+    public static final Identifier HANGING_HH_SIGN_GUI_TEXTURE = new Identifier(DownTheRabbitHole.MOD_ID, "textures/gui/hanging_signs/hh");
+
+
+    public static final Block HH_SIGN = registerBlock("hh_sign",
+            new TerraformSignBlock(HH_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_SIGN)));
+    public static final Block WALL_HH_SIGN = registerBlock("wall_hh_sign",
+            new TerraformWallSignBlock(HH_SIGN_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_SIGN).dropsLike(HH_SIGN)));
+    public static final Block HH_HANGING_SIGN = registerBlock("hh_hanging_sign",
+            new TerraformHangingSignBlock(HANGING_HH_SIGN_TEXTURE, HANGING_HH_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_HANGING_SIGN)));
+    public static final Block WALL_HH_HANGING_SIGN = registerBlock("wall_hh_hanging_sign",
+            new TerraformWallHangingSignBlock(HANGING_HH_SIGN_TEXTURE, HANGING_HH_SIGN_GUI_TEXTURE, FabricBlockSettings.copyOf(Blocks.OAK_WALL_HANGING_SIGN).dropsLike(HH_HANGING_SIGN)));
+
+
+    public static final Block HH_DOOR = registerBlockWithItem("hh_door",
+            new DoorBlock(FabricBlockSettings.copyOf(Blocks.OAK_DOOR), ModBlockCollections.HH_WOOD_SET));
+    public static final Block HH_TRAPDOOR = registerBlockWithItem("hh_trapdoor",
+            new TrapdoorBlock(FabricBlockSettings.copyOf(Blocks.OAK_TRAPDOOR), ModBlockCollections.HH_WOOD_SET));
+
+    public static final Block HH_LEAVES = registerBlockWithItem("hh_leaves",
+            new LeavesBlock(FabricBlockSettings.copyOf(Blocks.OAK_LEAVES).strength(0.2f).nonOpaque()));
+
 
     public static BlockFamily TH_FAMILY = BlockFamilies.register(ModBlocks.TH_PLANKS)
             .button(ModBlocks.TH_BUTTON)
@@ -252,7 +306,6 @@ public class ModBlocks {
             .pressurePlate(ModBlocks.TH_PRESSURE_PLATE)
             .sign(ModBlocks.TH_SIGN, ModBlocks.WALL_TH_SIGN)
             .trapdoor(ModBlocks.TH_TRAPDOOR)
-            .wall(ModBlocks.TH_WALL)
             .group("wooden")
             .unlockCriterionName("has_planks")
             .build();
@@ -267,7 +320,6 @@ public class ModBlocks {
             .pressurePlate(ModBlocks.BB_PRESSURE_PLATE)
             .sign(ModBlocks.BB_SIGN, ModBlocks.WALL_BB_SIGN)
             .trapdoor(ModBlocks.BB_TRAPDOOR)
-            .wall(ModBlocks.BB_WALL)
             .group("wooden")
             .unlockCriterionName("has_planks")
             .build();
@@ -282,7 +334,20 @@ public class ModBlocks {
             .pressurePlate(ModBlocks.WW_PRESSURE_PLATE)
             .sign(ModBlocks.WW_SIGN, ModBlocks.WALL_WW_SIGN)
             .trapdoor(ModBlocks.WW_TRAPDOOR)
-            .wall(ModBlocks.WW_WALL)
+            .group("wooden")
+            .unlockCriterionName("has_planks")
+            .build();
+
+    public static BlockFamily HH_FAMILY = BlockFamilies.register(ModBlocks.HH_PLANKS)
+            .button(ModBlocks.HH_BUTTON)
+            .door(ModBlocks.HH_DOOR)
+            .fence(ModBlocks.HH_FENCE)
+            .fenceGate(ModBlocks.HH_FENCE_GATE)
+            .stairs(ModBlocks.HH_STAIRS)
+            .slab(ModBlocks.HH_SLABS)
+            .pressurePlate(ModBlocks.HH_PRESSURE_PLATE)
+            .sign(ModBlocks.HH_SIGN, ModBlocks.WALL_HH_SIGN)
+            .trapdoor(ModBlocks.HH_TRAPDOOR)
             .group("wooden")
             .unlockCriterionName("has_planks")
             .build();

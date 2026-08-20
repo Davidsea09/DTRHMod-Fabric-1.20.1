@@ -68,11 +68,11 @@ public class ExteriorChestEntity extends BlockEntity implements GeoBlockEntity {
                 player.giveItemStack(ModItems.EXTERIOR_KEY.getDefaultStack());
                 component.setOpenedExtGrownChest(true);
 
-                triggerAnim("chest_controller", "take_grown_items");
-
                 world.updateListeners(pos, getCachedState(), getCachedState(), 3);
                 ModComponents.PROGRESSION_COMPONENT.sync((ServerPlayerEntity) player);
                 markDirty();
+            } else {
+                triggerAnim("chest_controller", "take_grown_items");
             }
             return ActionResult.SUCCESS;
         }

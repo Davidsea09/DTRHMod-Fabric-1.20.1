@@ -15,7 +15,6 @@ public class ProgressionComponentImpl implements ProgressionComponent, AutoSynce
     private BlockPos wonderlandSpawn = null;
     private boolean openedExtChest = false;
     private boolean openedExtGrownChest = false;
-    private boolean triggeredChestGrowth = false;
     private boolean doorOpened = false;
     private boolean wonderlandMirrorUnlocked = false;
     private int completedStages = 0;
@@ -139,11 +138,28 @@ public class ProgressionComponentImpl implements ProgressionComponent, AutoSynce
         return this.wonderlandSpawn;
     }
 
+    @Override
+    public void reset() {
+        this.exteriorDone = false;
+        this.wonderlandSpawn = null;
+        this.openedExtChest = false;
+        this.openedExtGrownChest = false;
+        this.doorOpened = false;
+        this.wonderlandMirrorUnlocked = false;
+        this.completedStages = 0;
+        this.metWhiteRabbit = false;
+        this.metInOverworld = false;
+
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            ModComponents.PROGRESSION_COMPONENT.sync(serverPlayer);
+        }
+    }
 
     @Override
     public void readFromNbt(NbtCompound nbtCompound) {
         exteriorDone = nbtCompound.getBoolean("ExteriorDone");
         openedExtChest = nbtCompound.getBoolean("OpenedExtChest");
+        openedExtGrownChest = nbtCompound.getBoolean("OpenedExtGrownChest");
         doorOpened = nbtCompound.getBoolean("DoorOpened");
         wonderlandMirrorUnlocked = nbtCompound.getBoolean("WonderlandMirrorUnlocked");
         completedStages = nbtCompound.getInt("CompletedStages");
@@ -162,6 +178,7 @@ public class ProgressionComponentImpl implements ProgressionComponent, AutoSynce
         nbtCompound.putBoolean("ExteriorDone", exteriorDone);
         nbtCompound.putBoolean("DoorOpened", doorOpened);
         nbtCompound.putBoolean("OpenedExtChest", openedExtChest);
+        nbtCompound.putBoolean("OpenedExtGrownChest", openedExtGrownChest);
         nbtCompound.putBoolean("WonderlandMirrorUnlocked", this.wonderlandMirrorUnlocked);
         nbtCompound.putInt("CompletedStages", this.completedStages);
         nbtCompound.putBoolean("MetWhiteRabbit", this.metWhiteRabbit);
@@ -172,6 +189,5 @@ public class ProgressionComponentImpl implements ProgressionComponent, AutoSynce
         }
 
     }
-
 
 }
